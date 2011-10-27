@@ -9,4 +9,13 @@
  */ 
 class BriefLayout extends BaseBriefLayout
 {
+  /**
+   * geef de string waarde van dit object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return $this->getNaam() ? $this->getNaam() : '';
+  }
 }

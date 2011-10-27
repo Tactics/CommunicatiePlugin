@@ -9,4 +9,16 @@
  */ 
 class BriefLayoutPeer extends BaseBriefLayoutPeer
 {
+  /**
+   * Geeft alle brieflayouts terug
+   *
+   * @return array[]BriefLayout
+   */
+  public static function getSorted()
+  {
+    $c = new Criteria();
+    $c->addAscendingOrderByColumn(self::NAAM);
+
+    return self::doSelect($c);
+  }
 }
