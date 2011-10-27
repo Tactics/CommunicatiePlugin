@@ -110,16 +110,9 @@ class briefActions extends sfActions
    */
   private function preExecuteVersturen()
   {
-    // tmp fix voor ontbrekende autoload in criteria uit sessie
-    PersoonPeer::getFieldNames();
-    SollicitatiePeer::getFieldNames();
-    VacaturePeer::getFieldNames();
-    SollicitatieAntwoordPeer::getFieldNames();
-    ThemaPeer::getFieldNames();
-    HoofdthemaPeer::getFieldNames();
-    KanaalPeer::getFieldNames();
-    VraagPeer::getFieldNames();
-
+    // fix voor ontbrekende autoload in criteria uit sessie
+    ini_set('unserialize_callback_func', '__autoload');
+    
     $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', null, 'brieven');
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';

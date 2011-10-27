@@ -1,4 +1,4 @@
-<?php include_partial('brief/breadcrumb'); ?>
+<?php include_partial('global/breadcrumb'); ?>
 <?php use_javascript('/ttBericht/js/tinymce/tiny_mce.js'); ?>
 
 <?php echo form_tag('brief/print', array('target' => '_blank', 'multipart' => true, 'onsubmit' => "if (! jQuery('#onderwerp').val()) {alert('Gelieve een onderwerp op te geven'); jQuery('#onderwerp').focus(); return false;}")); ?>
@@ -62,7 +62,7 @@
           <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 195px; margin-left: 20px;">
           <ul>
           <?php
-           $placeHolders = eval("return $bestemmelingenPeer::getPlaceholders();");
+           $placeHolders = eval("return $bestemmelingenClass::getPlaceholders();");
 
            foreach($placeHolders as $group_id => $placeHolderOfGroup)
            {

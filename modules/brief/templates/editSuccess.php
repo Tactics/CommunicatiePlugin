@@ -185,9 +185,8 @@ theme_advanced_buttons3 : ""
                 <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                 <strong><?php echo $oClass['label']; ?></strong>
                 <ul>
-                <?php
-                 $cPeer = $oClass['class'] . 'Peer';
-                 $placeHolders = eval("return $cPeer::getPlaceholders();");
+                <?php                 
+                 $placeHolders = eval("return {$oClass['class']}::getPlaceholders();");
 
                  foreach($placeHolders as $group_id => $placeHolderOfGroup)
                  {
