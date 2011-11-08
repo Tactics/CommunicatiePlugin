@@ -185,7 +185,7 @@ theme_advanced_buttons3 : ""
                 <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                 <strong><?php echo $oClass['label']; ?></strong>
                 <ul>
-                <?php                 
+                <?php    
                  $placeHolders = eval("return {$oClass['class']}::getPlaceholders();");
 
                  foreach($placeHolders as $group_id => $placeHolderOfGroup)
@@ -227,9 +227,7 @@ theme_advanced_buttons3 : ""
                    {
                       echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
                    }
-                   
                  }
-
                 ?>
                 </ul>
                 </div>
