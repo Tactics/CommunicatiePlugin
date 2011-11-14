@@ -21,7 +21,8 @@
           type: 'POST',
           data: {
             'onderwerp': jQuery('#onderwerp').val(),
-            'template_id': jQuery('#template_id').val(),
+            'template_ids': jQuery('#template_ids').val(),
+            'layout_ids': jQuery('#layout_ids').val(),
             'object_ids': jQuery('#object_ids').val(),
             'html': jQuery('#html').val()
           },
@@ -58,9 +59,7 @@
 
   </script>
 
-  <!-- Brieftemplate HEAD -->
-  <?php echo $bericht_head; ?>
-  <!-- /Brieftemplate HEAD -->
+  
 
 	<style type="text/css">
     .printbox td
@@ -119,7 +118,12 @@
     $aantal_brieven = 0;
     $aantal_via_email = 0;
     $object_ids = array();
-
+    $template_ids = array();
+    $layout_ids = array();
+   
+    // een eerste kleine optimalisatie om de stylesheets ($berichtHead) slechts 1x te includen
+    $vorigeCss = '';
+    
     while ($rs->next())
     {
       if ($aantal_brieven > 0)
@@ -130,23 +134,70 @@
       $object = new $bestemmelingenClass();
       $object->hydrate($rs);
 
+      if ($viaemail && $object->getMailerPrefersEmail())
+      {
+        $aantal_via_email++;
+        if (! $voorbeeld)
+        {
+          continue;
+        }
+      }
+      
+      if (! isset($brief_template))
+      {
+        $layoutEnTemplateId = $object->getLayoutEnTemplateId();
+        if (! $layoutEnTemplateId)
+        {
+          echo "<font color=red>brief_layout_id en brief_template_id niet gevonden voor {$bestemmelingenClass} (id: {$object->getId()})</font><br/>";
+          continue;
+        }
+        $brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
+        if (! $brief_template)
+        {
+          echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefTemplate (id: {$layoutEnTemplateId['brief_template_id']}) niet gevonden.</font><br/>";
+          continue;
+        }
+        $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);        
+      }
+      
       // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
       if (! $voorbeeld && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($bestemmelingenClass, $object->getId()))
       {
         continue;
       }
-
-      if ($viaemail && $object->getMailerPrefersEmail())
+      
+      $brief_layout = isset($brief_layout) ? $brief_layout : BriefLayoutPeer::retrieveByPK($brief_template->getBriefLayoutId());
+      if (! $brief_layout)
       {
-        $aantal_via_email++;
+        echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) niet gevonden.</font><br/>";
         continue;
       }
+      
+      $template_ids[] = $brief_template->getId();  
+      $layout_ids[] = $brief_layout->getId();
 
+      $onderwerp = $brief_template->getOnderwerp();               
+      $html = BriefTemplatePeer::getBerichtHtml($brief_template, $viaemail, $brief_template->getHtml(), $brief_layout);
+      
+      // Knip het resulterende document op in stukken zodat we meerdere
+      // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
+      $berichtHead = BriefTemplatePeer::getBerichtHead($html);
+      $berichtBody = BriefTemplatePeer::getBerichtBody($html);
+      
+      /* Brieftemplate HEAD (CSS) */
+      // @todo: te optimaliseren: slechts 1maal zelfde includen //
+      if ($berichtHead != $vorigeCss)
+      {
+        echo $berichtHead;
+        $vorigeCss = $berichtHead;
+      }      
+      
       // replace the placeholders
       $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
-      $values['onderwerp'] = BriefTemplatePeer::replacePlaceholders($onderwerp, $values);
+      $values['onderwerp'] = BriefTemplatePeer::replacePlaceholders($onderwerp, $values);      
 
-      $brief = BriefTemplatePeer::replacePlaceholders($bericht_body, $values);
+      $brief = BriefTemplatePeer::replacePlaceholders($berichtBody, $values);
+      $brief = BriefTemplatePeer::clearPlaceholders($brief);
 
       echo "<!-- Brief " . $aantal_brieven . "-->\n";
       echo $brief;
@@ -163,9 +214,10 @@
   ?>
 
   <div class="printbox">
-    <?php echo input_hidden_tag('onderwerp', $onderwerp); ?>
-    <?php echo input_hidden_tag('html', $html); ?>
-    <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
+    <?php echo input_hidden_tag('onderwerp', isset($onderwerp) ? $onderwerp : ''); ?>
+    <?php echo input_hidden_tag('html', isset($html) ? $html : ''); ?>
+    <?php echo input_hidden_tag('template_ids', implode(',', $template_ids)); ?>
+    <?php echo input_hidden_tag('layout_ids',implode(',', $layout_ids)); ?>
     <?php echo input_hidden_tag('object_ids', implode(',', $object_ids)); ?>
 
     <div style='float:right;text-align:right'>
@@ -173,7 +225,7 @@
       <br/>
       <br/>
       <br/>
-      <span style="font-size: 9px;">Totaal aantal brieven: <?php echo $aantal_brieven ?></span>
+      <span style="font-size: 9px;">Totaal aantal <?php echo $viaemail ? 'e-mails' : 'brieven'; ?>: <?php echo $aantal_brieven ?></span>
     </div>
 
     <center>

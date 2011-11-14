@@ -47,6 +47,18 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     }
     return strtr($html, $newValues);
   }
+  
+  /**
+   * vervangt de placeholders in de html met de lege values
+   *
+   * @param string $html
+   *
+   * @return string
+   */
+  public static function clearPlaceholders($html)
+  {    
+    return preg_replace('(%[a-z_]*%)', '', $html);
+  }
 
   /**
    * Helper functie voor de implementatie van getPlaceholders() in peerclasses
@@ -102,5 +114,138 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     }
 
     return $subset;
+  }
+  
+  /**
+   * Include een bestand en geef het resultaat terug als string
+   *
+   * http://php.net/manual/en/function.include.php
+   * 
+   * @param string $filename
+   * @return string
+   */
+  private static function get_include_contents($filename)
+  {
+    if (is_file($filename))
+    {
+        ob_start();
+        include $filename;
+        $contents = ob_get_contents();
+        ob_end_clean();
+        return $contents;
+    }
+
+    return false;
+  }
+  
+  /**
+   * geeft bericht_html terug
+   * 
+   * @param BriefTemplate $briefTemplate
+   * @param boolean $emailVerzenden
+   * @param string $html
+   * @param BriefLayout $briefLayout optional, default null
+   * @param boolean $viaemail
+   * 
+   * @return string $bericht_html
+   */
+  public static function getBerichtHtml($briefTemplate, $emailVerzenden, $html, $briefLayout = null, $viaemail = false)
+  {    
+    $layout = $briefLayout ? $briefLayout : $briefTemplate->getBriefLayout();
+
+    if ($emailVerzenden)
+    {
+      $layout_bestand = $layout->getMailBestand();
+      $layout_stylesheets = $layout->getMailStylesheets();
+    }
+    else
+    {
+      $layout_bestand = $layout->getPrintBestand();
+      $layout_stylesheets = $layout->getPrintStylesheets();
+    }
+    
+    $stylesheet_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'stylesheets' . DIRECTORY_SEPARATOR;
+    $layout_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
+
+    // Lees alle stylesheets in
+    $css = '';
+    foreach (explode(';', $layout_stylesheets) as $stylesheet)
+    {
+      $stylesheet_bestand = $stylesheet_dir . $stylesheet;
+      @$stylesheet_css = self::get_include_contents($stylesheet_bestand);
+      if ($stylesheet_css)
+      {
+        $css .= $stylesheet_css;
+      }
+    }    
+
+    // Haal layout op en pas deze toe
+    $html_layout = self::get_include_contents($layout_dir . $layout_bestand);
+
+    if ($html_layout)
+    {
+      Misc::use_helper('Url');      
+      $html = strtr($html_layout, array(
+        '%stylesheet%' => $css,
+        '%body%' => $html,
+        '%image_dir%' => $viaemail ? 'cid:' : url_for('brief/showImage') . '/image/'
+      ));
+    }
+    
+    return $html;
+  }
+  
+  /**
+   * geeft bericht_body terug
+   * 
+   * @param string $html
+   * 
+   * @return string $bericht_body
+   */
+  public static function getBerichtBody($html)
+  {    
+    $startOpenBodyTag = stripos($html, '<body');
+    $endOpenBodyTag = stripos($html, '>', $startOpenBodyTag);
+    $endBodyTag = stripos($html, '</body>', $endOpenBodyTag);
+
+    if (
+      ($startOpenBodyTag === false)
+      || ($endOpenBodyTag === false)
+      || ($endBodyTag === false)
+    )
+    {
+      throw new sfException('brief_layout "' . $layout_bestand . '" bevat geen geldige html body');
+    }
+
+    $bericht_body = substr($html, $endOpenBodyTag + 1, $endBodyTag - $endOpenBodyTag - 1);
+    
+    return $bericht_body;
+  }
+  
+  /**
+   * geeft bericht_head terug
+   * 
+   * @param string $html
+   * 
+   * @return string $bericht_head 
+   */
+  public static function getBerichtHead($html)
+  {
+    $startOpenHeadTag = stripos($html, '<head');
+    $endOpenHeadTag = stripos($html, '>', $startOpenHeadTag);
+    $endHeadTag = stripos($html, '</head>', $endOpenHeadTag);
+
+    if (
+      ($startOpenHeadTag === false)
+      || ($endOpenHeadTag === false)
+      || ($endHeadTag === false)
+    )
+    {
+      throw new sfException('brief_layout "' . $layout_bestand . '" bevat geen geldige html head');
+    }
+
+    $bericht_head = substr($html, $endOpenHeadTag + 1, $endHeadTag - $endOpenHeadTag - 1);
+    
+    return $bericht_head;
   }
 }

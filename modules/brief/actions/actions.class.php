@@ -115,8 +115,8 @@ class briefActions extends sfActions
     
     $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', null, 'brieven');
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
-    $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
-    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+    $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';    
+    $this->choose_template = $this->getUser()->getAttribute('choose_template', true, 'brieven');   
   }
 
   /**
@@ -126,10 +126,13 @@ class briefActions extends sfActions
   {
     $this->preExecuteVersturen();
 
-    if ($this->brief_template->getEenmaligVersturen())
+    $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+    $this->forward404Unless($briefTemplate);
+    
+    if ($briefTemplate->getEenmaligVersturen())
     {
       // Aantal dat de brief reeds kreeg
-      $this->criteria->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, $this->brief_template->getId());
+      $this->criteria->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, $briefTemplate->getId());
       $this->criteria->addJoin(BriefVerzondenPeer::OBJECT_ID, eval('return ' . $this->bestemmelingenPeer . '::ID;'));
       $this->criteria->add(BriefVerzondenPeer::OBJECT_CLASS, $this->bestemmelingenClass);
 
@@ -137,12 +140,43 @@ class briefActions extends sfActions
     }
 
     echo json_encode(array(
-      'html' => $this->brief_template->getHtml(),
-      'eenmalig' => $this->brief_template->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
-      'onderwerp' => $this->brief_template->getOnderwerp()
+      'html' => $briefTemplate->getHtml(),
+      'eenmalig' => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
+      'onderwerp' => $briefTemplate->getOnderwerp()
     ));
 
     exit();
+  }
+  
+  /**
+   * geeft de resultset terug op basis van
+   * $this->bestemmelingenPeer en $this->criteria
+   * 
+   * @return $rs Resultset
+   */
+  private function getRs()
+  {
+    while(true)
+    {
+      try
+      {
+        $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
+        break;
+      }
+      // load Peerclasses when not yet autoloaded
+      catch(Exception $e)
+      {
+        $m = $e->getMessage();
+        if (strpos($m, 'Cannot fetch TableMap for undefined table') === false)
+        {
+          throw($e);
+        }
+        $table = substr($m, strpos($m, 'table:') + 7, -1);
+        $tablePeer = sfInflector::camelize($table) . 'Peer';
+        eval($tablePeer . '::TABLE_NAME;'); // autoloaden van de peer gebeurt hier
+      }
+    }
+    return $rs;
   }
   
   /**
@@ -151,16 +185,20 @@ class briefActions extends sfActions
   public function executeOpmaak()
   {
     $this->preExecuteVersturen();
-
-    $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
+    
+    $rs = $this->getRs();
+    
     $this->aantalBestemmelingen = $rs->getRecordCount();
 
-    $c = new Criteria();
-    $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);
-    $this->brief_templates = BriefTemplatePeer::getSorted($c);
-
-    $this->brief_template = reset($this->brief_templates);
-    $this->onderwerp = $this->brief_template->getOnderwerp();
+    if ($this->choose_template)
+    {
+      $c = new Criteria();
+      $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);
+      $this->brief_templates = BriefTemplatePeer::getSorted($c);
+      
+      $this->brief_template = reset($this->brief_templates);
+      $this->onderwerp = $this->brief_template->getOnderwerp();
+    }
   }
 
   /**
@@ -184,7 +222,77 @@ class briefActions extends sfActions
 
     return false;
   }
+  
+  /**
+   * geeft een array terug met attachments uit
+   * a) de template
+   * b) on-the-fly toegevoegd
+   * 
+   * @param BriefTemplate $briefTemplate
+   * 
+   * @return array
+   */
+  private function getAttachments($briefTemplate)
+  {
+    $attachments = array();
+    if ($briefTemplate->getBriefBijlages())
+    {
+      foreach ($briefTemplate->getBriefBijlages() as $briefBijlage)
+      {
+        $node = DmsNodePeer::retrieveByPk($briefBijlage->getBijlageNodeId());
 
+        if (! $node)
+        {
+          continue;
+        }
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+        $node->saveToFile($tmpFile);
+
+        $attachments[$node->getName()] = $tmpFile;
+      }
+    }
+
+    // Bijlagen die worden bijgevoegd op moment van versturen
+    foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
+    {
+      // Controleren of bestand correct werd opgehaald.
+      if ($this->getRequest()->getFileError($fileId) == UPLOAD_ERR_NO_FILE)
+      {
+        // doe niets
+      }
+      else if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
+      {
+        switch ($this->getRequest()->getFileError($fileId))
+        {
+          case UPLOAD_ERR_INI_SIZE:
+            echo  'Opgeladen bestand groter dan ' . ini_get('upload_max_filesize') . '.';
+            break;
+          case UPLOAD_ERR_PARTIAL:
+            echo 'Bestand werd gedeeltelijk opgeladen.';
+            break;
+          case UPLOAD_ERR_NO_TMP_DIR:
+            echo 'bestand', 'Systeem kon geen tijdelijke folder vinden.';
+            break;
+          case UPLOAD_ERR_CANT_WRITE:
+            echo 'bestand', 'Systeem kon niet schrijven naar schijf.';
+            break;
+          case UPLOAD_ERR_EXTENSION:
+            echo 'bestand', 'Incorrecte extensie.';
+            break;
+        }
+        echo '<br /><a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
+         exit();
+      }
+      else
+      {
+        $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+        move_uploaded_file($fileInfo['tmp_name'], $tmpFile);
+        $attachments[$fileInfo['name']] = $tmpFile;
+      }
+    }
+    return $attachments;
+  }
   
   /**
    * Afdrukken of e-mail verzenden
@@ -193,127 +301,86 @@ class briefActions extends sfActions
   {
     $this->preExecuteVersturen();
 
-    $this->voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
-    $this->emailverzenden = (stripos($this->getRequestParameter('commit'), 'mail') !== false);
+    $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
+    $emailverzenden = (! $voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);
+    $chooseTemplate = $this->getRequestParameter('choose_template', true);
 
     // Voorbeeld is altijd op papier
-    if ($this->voorbeeld)
+    if ($voorbeeld)
     {
-      $this->viaemail = false;
+      $viaemail = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
     }
     else
     {
-      $this->viaemail = ($this->getRequestParameter('verzenden_via', false) == 'ja');
-    }
-    
-    $this->onderwerp = $this->getRequestParameter('onderwerp');
-    $this->html = $this->getRequestParameter('html');
-
-    $this->templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
-
-    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
-    $this->forward404Unless($this->brief_template);
-
-    $layout = $this->brief_template->getBriefLayout();
-
-    if ($this->emailverzenden)
-    {
-      $layout_bestand = $layout->getMailBestand();
-      $layout_stylesheets = $layout->getMailStylesheets();
-    }
-    else
-    {
-      $layout_bestand = $layout->getPrintBestand();
-      $layout_stylesheets = $layout->getPrintStylesheets();
-    }
-    
-    $stylesheet_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'stylesheets' . DIRECTORY_SEPARATOR;
-    $layout_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
-
-    // Lees alle stylesheets in
-    $css = '';
-    foreach (explode(';', $layout_stylesheets) as $stylesheet)
-    {
-      $stylesheet_bestand = $stylesheet_dir . $stylesheet;
-      @$stylesheet_css = $this->get_include_contents($stylesheet_bestand);
-      if ($stylesheet_css)
-      {
-        $css .= $stylesheet_css;
-      }
-    }    
-
-    // Haal layout op en pas deze toe
-    $html_layout = $this->get_include_contents($layout_dir . $layout_bestand);
-
-    if ($html_layout)
-    {
-      Misc::use_helper('Url');      
-      $html = strtr($html_layout, array(
-        '%stylesheet%' => $css,
-        '%body%' => $this->html,
-        '%image_dir%' => url_for('brief/showImage') . '/image/'
-      ));
+      $viaemail = ($this->getRequestParameter('verzenden_via', false) == 'ja');
     }
 
-    // Knip het resulterende document op in stukken zodat we meerdere
-    // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
+    $templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
 
-    $startOpenBodyTag = stripos($html, '<body');
-    $endOpenBodyTag = stripos($html, '>', $startOpenBodyTag);
-    $endBodyTag = stripos($html, '</body>', $endOpenBodyTag);
+    if ($chooseTemplate)
+    {      
+      $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
+      $this->forward404Unless($briefTemplate);
+      
+      $onderwerp = $this->getRequestParameter('onderwerp');            
+      $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailverzenden, $this->getRequestParameter('html'), null, $viaemail);
+      
+      // Knip het resulterende document op in stukken zodat we meerdere
+      // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
+      $berichtHead = BriefTemplatePeer::getBerichtHead($html);
+      $berichtBody = BriefTemplatePeer::getBerichtBody($html);
+    } 
 
-    if (
-      ($startOpenBodyTag === false)
-      || ($endOpenBodyTag === false)
-      || ($endBodyTag === false)
-    )
-    {
-      throw new sfException('brief_layout "' . $layout_bestand . '" bevat geen geldige html body');
-    }
-
-    $this->bericht_body = substr($html, $endOpenBodyTag + 1, $endBodyTag - $endOpenBodyTag - 1);
-
-
-    $startOpenHeadTag = stripos($html, '<head');
-    $endOpenHeadTag = stripos($html, '>', $startOpenHeadTag);
-    $endHeadTag = stripos($html, '</head>', $endOpenHeadTag);
-
-    if (
-      ($startOpenHeadTag === false)
-      || ($endOpenHeadTag === false)
-      || ($endHeadTag === false)
-    )
-    {
-      throw new sfException('brief_layout "' . $layout_bestand . '" bevat geen geldige html head');
-    }
-
-    $this->bericht_head = substr($html, $endOpenHeadTag + 1, $endHeadTag - $endOpenHeadTag - 1);
-
-    if ($this->voorbeeld)
-    {
-      $this->criteria->setLimit(1);
-    }
-
-    $this->rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
-
+    // default placeholders die in layout gebruikt kunnen worden
     $vandaag = new myDate();
-
-    $this->defaultPlaceholders = array(
+    $defaultPlaceholders = array(
       'datum' => $vandaag->format(),
       'user_naam' => $this->getUser()->getPersoon()->getNaam(),
       'user_telefoon' => $this->getUser()->getPersoon()->getTelefoon() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
       'user_email' => $this->getUser()->getPersoon()->getEmail(),
     );
-
-    if ($this->emailverzenden)
+    
+    if ($voorbeeld)
     {
-      while ($this->rs->next())
+      $this->criteria->setLimit(1);
+    }    
+    $rs = $this->getRs();
+
+    if ($emailverzenden)
+    { 
+      while ($rs->next())
       {
         $object = new $this->bestemmelingenClass();
-        $object->hydrate($this->rs);
+        $object->hydrate($rs);
+        
+        if (! isset($briefTemplate))
+        {
+          $layoutEnTemplateId = $object->getLayoutEnTemplateId();
+          if (! $layoutEnTemplateId)
+          {
+            echo "<font color=red>brief_layout_id en brief_template_id niet gevonden voor {$this->bestemmelingenClass} (id: {$object->getId()})</font><br/>";
+            continue;
+          }
+          $briefTemplate = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
+          if (! $briefTemplate)
+          {
+            echo "<font color=red>{$this->bestemmelingenClass} (id: {$object->getId()}): BriefTemplate (id: {$layoutEnTemplateId['brief_template_id']}) niet gevonden.</font><br/>";
+            continue;
+          }
+          
+          $briefLayout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
+          
+          $onderwerp = $briefTemplate->getOnderwerp();         
+          $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailverzenden, $briefTemplate->getHtml(), $briefLayout, $viaemail);
+
+          // Knip het resulterende document op in stukken zodat we meerdere
+          // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
+          $berichtHead = BriefTemplatePeer::getBerichtHead($html);
+          $berichtBody = BriefTemplatePeer::getBerichtBody($html);
+        }
 
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-        if ($this->brief_template->getEenmaligVersturen() && $this->brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
+        if ($briefTemplate->getEenmaligVersturen() && $briefTemplate->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
         {
           continue;
         }
@@ -321,79 +388,23 @@ class briefActions extends sfActions
         if ($object->getMailerPrefersEmail())
         {
           // replace the placeholders
-          $values = array_merge($object->fillPlaceholders(), $this->defaultPlaceholders);
-          $onderwerp = BriefTemplatePeer::replacePlaceholders($this->onderwerp, $values);
+          $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
+          $onderwerp = BriefTemplatePeer::replacePlaceholders($onderwerp, $values);
           $values['onderwerp'] = $onderwerp;
 
-          $brief = BriefTemplatePeer::replacePlaceholders($this->bericht_body, $values);
-          $brief = $this->bericht_head . $brief;
+          $brief = BriefTemplatePeer::replacePlaceholders($berichtBody, $values);
+          $brief = BriefTemplatePeer::clearPlaceholders($brief);          
+          $brief = $berichtHead . $brief;
           $email = $object->getMailerRecipientMail();
 
-          $attachements = array();
-
-          if ($this->brief_template->getBriefBijlages())
-          {
-            foreach ($this->brief_template->getBriefBijlages() as $briefBijlage)
-            {
-              $node = DmsNodePeer::retrieveByPk($briefBijlage->getBijlageNodeId());
-
-              if (! $node)
-              {
-                continue;
-              }
-
-              $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
-              $node->saveToFile($tmpFile);
-
-              $attachements[$node->getName()] = $tmpFile;
-            }
-          }
-
-          // Bijlagen die worden bijgevoegd op moment van versturen
-          foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
-          {
-            // Controleren of bestand correct werd opgehaald.
-            if ($this->getRequest()->getFileError($fileId) == UPLOAD_ERR_NO_FILE)
-            {
-              // doe niets
-            }
-            else if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
-            {
-              switch ($this->getRequest()->getFileError($fileId))
-              {
-                case UPLOAD_ERR_INI_SIZE:
-                  echo  'Opgeladen bestand groter dan ' . ini_get('upload_max_filesize') . '.';
-                  break;
-                case UPLOAD_ERR_PARTIAL:
-                  echo 'Bestand werd gedeeltelijk opgeladen.';
-                  break;
-                case UPLOAD_ERR_NO_TMP_DIR:
-                  echo 'bestand', 'Systeem kon geen tijdelijke folder vinden.';
-                  break;
-                case UPLOAD_ERR_CANT_WRITE:
-                  echo 'bestand', 'Systeem kon niet schrijven naar schijf.';
-                  break;
-                case UPLOAD_ERR_EXTENSION:
-                  echo 'bestand', 'Incorrecte extensie.';
-                  break;
-              }
-              echo '<br /><a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
-               exit();
-            }
-            else
-            {
-              $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
-              move_uploaded_file($fileInfo['tmp_name'], $tmpFile);
-              $attachements[$fileInfo['name']] = $tmpFile;
-            }
-          }
+          $attachments = $this->getAttachments($briefTemplate);
           
           try {
             BerichtPeer::verstuurEmail($email, $brief, array(
               'onderwerp' => $onderwerp,
               'skip_template' => true,
               'afzender' => 'noreply@stad.antwerpen.be',
-              'attachements' => $attachements
+              'attachements' => $attachments
             ));
 
             echo 'Bericht verzonden naar : ' . $email . '<br/>';
@@ -402,7 +413,7 @@ class briefActions extends sfActions
             $briefVerzonden = new BriefVerzonden();
             $briefVerzonden->setObjectClass($this->bestemmelingenClass);
             $briefVerzonden->setObjectId($object->getId());
-            $briefVerzonden->setBriefTemplateId($this->brief_template->getId());
+            $briefVerzonden->setBriefTemplateId($briefTemplate->getId());
             $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
             $briefVerzonden->setAdres($email);
             $briefVerzonden->setOnderwerp($onderwerp);
@@ -414,11 +425,11 @@ class briefActions extends sfActions
             echo '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '</font><br/>';
           }
 
-          foreach($attachements as $tmpFile)
+          foreach($attachments as $tmpFile)
           {
             unlink($tmpFile);
           }
-        }
+        }        
       }
 
       echo '<br/><br/>Einde verzendlijst<br/><br/>';
@@ -426,10 +437,21 @@ class briefActions extends sfActions
       exit();
     }
     else
-    {
-      $this->type = 'brieven ' . strtolower($this->brief_template->getNaam());
+    { 
+      $this->type = 'brieven';
+      if (isset($briefTemplate) && ($briefTemplate instanceof BriefTemplate))
+      { 
+        $this->brief_template = $briefTemplate;        
+        $this->type .= ' ' . strtolower($briefTemplate->getNaam());
+      }
+   
+      $this->rs = $rs;
+      $this->voorbeeld = $voorbeeld;
+      $this->emailverzenden = $emailverzenden;
+      $this->viaemail = $viaemail;
+      $this->defaultPlaceholders = $defaultPlaceholders;
       $this->setLayout(false);
-      $this->getResponse()->setTitle($this->voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
+      $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
     }
     
   }
@@ -441,7 +463,7 @@ class briefActions extends sfActions
   {
     $this->preExecuteVersturen();
 
-  	$brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+  	//$brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
     $html = $this->getRequestParameter('html');
     $onderwerp = $this->getRequestParameter('onderwerp');
     $object_ids = explode(',', $this->getRequestParameter('object_ids'));
@@ -473,7 +495,7 @@ class briefActions extends sfActions
       $briefVerzonden = new BriefVerzonden();
       $briefVerzonden->setObjectClass($this->bestemmelingenClass);
       $briefVerzonden->setObjectId($object->getId());
-      $briefVerzonden->setBriefTemplateId($brief_template->getId());
+      //$briefVerzonden->setBriefTemplateId($brief_template->getId());
       $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
       $briefVerzonden->setAdres($object->getAdres());
       $briefVerzonden->setHtml($brief);
