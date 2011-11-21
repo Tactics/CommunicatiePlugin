@@ -32,7 +32,7 @@
       foreach($results as $briefTemplate)
       {
         $table->addRow(array(
-          link_to($briefTemplate->getId(),  "brief/show?template_id=" . $briefTemplate->getId()),
+          link_to($briefTemplate->getId(),  "brief/edit?template_id=" . $briefTemplate->getId()),
           link_to_unless_empty($briefTemplate->getNaam(), "brief/edit?template_id=" . $briefTemplate->getId()),
           link_to_unless_empty($briefTemplate->getOnderwerp(), "brief/edit?template_id=" . $briefTemplate->getId()),
           $briefTemplate->getBriefLayoutId() ? $briefTemplate->getBriefLayout()->getNaam() : '-',

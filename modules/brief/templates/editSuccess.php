@@ -129,10 +129,11 @@ theme_advanced_buttons3 : ""
 
 <h2 class="pageblock"><?php echo $brief_template->getId() ? 'Sjabloon bewerken' : 'Nieuw sjabloon'; ?></h2>
 <div class="pageblock">
-  <?php echo form_tag("brief/update", array('multipart' => true)); ?>
+  <?php echo form_tag("brief/update", array('multipart' => true, 'name' => 'edit_template')); ?>
+  <?php include_partial('global/formvalidationerrors') ?>
   <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <table class="formtable">
-    <tr>
+    <tr <?php if ($sf_request->hasError('naam')) {echo 'class="error"';} ?>>
       <th>Naam:</th>
       <td><?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80)); ?></td>
     </tr>
@@ -140,7 +141,7 @@ theme_advanced_buttons3 : ""
       <th>&nbsp;</th>
       <td>&nbsp;</td>
     </tr>
-    <tr>
+    <tr <?php if ($sf_request->hasError('bestemmelingen')) {echo 'class="error"';} ?>>
       <th>Mogelijke bestemmelingen:</th>
       <td id="bestemmelingen">
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
@@ -155,7 +156,7 @@ theme_advanced_buttons3 : ""
       <th>&nbsp;</th>
       <td>&nbsp;</td>
     </tr>
-    <tr>
+    <tr <?php if ($sf_request->hasError('onderwerp')) {echo 'class="error"';} ?>>
       <th>Onderwerp:</th>
       <td><?php echo object_input_tag($brief_template, 'getOnderwerp', 'size=80'); ?> (Invoegvelden toegestaan)</td>
     </tr>
@@ -252,7 +253,7 @@ theme_advanced_buttons3 : ""
         <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
       </td>
     </tr>
-    <tr>
+    <tr <?php if ($sf_request->hasError('brief_layout_id')) {echo 'class="error"';} ?>>
       <th>Layout:</th>
       <td>
         <?php echo select_tag('brief_layout_id', objects_for_select(BriefLayoutPeer::getSorted(), 'getId', 'getNaam', $brief_template->getBriefLayoutId(), array('include_blank' => true))); ?>
