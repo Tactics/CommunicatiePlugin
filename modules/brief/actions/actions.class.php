@@ -121,7 +121,7 @@ class briefActions extends sfActions
    */
   public function handleErrorUpdate()
   {
-    if ($this->getRequestParameter('template_id'))
+    if (!$this->getRequestParameter('template_id'))
     {
       $this->forward('brief', 'create');
     }
