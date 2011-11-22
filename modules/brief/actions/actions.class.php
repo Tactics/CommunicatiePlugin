@@ -55,6 +55,19 @@ class briefActions extends sfActions
   }
 
   /**
+   * Validatie bij updaten van een brief template
+   */
+  public function validateUpdate()
+  {
+    if (! $this->getRequestParameter('classes'))
+    {
+      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
+    }
+    
+    return !$this->getRequest()->hasErrors();
+  }
+  
+  /**
    * update nieuwe html brief template
    */
   public function executeUpdate()
@@ -102,7 +115,22 @@ class briefActions extends sfActions
     }
     $this->redirect('brief/list');
   }
-
+  
+  /**
+   * Error handling bij updaten van een template
+   */
+  public function handleErrorUpdate()
+  {
+    if (!$this->getRequestParameter('template_id'))
+    {
+      $this->forward('brief', 'create');
+    }
+    else
+    {
+      $this->forward('brief', 'edit');
+    }
+  }
+  
   /**
    * geeft de resultset van objecten weer afh van de gegeven class en object_ids
    *

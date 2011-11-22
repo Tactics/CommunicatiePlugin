@@ -130,6 +130,7 @@ theme_advanced_buttons3 : ""
 <h2 class="pageblock"><?php echo $brief_template->getId() ? 'Sjabloon bewerken' : 'Nieuw sjabloon'; ?></h2>
 <div class="pageblock">
   <?php echo form_tag("brief/update", array('multipart' => true)); ?>
+  <?php include_partial('global/formvalidationerrors'); ?>
   <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <table class="formtable">
     <tr>
