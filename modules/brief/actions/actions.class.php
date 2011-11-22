@@ -161,7 +161,7 @@ class briefActions extends sfActions
       $this->criteria->addJoin(BriefVerzondenPeer::OBJECT_ID, eval('return ' . $this->bestemmelingenPeer . '::ID;'));
       $this->criteria->add(BriefVerzondenPeer::OBJECT_CLASS, $this->bestemmelingenClass);
 
-      $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
+      $rs = $this->getRs();
     }
 
     echo json_encode(array(
@@ -174,13 +174,44 @@ class briefActions extends sfActions
   }
   
   /**
+   * geeft de resultset terug op basis van
+   * $this->bestemmelingenPeer en $this->criteria
+   * 
+   * @return $rs Resultset
+   */
+  private function getRs()
+  {
+    while(true)
+    {
+      try
+      {
+        $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
+        break;
+      }
+      // load Peerclasses when not yet autoloaded
+      catch(Exception $e)
+      {
+        $m = $e->getMessage();
+        if (strpos($m, 'Cannot fetch TableMap for undefined table') === false)
+        {
+          throw($e);
+        }
+        $table = substr($m, strpos($m, 'table:') + 7, -1);
+        $tablePeer = sfInflector::camelize($table) . 'Peer';
+        eval($tablePeer . '::TABLE_NAME;'); // autoloaden van de peer gebeurt hier
+      }
+    }
+    return $rs;
+  }
+  
+  /**
    * Weergave scherm om brief op te maken
    */
   public function executeOpmaak()
   {
     $this->preExecuteVersturen();
 
-    $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
+    $rs = $this->getRs();
     $this->aantalBestemmelingen = $rs->getRecordCount();
 
     $c = new Criteria();
@@ -322,7 +353,7 @@ class briefActions extends sfActions
       $this->criteria->setLimit(1);
     }
 
-    $this->rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
+    $this->rs = $this->getRs();
 
     $vandaag = new myDate();
 
