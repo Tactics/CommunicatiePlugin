@@ -61,7 +61,7 @@ class briefActions extends sfActions
   {
     if (! $this->getRequestParameter('classes'))
     {
-      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
+      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens ï¿½ï¿½n mogelijke bestemmeling in te geven.');
     }
     
     return !$this->getRequest()->hasErrors();
@@ -464,7 +464,12 @@ class briefActions extends sfActions
           {
             unlink($tmpFile);
           }
-        }        
+        }      
+        else
+        {      
+          $email = $object->getMailerRecipientMail();
+          echo "<font color=red>E-mail werd niet verzonden worden naar $email<br />Reden: communicatie via e-mail niet gewenst.</font><br/>";          
+        }
       }
 
       echo '<br/><br/>Einde verzendlijst<br/><br/>';
