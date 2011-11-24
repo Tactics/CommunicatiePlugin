@@ -15,7 +15,11 @@
       <tr>
         <th>Verzenden via e-mail:</th>
         <td>
-          <?php echo select_tag('verzenden_via', options_for_select(array('ja' => 'Ja, indien mogelijk', 'nee' => 'Nee, alles afdrukkken op papier'), 'ja'), array('onchange' => 'jQuery(".emailonly").toggle(jQuery(this).val() == "ja");'))?>
+          <?php echo select_tag('verzenden_via', options_for_select(array(
+              'liefst' => 'Ja, indien gewenst',
+              'altijd' => 'Ja, altijd',
+              'nee' => 'Nee, alles afdrukkken op papier'
+            ), 'ja'), array('onchange' => 'jQuery(".emailonly").toggle(jQuery(this).val() != "nee");'))?>
         </td>
       </tr>
       

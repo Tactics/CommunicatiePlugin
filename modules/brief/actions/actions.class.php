@@ -332,6 +332,7 @@ class briefActions extends sfActions
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
     $emailverzenden = (! $voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);
     $chooseTemplate = $this->getRequestParameter('choose_template', true);
+    $verzenden_via = $this->getRequestParameter('verzenden_via', false);
 
     // Voorbeeld is altijd op papier
     if ($voorbeeld)
@@ -339,8 +340,8 @@ class briefActions extends sfActions
       $viaemail = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
     }
     else
-    {
-      $viaemail = ($this->getRequestParameter('verzenden_via', false) == 'ja');
+    {      
+      $viaemail = (($verzenden_via == 'liefst') || ($verzenden_via == 'altijd'));
     }
 
     $templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
@@ -413,7 +414,7 @@ class briefActions extends sfActions
           continue;
         }
 
-        if ($object->getMailerPrefersEmail())
+        if ((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) 
         {
           // replace the placeholders
           $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
@@ -447,10 +448,16 @@ class briefActions extends sfActions
             $briefVerzonden->setOnderwerp($onderwerp);
             $briefVerzonden->setHtml($brief);
             $briefVerzonden->save();
+            
+            // notify object dat er een brief naar het object verzonden is
+            if (method_exists($object, 'notifyBriefVerzonden'))
+            {
+              $object->notifyBriefVerzonden($briefVerzonden);
+            }
           }
-          catch(sfException $e)
+          catch(Exception $e)
           {
-            echo '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '</font><br/>';
+            echo '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
           }
 
           foreach($attachments as $tmpFile)
@@ -529,6 +536,13 @@ class briefActions extends sfActions
       $briefVerzonden->setHtml($brief);
       $briefVerzonden->setOnderwerp($values['onderwerp']);
       $briefVerzonden->save();
+      
+      // notify object dat er een brief naar het object verzonden is
+      if (method_exists($object, 'notifyBriefVerzonden'))
+      {
+        $object->notifyBriefVerzonden($briefVerzonden);
+      }
+      
     }
 
  		return sfView::NONE;
