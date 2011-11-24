@@ -488,7 +488,7 @@ class briefActions extends sfActions
       $this->rs = $rs;
       $this->voorbeeld = $voorbeeld;
       $this->emailverzenden = $emailverzenden;
-      $this->viaemail = $viaemail;
+      $this->viaemail = $voorbeeld && $viaemail;
       $this->defaultPlaceholders = $defaultPlaceholders;
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
