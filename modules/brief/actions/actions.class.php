@@ -468,7 +468,7 @@ class briefActions extends sfActions
         else
         {      
           $email = $object->getMailerRecipientMail();
-          echo "<font color=red>E-mail werd niet verzonden worden naar $email<br />Reden: communicatie via e-mail niet gewenst.</font><br/>";          
+          echo "<font color=red>E-mail werd niet verzonden naar $email<br />Reden: communicatie via e-mail niet gewenst.</font><br/>";          
         }
       }
 
