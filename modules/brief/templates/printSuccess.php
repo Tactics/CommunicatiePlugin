@@ -158,6 +158,7 @@
           continue;
         }
         $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);        
+        $html = BriefTemplatePeer::getBerichtHtml($brief_template, $emailverzenden, $brief_template->getHtml(), $brief_layout, $viaemail);
       }
       
       // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
@@ -176,8 +177,7 @@
       $template_ids[] = $brief_template->getId();  
       $layout_ids[] = $brief_layout->getId();
 
-      $onderwerp = $brief_template->getOnderwerp();               
-      $html = BriefTemplatePeer::getBerichtHtml($brief_template, $viaemail, $brief_template->getHtml(), $brief_layout);
+      $onderwerp = $brief_template->getOnderwerp();                     
       
       // Knip het resulterende document op in stukken zodat we meerdere
       // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
