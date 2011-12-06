@@ -157,7 +157,7 @@
           echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefTemplate (id: {$layoutEnTemplateId['brief_template_id']}) niet gevonden.</font><br/>";
           continue;
         }
-        $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);        
+        $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);       
         $html = BriefTemplatePeer::getBerichtHtml($brief_template, $viaemail, $brief_template->getHtml(), $brief_layout, $emailverzenden);
       }
       
@@ -177,7 +177,7 @@
       $template_ids[] = $brief_template->getId();  
       $layout_ids[] = $brief_layout->getId();
 
-      $onderwerp = $brief_template->getOnderwerp();                     
+      $onderwerp = $brief_template->getOnderwerp();
       
       // Knip het resulterende document op in stukken zodat we meerdere
       // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
