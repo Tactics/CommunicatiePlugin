@@ -273,8 +273,16 @@ class briefActions extends sfActions
         {
           continue;
         }
-
-        $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+        
+        if (function_exists('sys_get_temp_dir'))
+        {
+          $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+        }
+        else
+        {
+          $tmpFile = tempnam('/tmp', 'hrm_brief_bijlage');
+        }
+        
         $node->saveToFile($tmpFile);
 
         $attachments[$node->getName()] = $tmpFile;
@@ -314,7 +322,14 @@ class briefActions extends sfActions
       }
       else
       {
-        $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+        if (function_exists('sys_get_temp_dir'))
+        {
+          $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+        }
+        else
+        {
+          $tmpFile = tempnam('/tmp', 'hrm_brief_bijlage');
+        }        
         move_uploaded_file($fileInfo['tmp_name'], $tmpFile);
         $attachments[$fileInfo['name']] = $tmpFile;
       }
@@ -414,7 +429,8 @@ class briefActions extends sfActions
           continue;
         }
 
-        if ((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) 
+        $email = $object->getMailerRecipientMail();
+        if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)
         {
           // replace the placeholders
           $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
@@ -423,10 +439,15 @@ class briefActions extends sfActions
 
           $brief = BriefTemplatePeer::replacePlaceholders($berichtBody, $values);
           $brief = BriefTemplatePeer::clearPlaceholders($brief);          
-          $brief = $berichtHead . $brief;
-          $email = $object->getMailerRecipientMail();
+          $brief = $berichtHead . $brief;          
 
           $attachments = $this->getAttachments($briefTemplate);
+          
+          if (method_exists($object, 'getBriefAttachments'))
+          {
+            $objectAttachments = $object->getBriefAttachments();
+            $attachments = array_merge($attachments, $objectAttachments);            
+          }         
           
           try {
             BerichtPeer::verstuurEmail($email, $brief, array(
@@ -457,7 +478,11 @@ class briefActions extends sfActions
           }
           catch(Exception $e)
           {
-            echo '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
+            if (! $email)
+            {
+              echo '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
+            }
+            
           }
 
           foreach($attachments as $tmpFile)
@@ -468,7 +493,14 @@ class briefActions extends sfActions
         else
         {      
           $email = $object->getMailerRecipientMail();
-          echo "<font color=red>E-mail werd niet verzonden naar $email<br />Reden: communicatie via e-mail niet gewenst.</font><br/>";          
+          if ($email)
+          {
+            echo "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";  
+          }
+          else
+          {
+            echo "<font color=red>E-mail werd niet verzonden naar debiteur van factuur {$object->getFactuurNummer()}, reden: debiteur heeft geen e-mail adres.</font><br/>";  
+          }       
         }
       }
 
