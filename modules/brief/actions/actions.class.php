@@ -441,12 +441,12 @@ class briefActions extends sfActions
           $brief = BriefTemplatePeer::clearPlaceholders($brief);          
           $brief = $berichtHead . $brief;          
 
-          $attachments = $this->getAttachments($briefTemplate);
+          $tmpAttachments = $this->getAttachments($briefTemplate);
           
           if (method_exists($object, 'getBriefAttachments'))
           {
             $objectAttachments = $object->getBriefAttachments();
-            $attachments = array_merge($attachments, $objectAttachments);            
+            $attachments = array_merge($tmpAttachments, $objectAttachments);            
           }         
           
           try {
@@ -485,7 +485,7 @@ class briefActions extends sfActions
             
           }
 
-          foreach($attachments as $tmpFile)
+          foreach($tmpAttachments as $tmpFile)
           {
             unlink($tmpFile);
           }
@@ -535,12 +535,12 @@ class briefActions extends sfActions
   public function executeBevestigAfdrukken()
   {
     $this->preExecuteVersturen();
-
+    
   	//$brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
     $html = $this->getRequestParameter('html');
     $onderwerp = $this->getRequestParameter('onderwerp');
     $object_ids = explode(',', $this->getRequestParameter('object_ids'));
-
+    
     $c = new Criteria();
     $c->add(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $object_ids, Criteria::IN);
     $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($c);');
@@ -574,7 +574,7 @@ class briefActions extends sfActions
       $briefVerzonden->setHtml($brief);
       $briefVerzonden->setOnderwerp($values['onderwerp']);
       $briefVerzonden->save();
-      
+            
       // notify object dat er een brief naar het object verzonden is
       if (method_exists($object, 'notifyBriefVerzonden'))
       {
