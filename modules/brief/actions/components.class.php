@@ -5,13 +5,27 @@
 
 class briefComponents extends sfComponents
 {
-  public static function getCommunicatieLogPager($object_class, $object_id)
+  public static function getCommunicatieLogPager($object_class, $object_id, $sqls)
   {
     $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::ID, false);
 
     $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
     $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID, $object_id);
+    
+    /*
+     TODO: BasePeer::createSelectSql(Criteria $criteria, &$params)
+      
+      $sql = 'SELECT * from (select * from ' . BriefVerzondenPeer::TABLE_NAME . ' where object_class = "' . $object_class . '" AND object_id = ' . $object_id . ')';
 
+    foreach($sqls as $s)
+    {
+      $sql .= ' UNION ' . $s;
+    }
+    
+    $sql .= ' ORDER BY '*/
+    
+    
+     
     return $pager;
   }
 

@@ -33,6 +33,10 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 
 	
+	protected $vertaald = false;
+
+
+	
 	protected $created_by;
 
 
@@ -99,6 +103,13 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	{
 
 		return $this->mail_stylesheets;
+	}
+
+	
+	public function getVertaald()
+	{
+
+		return $this->vertaald;
 	}
 
 	
@@ -256,6 +267,16 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setVertaald($v)
+	{
+
+		if ($this->vertaald !== $v || $v === false) {
+			$this->vertaald = $v;
+			$this->modifiedColumns[] = BriefLayoutPeer::VERTAALD;
+		}
+
+	} 
+	
 	public function setCreatedBy($v)
 	{
 
@@ -338,19 +359,21 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 			$this->mail_stylesheets = $rs->getString($startcol + 5);
 
-			$this->created_by = $rs->getInt($startcol + 6);
+			$this->vertaald = $rs->getBoolean($startcol + 6);
 
-			$this->updated_by = $rs->getInt($startcol + 7);
+			$this->created_by = $rs->getInt($startcol + 7);
 
-			$this->created_at = $rs->getTimestamp($startcol + 8, null);
+			$this->updated_by = $rs->getInt($startcol + 8);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 9, null);
+			$this->created_at = $rs->getTimestamp($startcol + 9, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 10, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 10; 
+						return $startcol + 11; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefLayout object", $e);
 		}
@@ -554,15 +577,18 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 				return $this->getMailStylesheets();
 				break;
 			case 6:
-				return $this->getCreatedBy();
+				return $this->getVertaald();
 				break;
 			case 7:
-				return $this->getUpdatedBy();
+				return $this->getCreatedBy();
 				break;
 			case 8:
-				return $this->getCreatedAt();
+				return $this->getUpdatedBy();
 				break;
 			case 9:
+				return $this->getCreatedAt();
+				break;
+			case 10:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -581,10 +607,11 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 			$keys[3] => $this->getMailBestand(),
 			$keys[4] => $this->getPrintStylesheets(),
 			$keys[5] => $this->getMailStylesheets(),
-			$keys[6] => $this->getCreatedBy(),
-			$keys[7] => $this->getUpdatedBy(),
-			$keys[8] => $this->getCreatedAt(),
-			$keys[9] => $this->getUpdatedAt(),
+			$keys[6] => $this->getVertaald(),
+			$keys[7] => $this->getCreatedBy(),
+			$keys[8] => $this->getUpdatedBy(),
+			$keys[9] => $this->getCreatedAt(),
+			$keys[10] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -619,15 +646,18 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 				$this->setMailStylesheets($value);
 				break;
 			case 6:
-				$this->setCreatedBy($value);
+				$this->setVertaald($value);
 				break;
 			case 7:
-				$this->setUpdatedBy($value);
+				$this->setCreatedBy($value);
 				break;
 			case 8:
-				$this->setCreatedAt($value);
+				$this->setUpdatedBy($value);
 				break;
 			case 9:
+				$this->setCreatedAt($value);
+				break;
+			case 10:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -643,10 +673,11 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[3], $arr)) $this->setMailBestand($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setPrintStylesheets($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setMailStylesheets($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCreatedBy($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setUpdatedBy($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCreatedAt($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setUpdatedAt($arr[$keys[9]]);
+		if (array_key_exists($keys[6], $arr)) $this->setVertaald($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCreatedBy($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setUpdatedBy($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
 	}
 
 	
@@ -660,6 +691,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefLayoutPeer::MAIL_BESTAND)) $criteria->add(BriefLayoutPeer::MAIL_BESTAND, $this->mail_bestand);
 		if ($this->isColumnModified(BriefLayoutPeer::PRINT_STYLESHEETS)) $criteria->add(BriefLayoutPeer::PRINT_STYLESHEETS, $this->print_stylesheets);
 		if ($this->isColumnModified(BriefLayoutPeer::MAIL_STYLESHEETS)) $criteria->add(BriefLayoutPeer::MAIL_STYLESHEETS, $this->mail_stylesheets);
+		if ($this->isColumnModified(BriefLayoutPeer::VERTAALD)) $criteria->add(BriefLayoutPeer::VERTAALD, $this->vertaald);
 		if ($this->isColumnModified(BriefLayoutPeer::CREATED_BY)) $criteria->add(BriefLayoutPeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefLayoutPeer::UPDATED_BY)) $criteria->add(BriefLayoutPeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefLayoutPeer::CREATED_AT)) $criteria->add(BriefLayoutPeer::CREATED_AT, $this->created_at);
@@ -703,6 +735,8 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 		$copyObj->setPrintStylesheets($this->print_stylesheets);
 
 		$copyObj->setMailStylesheets($this->mail_stylesheets);
+
+		$copyObj->setVertaald($this->vertaald);
 
 		$copyObj->setCreatedBy($this->created_by);
 

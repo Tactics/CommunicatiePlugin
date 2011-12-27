@@ -38,6 +38,8 @@ class BriefBijlageMapBuilder {
 
 		$tMap->addColumn('BIJLAGE_NODE_ID', 'BijlageNodeId', 'int', CreoleTypes::INTEGER, false, null);
 
+		$tMap->addColumn('TAAL', 'Taal', 'string', CreoleTypes::VARCHAR, false, 45);
+
 		$tMap->addColumn('CREATED_AT', 'CreatedAt', 'int', CreoleTypes::TIMESTAMP, false, null);
 
 		$tMap->addColumn('UPDATED_AT', 'UpdatedAt', 'int', CreoleTypes::TIMESTAMP, false, null);

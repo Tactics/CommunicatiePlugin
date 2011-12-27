@@ -50,6 +50,8 @@ class BriefVerzondenMapBuilder {
 
 		$tMap->addColumn('CUSTOM', 'Custom', 'boolean', CreoleTypes::BOOLEAN, false, null);
 
+		$tMap->addColumn('TAAL', 'Taal', 'string', CreoleTypes::VARCHAR, false, 45);
+
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 
 		$tMap->addColumn('UPDATED_BY', 'UpdatedBy', 'int', CreoleTypes::INTEGER, false, null);

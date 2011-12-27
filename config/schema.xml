@@ -32,6 +32,7 @@
     <column name="medium" type="VARCHAR" size="45"/>
     <column name="adres" type="VARCHAR" size="1000"/>
     <column name="custom" type="BOOLEAN"/>
+    <column name="taal" type="VARCHAR" size="45"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>
@@ -51,6 +52,7 @@
     <column name="mail_bestand" type="VARCHAR" size="100"/>
     <column name="print_stylesheets" type="VARCHAR" size="255"/>
     <column name="mail_stylesheets" type="VARCHAR" size="255"/>
+    <column name="vertaald" type="BOOLEAN" default="false"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>
@@ -61,6 +63,7 @@
     <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
     <column name="brief_template_id" type="INTEGER" required="true"/>
     <column name="bijlage_node_id" type="INTEGER"/>
+    <column name="taal" type="VARCHAR" size="45"/>
     <column name="created_at" type="TIMESTAMP"/>
     <column name="updated_at" type="TIMESTAMP"/>
     <column name="created_by" type="INTEGER"/>

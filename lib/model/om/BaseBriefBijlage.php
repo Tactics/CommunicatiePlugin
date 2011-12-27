@@ -21,6 +21,10 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 
 	
+	protected $taal;
+
+
+	
 	protected $created_at;
 
 
@@ -63,6 +67,13 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 	{
 
 		return $this->bijlage_node_id;
+	}
+
+	
+	public function getTaal()
+	{
+
+		return $this->taal;
 	}
 
 	
@@ -176,6 +187,22 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setTaal($v)
+	{
+
+		
+		
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->taal !== $v) {
+			$this->taal = $v;
+			$this->modifiedColumns[] = BriefBijlagePeer::TAAL;
+		}
+
+	} 
+	
 	public function setCreatedAt($v)
 	{
 
@@ -252,19 +279,21 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 			$this->bijlage_node_id = $rs->getInt($startcol + 2);
 
-			$this->created_at = $rs->getTimestamp($startcol + 3, null);
+			$this->taal = $rs->getString($startcol + 3);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 4, null);
+			$this->created_at = $rs->getTimestamp($startcol + 4, null);
 
-			$this->created_by = $rs->getInt($startcol + 5);
+			$this->updated_at = $rs->getTimestamp($startcol + 5, null);
 
-			$this->updated_by = $rs->getInt($startcol + 6);
+			$this->created_by = $rs->getInt($startcol + 6);
+
+			$this->updated_by = $rs->getInt($startcol + 7);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 7; 
+						return $startcol + 8; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefBijlage object", $e);
 		}
@@ -461,15 +490,18 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 				return $this->getBijlageNodeId();
 				break;
 			case 3:
-				return $this->getCreatedAt();
+				return $this->getTaal();
 				break;
 			case 4:
-				return $this->getUpdatedAt();
+				return $this->getCreatedAt();
 				break;
 			case 5:
-				return $this->getCreatedBy();
+				return $this->getUpdatedAt();
 				break;
 			case 6:
+				return $this->getCreatedBy();
+				break;
+			case 7:
 				return $this->getUpdatedBy();
 				break;
 			default:
@@ -485,10 +517,11 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 			$keys[0] => $this->getId(),
 			$keys[1] => $this->getBriefTemplateId(),
 			$keys[2] => $this->getBijlageNodeId(),
-			$keys[3] => $this->getCreatedAt(),
-			$keys[4] => $this->getUpdatedAt(),
-			$keys[5] => $this->getCreatedBy(),
-			$keys[6] => $this->getUpdatedBy(),
+			$keys[3] => $this->getTaal(),
+			$keys[4] => $this->getCreatedAt(),
+			$keys[5] => $this->getUpdatedAt(),
+			$keys[6] => $this->getCreatedBy(),
+			$keys[7] => $this->getUpdatedBy(),
 		);
 		return $result;
 	}
@@ -514,15 +547,18 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 				$this->setBijlageNodeId($value);
 				break;
 			case 3:
-				$this->setCreatedAt($value);
+				$this->setTaal($value);
 				break;
 			case 4:
-				$this->setUpdatedAt($value);
+				$this->setCreatedAt($value);
 				break;
 			case 5:
-				$this->setCreatedBy($value);
+				$this->setUpdatedAt($value);
 				break;
 			case 6:
+				$this->setCreatedBy($value);
+				break;
+			case 7:
 				$this->setUpdatedBy($value);
 				break;
 		} 	}
@@ -535,10 +571,11 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setBriefTemplateId($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setBijlageNodeId($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCreatedAt($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setUpdatedAt($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCreatedBy($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setUpdatedBy($arr[$keys[6]]);
+		if (array_key_exists($keys[3], $arr)) $this->setTaal($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setUpdatedAt($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCreatedBy($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setUpdatedBy($arr[$keys[7]]);
 	}
 
 	
@@ -549,6 +586,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefBijlagePeer::ID)) $criteria->add(BriefBijlagePeer::ID, $this->id);
 		if ($this->isColumnModified(BriefBijlagePeer::BRIEF_TEMPLATE_ID)) $criteria->add(BriefBijlagePeer::BRIEF_TEMPLATE_ID, $this->brief_template_id);
 		if ($this->isColumnModified(BriefBijlagePeer::BIJLAGE_NODE_ID)) $criteria->add(BriefBijlagePeer::BIJLAGE_NODE_ID, $this->bijlage_node_id);
+		if ($this->isColumnModified(BriefBijlagePeer::TAAL)) $criteria->add(BriefBijlagePeer::TAAL, $this->taal);
 		if ($this->isColumnModified(BriefBijlagePeer::CREATED_AT)) $criteria->add(BriefBijlagePeer::CREATED_AT, $this->created_at);
 		if ($this->isColumnModified(BriefBijlagePeer::UPDATED_AT)) $criteria->add(BriefBijlagePeer::UPDATED_AT, $this->updated_at);
 		if ($this->isColumnModified(BriefBijlagePeer::CREATED_BY)) $criteria->add(BriefBijlagePeer::CREATED_BY, $this->created_by);
@@ -586,6 +624,8 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 		$copyObj->setBriefTemplateId($this->brief_template_id);
 
 		$copyObj->setBijlageNodeId($this->bijlage_node_id);
+
+		$copyObj->setTaal($this->taal);
 
 		$copyObj->setCreatedAt($this->created_at);
 
