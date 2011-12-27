@@ -66,10 +66,55 @@ class briefActions extends sfActions
   {
     if (! $this->getRequestParameter('classes'))
     {
-      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens Ã©Ã©n mogelijke bestemmeling in te geven.');
+      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
     }
     
+    if (! $this->getRequestParameter('naam'))
+    {
+      $this->getRequest()->setError('naam', 'Gelieve een naam in te geven.');
+    }
+    
+    /*if (! $this->getRequestParameter('brief_layout_id'))
+    {
+      $this->getRequest()->setError('brief_layout_id', 'Gelieve een layout te selecteren.');
+    }*/
+    
+    BriefTemplatePeer::isVertaalbaar() ? $this->validateUpdateVertaalbaar() : $this->validateUpdateNietVertaalbaar();
+    
     return !$this->getRequest()->hasErrors();
+  }
+  
+  /**
+   * Validatie wanneer vertaling nodig is
+   */
+  private function validateUpdateVertaalbaar()
+  {
+    foreach (BriefTemplatePeer::getTranslationLanguageArray() as $languages)
+    {
+      $label = $languages['label'];
+      $culture = $languages['culture'];
+      
+      if (! $this->getRequestParameter('onderwerp_' . $label))
+      {
+        $this->getRequest()->setError('onderwerp_' . $label, 'Gelieve een ' . $label . ' onderwerp in te geven.');
+      }
+      
+      if (! $this->getRequestParameter('html_' . $label))
+      {
+        $this->getRequest()->setError('html_' . $label, 'Gelieve een ' . $label . ' tekst in te geven');
+      }
+    }
+  }
+  
+  /**
+   * Validatie wanneer vertaling niet nodig is
+   */
+  private function validateUpdateNietVertaalbaar()
+  {
+    if (! $this->getRequestParameter('onderwerp'))
+    {
+      $this->getRequest()->setError('onderwerp', 'Gelieve een onderwerp in te geven.');
+    }
   }
   
   /**
@@ -92,7 +137,14 @@ class briefActions extends sfActions
     
     if (BriefTemplatePeer::isVertaalbaar())
     {
-      
+      foreach (BriefTemplatePeer::getTranslationLanguageArray() as $language)
+      {
+        $culture = $language['culture'];
+        $label = $language['label'];
+        $msgSource = new sfMessageSource_MSSQL();
+        die();
+        $msgSource->update('brieven.' . $culture);
+      }
     }
     else
     {

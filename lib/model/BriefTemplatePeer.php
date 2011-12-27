@@ -152,6 +152,6 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function isDefaultTranslationLanguage($languageArray)
   {
-    return array_key_exists('default', $langArr) && ($langArr['default'] == true);
+    return array_key_exists('default', $languageArray) && ($languageArray['default'] == true);
   }
 }
