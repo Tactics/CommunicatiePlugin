@@ -42,6 +42,11 @@ class briefActions extends sfActions
    */
   public function executeCreate()
   {
+    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
+    {
+      $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
+    }
+        
     $this->brief_template = new BriefTemplate();
     $this->setTemplate('edit');
   }
@@ -61,7 +66,7 @@ class briefActions extends sfActions
   {
     if (! $this->getRequestParameter('classes'))
     {
-      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
+      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens Ã©Ã©n mogelijke bestemmeling in te geven.');
     }
     
     return !$this->getRequest()->hasErrors();
@@ -84,8 +89,17 @@ class briefActions extends sfActions
     }
     
     $brief_template->setNaam($this->getRequestParameter('naam'));
-    $brief_template->setOnderwerp($this->getRequestParameter('onderwerp'));
-    $brief_template->setHtml($this->getRequestParameter('html'));
+    
+    if (BriefTemplatePeer::isVertaalbaar())
+    {
+      
+    }
+    else
+    {
+      $brief_template->setOnderwerp($this->getRequestParameter('onderwerp'));
+      $brief_template->setHtml($this->getRequestParameter('html')); 
+    }
+    
     $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
     $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));

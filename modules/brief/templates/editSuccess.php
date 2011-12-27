@@ -156,24 +156,33 @@ theme_advanced_buttons3 : ""
       <th>&nbsp;</th>
       <td>&nbsp;</td>
     </tr>
-    <tr <?php if ($sf_request->hasError('onderwerp')) {echo 'class="error"';} ?>>
-      <th>Onderwerp:</th>
-      <td><?php echo object_input_tag($brief_template, 'getOnderwerp', 'size=80'); ?> (Invoegvelden toegestaan)</td>
-    </tr>
     <tr>
       <th>&nbsp;</th>
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <th>Tekst:</th>
+      <th>Onderwerp/tekst:</th>
       <td>
         <table>
-          <tr>
+          <tr <?php if ($sf_request->hasError('onderwerp')) {echo 'class="error"';} ?>>
             <td>
-              <?php echo object_textarea_tag($brief_template, 'getHtml', array(
-              'rich' => true,
-              'tinymce_options' => $mceoptions
-            )); ?>
+              <?php 
+                if ($is_vertaalbaar)
+                {
+                  include_partial('brief_text_area_vertaalbaar', array(
+                    'brief_template'  => $brief_template, 
+                    'mceoptions' => $mceoptions,
+                    'language_array'  => $language_array
+                  ));
+                }
+                else
+                {
+                  include_partial('brief_text_area', array(
+                    'brief_template'  => $brief_template, 
+                    'mceoptions' => $mceoptions
+                  ));
+                }
+              ?>
             </td>
             <td>
               <h2 class="pageblock" style="margin-left: 20px; width: 200px;">Invoegvelden</h2>
@@ -271,3 +280,11 @@ theme_advanced_buttons3 : ""
   &nbsp;<?php echo button_to_function('Annuleren', 'history.back();'); ?>
    </form>
 </div>
+
+<?php if ($is_vertaalbaar): ?>
+  <script type="text/javascript">
+    jQuery(function($){
+      $('#tabs').tt_tabs();
+    });
+  </script>
+<?php endif; ?>

@@ -103,4 +103,55 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
     return $subset;
   }
+  
+  
+  /**
+   * @return bool
+   */
+  public static function isVertaalbaar()
+  {
+    $i18n = sfConfig::get('sf_communicatie_i18n');
+    
+    return is_array($i18n['languages']) && (count($i18n['languages']) > 0);
+  }
+  
+  /**
+   * Haalt de verschillende talen op.
+   * 
+   * @return array 
+   */
+  public static function getTranslationLanguageArray()
+  {
+    $i18n = sfConfig::get('sf_communicatie_i18n');
+    return $i18n['languages'];
+  }
+  
+  /**
+   * Default taal ophalen.
+   * 
+   * @return array
+   */
+  public static function getDefaultTranslationLanguage()
+  {   
+    foreach ($this->getTranslationLanguageArray() as $languageArr)
+    {
+      if ($this->isDefaultLanguage($languageArr))
+      {
+        return $languageArr;
+      }
+    }
+    
+    throw new sfException('Default language not found.');
+  }
+  
+  /**
+   * Controleren of taal default is.
+   * 
+   * @param array language array ('culture' => ..., 'label' => ..., 'default' => ...)
+   * @return bool
+   */
+  public static function isDefaultTranslationLanguage($languageArray)
+  {
+    return array_key_exists('default', $langArr) && ($langArr['default'] == true);
+  }
 }
