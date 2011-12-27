@@ -66,6 +66,11 @@ interface iMailer
    * @return array mapping
    */    
   public function getMailerAdresMapping();    
+  
+  /**
+   * @return string Culture
+   */
+  public function getMailerCulture();
     
 }
 
