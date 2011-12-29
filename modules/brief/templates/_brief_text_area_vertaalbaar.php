@@ -21,9 +21,9 @@
 
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', 
           $onderwerp,
-          array('size' => 80)
+          array('size' => 60)
          );
-         echo '(Invoegvelden toegestaan) <br /><br />';
+         echo ' (Invoegvelden toegestaan) <br /><br />';
       
         echo textarea_tag('html[' . BriefTemplatePeer::getCulture($language) .']',
           $html,

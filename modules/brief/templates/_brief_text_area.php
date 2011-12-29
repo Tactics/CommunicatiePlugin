@@ -1,6 +1,6 @@
 <?php 
         echo object_input_tag($brief_template, 'getOnderwerp', array(
-          'size' => 80
+          'size' => 60
         )); 
       ?> (Invoegvelden toegestaan) <br /><br />
 

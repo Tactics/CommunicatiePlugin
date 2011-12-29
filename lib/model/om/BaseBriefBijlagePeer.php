@@ -29,7 +29,7 @@ abstract class BaseBriefBijlagePeer {
 	const BIJLAGE_NODE_ID = 'brief_bijlage.BIJLAGE_NODE_ID';
 
 	
-	const TAAL = 'brief_bijlage.TAAL';
+	const CULTURE = 'brief_bijlage.CULTURE';
 
 	
 	const CREATED_AT = 'brief_bijlage.CREATED_AT';
@@ -49,17 +49,17 @@ abstract class BaseBriefBijlagePeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'BriefTemplateId', 'BijlageNodeId', 'Taal', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
-		BasePeer::TYPE_COLNAME => array (BriefBijlagePeer::ID, BriefBijlagePeer::BRIEF_TEMPLATE_ID, BriefBijlagePeer::BIJLAGE_NODE_ID, BriefBijlagePeer::TAAL, BriefBijlagePeer::CREATED_AT, BriefBijlagePeer::UPDATED_AT, BriefBijlagePeer::CREATED_BY, BriefBijlagePeer::UPDATED_BY, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'brief_template_id', 'bijlage_node_id', 'taal', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
+		BasePeer::TYPE_PHPNAME => array ('Id', 'BriefTemplateId', 'BijlageNodeId', 'Culture', 'CreatedAt', 'UpdatedAt', 'CreatedBy', 'UpdatedBy', ),
+		BasePeer::TYPE_COLNAME => array (BriefBijlagePeer::ID, BriefBijlagePeer::BRIEF_TEMPLATE_ID, BriefBijlagePeer::BIJLAGE_NODE_ID, BriefBijlagePeer::CULTURE, BriefBijlagePeer::CREATED_AT, BriefBijlagePeer::UPDATED_AT, BriefBijlagePeer::CREATED_BY, BriefBijlagePeer::UPDATED_BY, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'brief_template_id', 'bijlage_node_id', 'culture', 'created_at', 'updated_at', 'created_by', 'updated_by', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'BriefTemplateId' => 1, 'BijlageNodeId' => 2, 'Taal' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, 'CreatedBy' => 6, 'UpdatedBy' => 7, ),
-		BasePeer::TYPE_COLNAME => array (BriefBijlagePeer::ID => 0, BriefBijlagePeer::BRIEF_TEMPLATE_ID => 1, BriefBijlagePeer::BIJLAGE_NODE_ID => 2, BriefBijlagePeer::TAAL => 3, BriefBijlagePeer::CREATED_AT => 4, BriefBijlagePeer::UPDATED_AT => 5, BriefBijlagePeer::CREATED_BY => 6, BriefBijlagePeer::UPDATED_BY => 7, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'brief_template_id' => 1, 'bijlage_node_id' => 2, 'taal' => 3, 'created_at' => 4, 'updated_at' => 5, 'created_by' => 6, 'updated_by' => 7, ),
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'BriefTemplateId' => 1, 'BijlageNodeId' => 2, 'Culture' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, 'CreatedBy' => 6, 'UpdatedBy' => 7, ),
+		BasePeer::TYPE_COLNAME => array (BriefBijlagePeer::ID => 0, BriefBijlagePeer::BRIEF_TEMPLATE_ID => 1, BriefBijlagePeer::BIJLAGE_NODE_ID => 2, BriefBijlagePeer::CULTURE => 3, BriefBijlagePeer::CREATED_AT => 4, BriefBijlagePeer::UPDATED_AT => 5, BriefBijlagePeer::CREATED_BY => 6, BriefBijlagePeer::UPDATED_BY => 7, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'brief_template_id' => 1, 'bijlage_node_id' => 2, 'culture' => 3, 'created_at' => 4, 'updated_at' => 5, 'created_by' => 6, 'updated_by' => 7, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
@@ -120,7 +120,7 @@ abstract class BaseBriefBijlagePeer {
 
 		$criteria->addSelectColumn(BriefBijlagePeer::BIJLAGE_NODE_ID);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::TAAL);
+		$criteria->addSelectColumn(BriefBijlagePeer::CULTURE);
 
 		$criteria->addSelectColumn(BriefBijlagePeer::CREATED_AT);
 

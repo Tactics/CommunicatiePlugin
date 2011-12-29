@@ -79,6 +79,11 @@ class briefActions extends sfActions
     {
       $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
     }
+    
+    if ($this->systeemnaam = $this->brief_template->getSysteemnaam())
+    {
+      $this->systeemplaceholders = $this->brief_template->getSysteemplaceholdersArray();
+    }
   }
   
   /**
@@ -86,15 +91,31 @@ class briefActions extends sfActions
    */
   public function validateUpdate()
   {
-    if (! $this->getRequestParameter('classes'))
+    if ($this->getRequestParameter('template_id'))
     {
-      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
+      $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+      $this->forward404Unless($briefTemplate);
+      
+      $systeem = $briefTemplate->getSysteemnaam() ? true : false;
+    }
+    else
+    {
+      $systeem = false;
     }
     
-    if (! $this->getRequestParameter('naam'))
+    if (! $systeem)
     {
-      $this->getRequest()->setError('naam', 'Gelieve een naam in te geven.');
+      if (! $this->getRequestParameter('classes'))
+      {
+        $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
+      }
+    
+      if (! $this->getRequestParameter('naam'))
+      {
+        $this->getRequest()->setError('naam', 'Gelieve een naam in te geven.');
+      }  
     }
+    
     
     /*if (! $this->getRequestParameter('brief_layout_id'))
     {
@@ -153,17 +174,24 @@ class briefActions extends sfActions
     {
       $brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
       $this->forward404Unless($brief_template);
+      
+      $systeem = $brief_template->getSysteemnaam() ? true : false;
     }
     else
     {
       $brief_template = new BriefTemplate();
       $brief_template->setType(BriefTemplatePeer::TYPE_DB);
+      
+      $systeem = false;
     }
     
-    $brief_template->setNaam($this->getRequestParameter('naam')); 
+    if (! $systeem)
+    {
+      $brief_template->setNaam($this->getRequestParameter('naam')); 
+      $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));
+    }
     $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
-    $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));
     
     if (BriefTemplatePeer::isVertaalbaar())
     {
@@ -424,7 +452,6 @@ class briefActions extends sfActions
     }
 
     // laadt template
-    $this->templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
     $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
     $this->forward404Unless($this->brief_template);
         
@@ -433,11 +460,9 @@ class briefActions extends sfActions
     $this->html = $this->getRequestParameter('html');
 
     $cultureBrieven = array();
-    $cultures = BriefTemplatePeer::getCultureLabelArray();
-    foreach ($cultures as $culture => $label)
+    foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
     {
-      $headAndBody = $this->brief_template->getBriefLayout()->getHeadAndBody($this->emailverzenden ? 'mail' : 'brief', $culture, $this->html[$culture]);
-      
+      $cultureBrieven[$culture] = $this->brief_template->getBriefLayout()->getHeadAndBody($this->emailverzenden ? 'mail' : 'brief', $culture, $this->html[$culture]);
       $cultureBrieven[$culture]['onderwerp'] = $this->onderwerp[$culture];
       $cultureBrieven[$culture]['head']     = $headAndBody['head'];       
       $cultureBrieven[$culture]['body']     = $headAndBody['body'];       

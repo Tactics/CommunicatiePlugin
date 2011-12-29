@@ -107,7 +107,7 @@ theme_advanced_buttons3 : ""
         $('#placeholders_summary').html($('<p>Geen geschikte velden</p>'));
       }
 
-    }).click().click();
+    }).click();
 
     // Checkbox toggled weergave alle placeholders of korte lijst met supported placeholders
     $('#hideUnsupported').click(function(){
@@ -127,6 +127,8 @@ theme_advanced_buttons3 : ""
   }
 </script>
 
+<?php $disabled = isset($systeemnaam) && $systeemnaam ? true : false; ?>
+
 <h2 class="pageblock"><?php echo $brief_template->getId() ? 'Sjabloon bewerken' : 'Nieuw sjabloon'; ?></h2>
 <div class="pageblock">
   <?php echo form_tag("brief/update", array('multipart' => true, 'name' => 'edit_template')); ?>
@@ -135,8 +137,14 @@ theme_advanced_buttons3 : ""
   <table class="formtable">
     <tr <?php if ($sf_request->hasError('naam')) {echo 'class="error"';} ?>>
       <th>Naam:</th>
-      <td><?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80)); ?></td>
+      <td><?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80, 'disabled' => $disabled)); ?></td>
     </tr>
+    <?php if (isset($systeemnaam) && $systeemnaam): ?>
+    <tr>
+      <th>Systeemnaam:</th>
+      <td><?php echo $systeemnaam ?></td>
+    </tr>
+    <?php endif; ?>
     <tr>
       <th>&nbsp;</th>
       <td>&nbsp;</td>
@@ -146,7 +154,7 @@ theme_advanced_buttons3 : ""
       <td id="bestemmelingen">
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
         <label>
-          <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray())); ?>
+          <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray()), array('disabled' => $disabled)); ?>
           <?php echo $oClass['label']; ?>
         </label>
         <?php endforeach; ?>
@@ -189,22 +197,18 @@ theme_advanced_buttons3 : ""
               <div class="pageblock" style="width: 195px; margin-left: 20px;margin-bottom: 0px;border-bottom: 0px;">
                 <label><input type="checkbox" id="hideUnsupported"> Geef enkel invoegvelden weer die door elk type bestemmeling ondersteund worden.</label>
               </div>
-              <div id="placeholders_summary" class="pageblock" style="overflow: auto; height: 430px; width: 195px; margin-left: 20px; display:none;"></div>
-              <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 195px; margin-left: 20px;">
-              <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
-                <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
-                <strong><?php echo $oClass['label']; ?></strong>
-                <ul>
-                <?php    
-                 $placeHolders = eval("return {$oClass['class']}::getPlaceholders();");
+              
+              <div class="pageblock" style="overflow: auto; height: 430px; width: 195px; margin-left: 20px;">
+                <div id="placeholders_summary" style="display:none; margin-bottom: 6px;"></div>
+                <div id="placeholders">
+                  <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
+                    <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
+                    <strong><?php echo $oClass['label']; ?></strong>
+                    <ul>
+                    <?php    
+                     $placeHolders = eval("return {$oClass['class']}::getPlaceholders();");
 
-                 foreach($placeHolders as $group_id => $placeHolderOfGroup)
-                 {
-                   if (is_array($placeHolderOfGroup))
-                   {
-                     echo '<li>' . $group_id . '</li>';
-                     echo '<ul>';
-                     foreach($placeHolderOfGroup as $group_id => $placeHolderOfGroup)
+                     foreach($placeHolders as $group_id => $placeHolderOfGroup)
                      {
                        if (is_array($placeHolderOfGroup))
                        {
@@ -216,7 +220,20 @@ theme_advanced_buttons3 : ""
                            {
                              echo '<li>' . $group_id . '</li>';
                              echo '<ul>';
+                             foreach($placeHolderOfGroup as $group_id => $placeHolderOfGroup)
+                             {
+                               if (is_array($placeHolderOfGroup))
+                               {
+                                 echo '<li>' . $group_id . '</li>';
+                                 echo '<ul>';
 
+                                 echo '</ul>';
+                               }
+                               else
+                               {
+                                 echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
+                               }
+                             }
                              echo '</ul>';
                            }
                            else
@@ -228,20 +245,24 @@ theme_advanced_buttons3 : ""
                        }
                        else
                        {
-                         echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
+                          echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
                        }
                      }
-                     echo '</ul>';
-                   }
-                   else
-                   {
-                      echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
-                   }
-                 }
-                ?>
-                </ul>
+                    ?>
+                    </ul>
+                    </div>
+                  <?php endforeach; ?>
                 </div>
-              <?php endforeach; ?>
+                <?php if (isset($systeemnaam) && $systeemnaam && count($systeemplaceholders) > 0): ?>
+                  <div class="system">
+                    <strong>Briefspecifieke velden</strong>
+                      <ul>
+                        <?php foreach ($systeemplaceholders as $systeemplaceholder): ?>
+                          <li class="placeholder"><a href="#" onClick="insertPlaceholder('<?php echo $systeemplaceholder ?>'); return false;"><?php echo $systeemplaceholder ?></a></li>
+                        <?php endforeach; ?>
+                      </ul>
+                  </div>
+                <?php endif; ?>
               </div>
             </td>
           </tr>

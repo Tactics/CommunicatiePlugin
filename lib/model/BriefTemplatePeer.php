@@ -47,6 +47,8 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     }
     return strtr($html, $newValues);
   }
+  
+  
 
   /**
    * Helper functie voor de implementatie van getPlaceholders() in peerclasses

@@ -45,7 +45,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 
 	
-	protected $taal;
+	protected $culture;
 
 
 	
@@ -136,10 +136,10 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	}
 
 	
-	public function getTaal()
+	public function getCulture()
 	{
 
-		return $this->taal;
+		return $this->culture;
 	}
 
 	
@@ -343,7 +343,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 	} 
 	
-	public function setTaal($v)
+	public function setCulture($v)
 	{
 
 		
@@ -352,9 +352,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 			$v = (string) $v; 
 		}
 
-		if ($this->taal !== $v) {
-			$this->taal = $v;
-			$this->modifiedColumns[] = BriefVerzondenPeer::TAAL;
+		if ($this->culture !== $v) {
+			$this->culture = $v;
+			$this->modifiedColumns[] = BriefVerzondenPeer::CULTURE;
 		}
 
 	} 
@@ -447,7 +447,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 			$this->custom = $rs->getBoolean($startcol + 8);
 
-			$this->taal = $rs->getString($startcol + 9);
+			$this->culture = $rs->getString($startcol + 9);
 
 			$this->created_by = $rs->getInt($startcol + 10);
 
@@ -676,7 +676,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				return $this->getCustom();
 				break;
 			case 9:
-				return $this->getTaal();
+				return $this->getCulture();
 				break;
 			case 10:
 				return $this->getCreatedBy();
@@ -709,7 +709,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 			$keys[6] => $this->getMedium(),
 			$keys[7] => $this->getAdres(),
 			$keys[8] => $this->getCustom(),
-			$keys[9] => $this->getTaal(),
+			$keys[9] => $this->getCulture(),
 			$keys[10] => $this->getCreatedBy(),
 			$keys[11] => $this->getUpdatedBy(),
 			$keys[12] => $this->getCreatedAt(),
@@ -757,7 +757,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				$this->setCustom($value);
 				break;
 			case 9:
-				$this->setTaal($value);
+				$this->setCulture($value);
 				break;
 			case 10:
 				$this->setCreatedBy($value);
@@ -787,7 +787,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[6], $arr)) $this->setMedium($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setAdres($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCustom($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setTaal($arr[$keys[9]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCulture($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCreatedBy($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setUpdatedBy($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCreatedAt($arr[$keys[12]]);
@@ -808,7 +808,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefVerzondenPeer::MEDIUM)) $criteria->add(BriefVerzondenPeer::MEDIUM, $this->medium);
 		if ($this->isColumnModified(BriefVerzondenPeer::ADRES)) $criteria->add(BriefVerzondenPeer::ADRES, $this->adres);
 		if ($this->isColumnModified(BriefVerzondenPeer::CUSTOM)) $criteria->add(BriefVerzondenPeer::CUSTOM, $this->custom);
-		if ($this->isColumnModified(BriefVerzondenPeer::TAAL)) $criteria->add(BriefVerzondenPeer::TAAL, $this->taal);
+		if ($this->isColumnModified(BriefVerzondenPeer::CULTURE)) $criteria->add(BriefVerzondenPeer::CULTURE, $this->culture);
 		if ($this->isColumnModified(BriefVerzondenPeer::CREATED_BY)) $criteria->add(BriefVerzondenPeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefVerzondenPeer::UPDATED_BY)) $criteria->add(BriefVerzondenPeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefVerzondenPeer::CREATED_AT)) $criteria->add(BriefVerzondenPeer::CREATED_AT, $this->created_at);
@@ -859,7 +859,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 		$copyObj->setCustom($this->custom);
 
-		$copyObj->setTaal($this->taal);
+		$copyObj->setCulture($this->culture);
 
 		$copyObj->setCreatedBy($this->created_by);
 

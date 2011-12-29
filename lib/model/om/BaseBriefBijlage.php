@@ -21,7 +21,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 
 	
-	protected $taal;
+	protected $culture;
 
 
 	
@@ -70,10 +70,10 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 	}
 
 	
-	public function getTaal()
+	public function getCulture()
 	{
 
-		return $this->taal;
+		return $this->culture;
 	}
 
 	
@@ -187,7 +187,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 	} 
 	
-	public function setTaal($v)
+	public function setCulture($v)
 	{
 
 		
@@ -196,9 +196,9 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 			$v = (string) $v; 
 		}
 
-		if ($this->taal !== $v) {
-			$this->taal = $v;
-			$this->modifiedColumns[] = BriefBijlagePeer::TAAL;
+		if ($this->culture !== $v) {
+			$this->culture = $v;
+			$this->modifiedColumns[] = BriefBijlagePeer::CULTURE;
 		}
 
 	} 
@@ -279,7 +279,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 			$this->bijlage_node_id = $rs->getInt($startcol + 2);
 
-			$this->taal = $rs->getString($startcol + 3);
+			$this->culture = $rs->getString($startcol + 3);
 
 			$this->created_at = $rs->getTimestamp($startcol + 4, null);
 
@@ -490,7 +490,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 				return $this->getBijlageNodeId();
 				break;
 			case 3:
-				return $this->getTaal();
+				return $this->getCulture();
 				break;
 			case 4:
 				return $this->getCreatedAt();
@@ -517,7 +517,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 			$keys[0] => $this->getId(),
 			$keys[1] => $this->getBriefTemplateId(),
 			$keys[2] => $this->getBijlageNodeId(),
-			$keys[3] => $this->getTaal(),
+			$keys[3] => $this->getCulture(),
 			$keys[4] => $this->getCreatedAt(),
 			$keys[5] => $this->getUpdatedAt(),
 			$keys[6] => $this->getCreatedBy(),
@@ -547,7 +547,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 				$this->setBijlageNodeId($value);
 				break;
 			case 3:
-				$this->setTaal($value);
+				$this->setCulture($value);
 				break;
 			case 4:
 				$this->setCreatedAt($value);
@@ -571,7 +571,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setBriefTemplateId($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setBijlageNodeId($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setTaal($arr[$keys[3]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCulture($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setUpdatedAt($arr[$keys[5]]);
 		if (array_key_exists($keys[6], $arr)) $this->setCreatedBy($arr[$keys[6]]);
@@ -586,7 +586,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefBijlagePeer::ID)) $criteria->add(BriefBijlagePeer::ID, $this->id);
 		if ($this->isColumnModified(BriefBijlagePeer::BRIEF_TEMPLATE_ID)) $criteria->add(BriefBijlagePeer::BRIEF_TEMPLATE_ID, $this->brief_template_id);
 		if ($this->isColumnModified(BriefBijlagePeer::BIJLAGE_NODE_ID)) $criteria->add(BriefBijlagePeer::BIJLAGE_NODE_ID, $this->bijlage_node_id);
-		if ($this->isColumnModified(BriefBijlagePeer::TAAL)) $criteria->add(BriefBijlagePeer::TAAL, $this->taal);
+		if ($this->isColumnModified(BriefBijlagePeer::CULTURE)) $criteria->add(BriefBijlagePeer::CULTURE, $this->culture);
 		if ($this->isColumnModified(BriefBijlagePeer::CREATED_AT)) $criteria->add(BriefBijlagePeer::CREATED_AT, $this->created_at);
 		if ($this->isColumnModified(BriefBijlagePeer::UPDATED_AT)) $criteria->add(BriefBijlagePeer::UPDATED_AT, $this->updated_at);
 		if ($this->isColumnModified(BriefBijlagePeer::CREATED_BY)) $criteria->add(BriefBijlagePeer::CREATED_BY, $this->created_by);
@@ -625,7 +625,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 		$copyObj->setBijlageNodeId($this->bijlage_node_id);
 
-		$copyObj->setTaal($this->taal);
+		$copyObj->setCulture($this->culture);
 
 		$copyObj->setCreatedAt($this->created_at);
 

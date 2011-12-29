@@ -59,6 +59,18 @@ class BriefTemplate extends BaseBriefTemplate
 
     return $b ? explode('|', trim($b, '|')) : array();
   }
+  /**
+
+   * Geeft de verschillende placeholders eigen aan de systeemtemplate
+   *
+   * @return array[]string
+   */
+  public function getSysteemplaceholdersArray()
+  {
+    $placeholders = $this->getSysteemplaceholders();
+
+    return $placeholders ? explode('|', trim($placeholders, '|')) : array();
+  }
 
   /**
    * Haalt de parentnode op uit de store (tabel dms_store), aangemaakt in punt 4.
@@ -111,6 +123,136 @@ class BriefTemplate extends BaseBriefTemplate
     $transUnit = TransUnitPeer::doSelectOne($c);
     
     return $transUnit ? $transUnit->getTarget() : '';
+  }
+  
+  /**
+   * Onderwerp ophalen a.d.h.v culture.
+   * 
+   * @param string $culture
+   */
+  public function getTranslatedOnderwerp($culture)
+  {
+    if ($culture === BriefTemplatePeer::getDefaultCulture())
+    {
+      $onderwerp = $this->getOnderwerp();
+    }
+    else
+    {
+      $catalogueName = 'brieven.'.$culture;
+      $catalogue     = CataloguePeer::retrieveByName($catalogueName);
+      if (! $catalogue)
+      {
+        throw new sfException('Catalogue not found');
+      }
+
+      $c = new Criteria();
+      $c->add(TransUnitPeer::CATALOGUE_ID, $catalogue->getId());
+      $c->add(TransUnitPeer::SOURCE, $this->getOnderwerpSource($culture));
+      $transUnit = TransUnitPeer::doSelectOne($c);
+      if (! $transUnit)
+      {
+        throw new sfException('TransUnit not found');
+      }
+      
+      $onderwerp = $transUnit->getTarget();
+    }  
+    
+    return $onderwerp;
+  }
+  
+  /**
+   * Html ophalen a.d.h.v culture.
+   * 
+   * @param string $culture
+   */
+  public function getTranslatedHtml($culture)
+  {
+    if ($culture === BriefTemplatePeer::getDefaultCulture())
+    {
+      $html = $this->getHtml();
+    }
+    else
+    {
+      $catalogueName = 'brieven.'.$culture;
+      $catalogue     = CataloguePeer::retrieveByName($catalogueName);
+      if (! $catalogue)
+      {
+        throw new sfException('Catalogue not found');
+      }
+
+      $c = new Criteria();
+      $c->add(TransUnitPeer::CATALOGUE_ID, $catalogue->getId());
+      $c->add(TransUnitPeer::SOURCE, $this->getHtmlSource($culture));
+      $transUnit = TransUnitPeer::doSelectOne($c);
+      if (! $transUnit)
+      {
+        throw new sfException('TransUnit not found');
+      }
+      
+      $html = $transUnit->getTarget();
+    }  
+    
+    return $html;
+  }
+  
+  
+  /**
+   * Mail versturen naar object
+   * 
+   * @param iMailer interface $object
+   * @param array $options
+   */
+  public function sendMailToObject(iMailer $object, $options = array())
+  {
+    $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
+    
+    // Controleren of het mogelijk is deze brief_template te versturen naar $object.
+    $b     = $this->getBestemmelingArray();
+    $cName = get_class($object);
+    if (! in_array($cName, $b))
+    {
+      throw new sfException("Unknown object: can't send mail to instance of class \"{$cName}\"");
+    }
+    
+    // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
+    if ($this->getEenmaligVersturen() && $this->reedsVerstuurdNaar($cName, $object->getId()))
+    {
+      throw new sfException("Mail already sent.");
+    }
+    
+    $culture    = $object->getMailerCulture();
+    $values     = $object->fillPlaceholders(null, $culture);
+    // @todo isSysteemTemplate functie ?
+    if ($this->getSysteemnaam())
+    {
+      $values = array_merge($values, $systeemvalues);
+    }
+    $email      = $object->getMailerRecipientMail();   
+    
+    $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
+    $html        = BriefTemplatePeer::replacePlaceholders($this->getTranslatedHtml($culture), $values);
+    
+    $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html);
+    
+    $brief = $headAndBody['head'] . $headAndBody['body'];
+
+    // Mail versturen
+    BerichtPeer::verstuurEmail($email, $brief, array(
+      'onderwerp' => $onderwerp,
+      'skip_template' => true
+    ));
+
+    // Mail loggen
+    $briefVerzonden = new BriefVerzonden();
+    $briefVerzonden->setObjectClass($cName);
+    $briefVerzonden->setObjectId($object->getId());
+    $briefVerzonden->setBriefTemplateId($this->getId());
+    $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
+    $briefVerzonden->setAdres($email);
+    $briefVerzonden->setOnderwerp($onderwerp);
+    $briefVerzonden->setCulture($culture);
+    $briefVerzonden->setHtml($brief);
+    $briefVerzonden->save();
   }
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));

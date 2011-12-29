@@ -17,6 +17,7 @@
                             array("name" => BriefTemplatePeer::ONDERWERP, "text" => "Onderwerp", "sortable" => true ),
                             array("name" => BriefTemplatePeer::BRIEF_LAYOUT_ID, "text" => "Layout", "sortable" => true, 'width' => 120),
                             array("name" => BriefTemplatePeer::EENMALIG_VERSTUREN, "text" => "Versturen", "sortable" => true, 'width' => 60 ),
+                            array("name" => BriefTemplatePeer::SYSTEEMNAAM, "text" => "Systeemnaam", 'width' => 30, 'align' => 'center'),
                             array("text" => "Acties", "width" => 30, "align" => "center"	),
                           ),
                           array(
@@ -37,6 +38,7 @@
           link_to_unless_empty($briefTemplate->getOnderwerp(), "brief/edit?template_id=" . $briefTemplate->getId()),
           $briefTemplate->getBriefLayoutId() ? $briefTemplate->getBriefLayout()->getNaam() : '-',
           $briefTemplate->getEenmaligVersturen() ? 'eenmaal' : 'meermaals',
+          $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
           array("content" =>
               //link_to(image_tag('icons/zoom_16.gif'), 'brief/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
               link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "brief/edit?template_id=" . $briefTemplate->getId())

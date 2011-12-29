@@ -50,7 +50,7 @@ class BriefLayout extends BaseBriefLayout
    * 
    * @return string
    */
-  public function getHeadAndBody($type, $culturen, $html)
+  public function getHeadAndBody($type, $culture, $html)
   {
     if ($type == 'mail')
     {

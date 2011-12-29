@@ -40,8 +40,6 @@ class BriefTemplateMapBuilder {
 
 		$tMap->addColumn('NAAM', 'Naam', 'string', CreoleTypes::VARCHAR, true, 45);
 
-		$tMap->addColumn('SYSTEEMNAAM', 'Systeemnaam', 'string', CreoleTypes::VARCHAR, false, 45);
-
 		$tMap->addColumn('TYPE', 'Type', 'string', CreoleTypes::VARCHAR, true, 45);
 
 		$tMap->addColumn('BESTEMMELING_CLASSES', 'BestemmelingClasses', 'string', CreoleTypes::VARCHAR, false, 1000);
@@ -49,6 +47,10 @@ class BriefTemplateMapBuilder {
 		$tMap->addColumn('HTML', 'Html', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
 		$tMap->addColumn('EENMALIG_VERSTUREN', 'EenmaligVersturen', 'boolean', CreoleTypes::BOOLEAN, true, null);
+
+		$tMap->addColumn('SYSTEEMNAAM', 'Systeemnaam', 'string', CreoleTypes::VARCHAR, false, 45);
+
+		$tMap->addColumn('SYSTEEMPLACEHOLDERS', 'Systeemplaceholders', 'string', CreoleTypes::VARCHAR, false, 1000);
 
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 
