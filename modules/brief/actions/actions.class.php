@@ -111,21 +111,26 @@ class briefActions extends sfActions
    */
   private function validateUpdateVertaalbaar()
   {
-    foreach (BriefTemplatePeer::getTranslationLanguageArray() as $languages)
+    // Mogelijke vertalingen
+    $cultures = BriefTemplatePeer::getCultureLabelArray();    
+    // Array met body en onderwerp per culture.
+    $onderwerpen = $this->getRequestParameter('onderwerp');
+    $htmls       = $this->getRequestParameter('html');
+    
+    foreach ($cultures as $culture => $label)
     {
-      $label = $languages['label'];
-      $culture = $languages['culture'];
-      
-      if (! $this->getRequestParameter('onderwerp_' . $culture))
+      if (! $onderwerpen[$culture])
       {
-        $this->getRequest()->setError('onderwerp_' . $culture, 'Gelieve een ' . $culture . ' onderwerp in te geven.');
+        $this->getRequest()->setError('onderwerp[' . $culture . ']', 'Gelieve een ' . $label . ' onderwerp in te geven.');
       }
       
-      if (! $this->getRequestParameter('html_' . $culture))
+      if (! $htmls[$culture])
       {
-        $this->getRequest()->setError('html_' . $culture, 'Gelieve een ' . $culture . ' tekst in te geven');
+        $this->getRequest()->setError('html[' . $culture . ']', 'Gelieve een ' . $label . ' e-mail bericht in te geven.');
       }
     }
+    
+    return ! $this->getRequest()->hasErrors();
   }
   
   /**
@@ -164,26 +169,34 @@ class briefActions extends sfActions
     {
       $brief_template->save();
       
-      foreach (BriefTemplatePeer::getTranslationLanguageArray() as $language)
+      $cultures = BriefTemplatePeer::getCultureLabelArray();
+      $defaultCulture = BriefTemplatePeer::getDefaultCulture();
+      
+      // Array met body en onderwerp per culture.
+      $onderwerpen = $this->getRequestParameter('onderwerp');
+      $htmls       = $this->getRequestParameter('html');
+      
+      foreach ($cultures as $culture => $label)
       {
         $culture = BriefTemplatePeer::getCulture($language);
         $label = BriefTemplatePeer::getLabel($language);
-        $catalogueName = BriefTemplatePeer::getCatalogueName($language);
-        $htmlSource = $brief_template->getHtmlSource($language);
-        $onderwerpSource = $brief_template->getOnderwerpSource($language);
-        $onderwerp = $this->getRequestParameter('onderwerp_' . $culture);
-        $html = $this->getRequestParameter('html_' . $culture);
         
-        if (array_key_exists('default', $language))
+        // Default culture opslaan in brief_template object
+        if ($culture === $defaultCulture) 
         {
-          $brief_template->setOnderwerp($onderwerp);
-          $brief_template->setHtml($html); 
+          $brief_template->setOnderwerp($onderwerpen[$culture]);
+          $brief_template->setHtml($htmls[$culture]); 
           $brief_template->save(); 
         }
-        else
-        {
-          $this->updateOrCreateTransUnit($htmlSource, $html, null, $catalogueName);
-          $this->updateOrCreateTransUnit($onderwerpSource, $onderwerp, null, $catalogueName);
+        else // Vertalingen opslaan in TransUnit object
+        {          
+          // @todo getCatalogueName method.
+          $catalogueName = 'brieven.'.$culture;
+          $htmlSource = $brief_template->getHtmlSource($culture);
+          $onderwerpSource = $brief_template->getOnderwerpSource($culture);
+
+          $this->updateOrCreateTransUnit($htmlSource, $htmls[$culture], null, $catalogueName);
+          $this->updateOrCreateTransUnit($onderwerpSource, $onderwerpen[$culture], null, $catalogueName);
         }
       }
     }

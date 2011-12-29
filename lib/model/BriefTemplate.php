@@ -82,14 +82,9 @@ class BriefTemplate extends BaseBriefTemplate
    * @param $language
    * @return string Source
    */
-  public function getHtmlSource($language)
-  {
-    if (is_array($language) && !array_key_exists('label', $language))
-    {
-      throw new sfException('Unknown language format.');
-    }
-    
-    return 'brieftemplate_' . $this->getId() . '_html_' . BriefTemplatePeer::getLabel($language);    
+  public function getHtmlSource($culture)
+  {   
+    return 'brieftemplate_' . $this->getId() . '_html_' . $culture;    
   }
   
   /**
@@ -98,14 +93,9 @@ class BriefTemplate extends BaseBriefTemplate
    * @param $language
    * @return string Source
    */
-  public function getOnderwerpSource($language)
+  public function getOnderwerpSource($culture)
   {
-    if (is_array($language) && !array_key_exists('label', $language))
-    {
-      throw new sfException('Unknown language format.');
-    }
-    
-    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . BriefTemplatePeer::getLabel($language);    
+    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . $culture;    
   }
   
   /**
