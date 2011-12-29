@@ -15,8 +15,8 @@
          }
          else
          {
-           $onderwerp = $brief_template->getVertaling($brief_template->getOnderwerpSource($language));
-           $html      = $brief_template->getVertaling($brief_template->getHtmlSource($language));
+           $onderwerp = $brief_template->getVertaling($brief_template->getOnderwerpSource($language['culture']));
+           $html      = $brief_template->getVertaling($brief_template->getHtmlSource($language['culture']));
          }
 
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', 

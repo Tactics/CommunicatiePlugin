@@ -177,10 +177,7 @@ class briefActions extends sfActions
       $htmls       = $this->getRequestParameter('html');
       
       foreach ($cultures as $culture => $label)
-      {
-        $culture = BriefTemplatePeer::getCulture($language);
-        $label = BriefTemplatePeer::getLabel($language);
-        
+      {       
         // Default culture opslaan in brief_template object
         if ($culture === $defaultCulture) 
         {
