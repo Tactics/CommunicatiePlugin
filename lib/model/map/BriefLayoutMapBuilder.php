@@ -30,7 +30,7 @@ class BriefLayoutMapBuilder {
 		$tMap = $this->dbMap->addTable('brief_layout');
 		$tMap->setPhpName('BriefLayout');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
 
 		$tMap->addPrimaryKey('ID', 'Id', 'int', CreoleTypes::INTEGER, true, null);
 

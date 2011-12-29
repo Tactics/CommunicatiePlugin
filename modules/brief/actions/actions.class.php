@@ -20,6 +20,22 @@
 class briefActions extends sfActions
 {
   /**
+   * geeft de resultset van objecten weer afh van de gegeven class en object_ids
+   *
+   * @return resultset $rs
+   */
+  private function preExecuteVersturen()
+  {
+    // fix voor ontbrekende autoload in criteria uit sessie
+    ini_set('unserialize_callback_func', '__autoload');
+    
+    $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', null, 'brieven');
+    $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
+    $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
+    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+  }
+  
+  /**
    * Standaard index actie
    */
   public function executeIndex()
@@ -42,12 +58,13 @@ class briefActions extends sfActions
    */
   public function executeCreate()
   {
+    $this->brief_template = new BriefTemplate();
+    
     if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
     {
       $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
     }
         
-    $this->brief_template = new BriefTemplate();
     $this->setTemplate('edit');
   }
 
@@ -55,8 +72,13 @@ class briefActions extends sfActions
    * aanpassen van manuele html brief template
    */
   public function executeEdit()
-  {
+  {  
     $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+    
+    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
+    {
+      $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
+    }
   }
   
   /**
@@ -94,14 +116,14 @@ class briefActions extends sfActions
       $label = $languages['label'];
       $culture = $languages['culture'];
       
-      if (! $this->getRequestParameter('onderwerp_' . $label))
+      if (! $this->getRequestParameter('onderwerp_' . $culture))
       {
-        $this->getRequest()->setError('onderwerp_' . $label, 'Gelieve een ' . $label . ' onderwerp in te geven.');
+        $this->getRequest()->setError('onderwerp_' . $culture, 'Gelieve een ' . $culture . ' onderwerp in te geven.');
       }
       
-      if (! $this->getRequestParameter('html_' . $label))
+      if (! $this->getRequestParameter('html_' . $culture))
       {
-        $this->getRequest()->setError('html_' . $label, 'Gelieve een ' . $label . ' tekst in te geven');
+        $this->getRequest()->setError('html_' . $culture, 'Gelieve een ' . $culture . ' tekst in te geven');
       }
     }
   }
@@ -133,29 +155,45 @@ class briefActions extends sfActions
       $brief_template->setType(BriefTemplatePeer::TYPE_DB);
     }
     
-    $brief_template->setNaam($this->getRequestParameter('naam'));
+    $brief_template->setNaam($this->getRequestParameter('naam')); 
+    $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
+    $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
+    $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));
     
     if (BriefTemplatePeer::isVertaalbaar())
     {
+      $brief_template->save();
+      
       foreach (BriefTemplatePeer::getTranslationLanguageArray() as $language)
       {
-        $culture = $language['culture'];
-        $label = $language['label'];
-        $msgSource = new sfMessageSource_MSSQL();
-        die();
-        $msgSource->update('brieven.' . $culture);
+        $culture = BriefTemplatePeer::getCulture($language);
+        $label = BriefTemplatePeer::getLabel($language);
+        $catalogueName = BriefTemplatePeer::getCatalogueName($language);
+        $htmlSource = $brief_template->getHtmlSource($language);
+        $onderwerpSource = $brief_template->getOnderwerpSource($language);
+        $onderwerp = $this->getRequestParameter('onderwerp_' . $culture);
+        $html = $this->getRequestParameter('html_' . $culture);
+        
+        if (array_key_exists('default', $language))
+        {
+          $brief_template->setOnderwerp($onderwerp);
+          $brief_template->setHtml($html); 
+          $brief_template->save(); 
+        }
+        else
+        {
+          $this->updateOrCreateTransUnit($htmlSource, $html, null, $catalogueName);
+          $this->updateOrCreateTransUnit($onderwerpSource, $onderwerp, null, $catalogueName);
+        }
       }
     }
     else
     {
       $brief_template->setOnderwerp($this->getRequestParameter('onderwerp'));
       $brief_template->setHtml($this->getRequestParameter('html')); 
+      $brief_template->save(); 
     }
-    
-    $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
-    $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
-    $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));
-    $brief_template->save();
+
 
     foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
     {
@@ -196,21 +234,42 @@ class briefActions extends sfActions
       $this->forward('brief', 'edit');
     }
   }
-
+  
   /**
-   * geeft de resultset van objecten weer afh van de gegeven class en object_ids
-   *
-   * @return resultset $rs
+   * Updaten of aanmaken van een transunit.
+   * Aanmaken: manueel
+   * Updaten: via sfMessageSource_MSSQL class
+   * 
+   * @param type $catalogueName
+   * @param type $tekst 
    */
-  private function preExecuteVersturen()
-  {
-    // fix voor ontbrekende autoload in criteria uit sessie
-    ini_set('unserialize_callback_func', '__autoload');
+  private function updateOrCreateTransUnit($source, $target, $comments, $catalogueName)
+  {      
+    $catalogue = CataloguePeer::retrieveByName($catalogueName);
+    if (! $catalogue)
+    {
+      throw new sfException('Catalogue not found.');
+    }
     
-    $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', null, 'brieven');
-    $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
-    $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
-    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+    $c = new Criteria();
+    $c->add(TransUnitPeer::CATALOGUE_ID, $catalogue->getId());
+    $c->add(TransUnitPeer::SOURCE, $source);
+    $transUnit = TransUnitPeer::doSelectOne($c);
+    
+    if ($transUnit)
+    {
+      $transUnit->setTarget($target);
+    }
+    else
+    {
+      $transUnit = new TransUnit();
+      $transUnit->setCatalogueId($catalogue->getId());
+      $transUnit->setSource($source);
+      $transUnit->setTarget($target);
+      $transUnit->setComments($comments);
+    }
+    
+    $transUnit->save();
   }
 
   /**
@@ -276,6 +335,11 @@ class briefActions extends sfActions
   public function executeOpmaak()
   {
     $this->preExecuteVersturen();
+    
+    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
+    {
+      $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
+    }
 
     $rs = $this->getRs();
     $this->aantalBestemmelingen = $rs->getRecordCount();
@@ -310,6 +374,24 @@ class briefActions extends sfActions
     return false;
   }
 
+  private function calculateCulture($object)
+  {
+    $culture = $object->getMailerCulture();
+    $cultures = BriefTemplatePeer::getCultureLabelArray();
+    
+    if (! $culture)
+    {
+      $culture = $this->getUser()->getCulture();
+    }
+    
+    if (! array_key_exists($culture, $cultures))
+    {
+      $culture = BriefTemplatePeer::getCulture(BriefTemplatePeer::getDefaultCulture());
+    }
+    
+    return $culture;
+  }
+  
   
   /**
    * Afdrukken of e-mail verzenden
@@ -317,7 +399,7 @@ class briefActions extends sfActions
   public function executePrint()
   {
     $this->preExecuteVersturen();
-
+    
     $this->voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
     $this->emailverzenden = (stripos($this->getRequestParameter('commit'), 'mail') !== false);
 
@@ -330,90 +412,27 @@ class briefActions extends sfActions
     {
       $this->viaemail = ($this->getRequestParameter('verzenden_via', false) == 'ja');
     }
-    
+
+    // laadt template
+    $this->templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
+    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
+    $this->forward404Unless($this->brief_template);
+        
+    // arrays met onderwerp en content per culture
     $this->onderwerp = $this->getRequestParameter('onderwerp');
     $this->html = $this->getRequestParameter('html');
 
-    $this->templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
-
-    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
-    $this->forward404Unless($this->brief_template);
-
-    $layout = $this->brief_template->getBriefLayout();
-
-    if ($this->emailverzenden)
+    $cultureBrieven = array();
+    $cultures = BriefTemplatePeer::getCultureLabelArray();
+    foreach ($cultures as $culture => $label)
     {
-      $layout_bestand = $layout->getMailBestand();
-      $layout_stylesheets = $layout->getMailStylesheets();
-    }
-    else
-    {
-      $layout_bestand = $layout->getPrintBestand();
-      $layout_stylesheets = $layout->getPrintStylesheets();
-    }
-    
-    $stylesheet_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'stylesheets' . DIRECTORY_SEPARATOR;
-    $layout_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
-
-    // Lees alle stylesheets in
-    $css = '';
-    foreach (explode(';', $layout_stylesheets) as $stylesheet)
-    {
-      $stylesheet_bestand = $stylesheet_dir . $stylesheet;
-      @$stylesheet_css = $this->get_include_contents($stylesheet_bestand);
-      if ($stylesheet_css)
-      {
-        $css .= $stylesheet_css;
-      }
+      $headAndBody = $this->brief_template->getBriefLayout()->getHeadAndBody($this->emailverzenden ? 'mail' : 'brief', $culture, $this->html[$culture]);
+      
+      $cultureBrieven[$culture]['onderwerp'] = $this->onderwerp[$culture];
+      $cultureBrieven[$culture]['head']     = $headAndBody['head'];       
+      $cultureBrieven[$culture]['body']     = $headAndBody['body'];       
     }    
-
-    // Haal layout op en pas deze toe
-    $html_layout = $this->get_include_contents($layout_dir . $layout_bestand);
-
-    if ($html_layout)
-    {
-      Misc::use_helper('Url');      
-      $html = strtr($html_layout, array(
-        '%stylesheet%' => $css,
-        '%body%' => $this->html,
-        '%image_dir%' => url_for('brief/showImage') . '/image/'
-      ));
-    }
-
-    // Knip het resulterende document op in stukken zodat we meerdere
-    // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
-
-    $startOpenBodyTag = stripos($html, '<body');
-    $endOpenBodyTag = stripos($html, '>', $startOpenBodyTag);
-    $endBodyTag = stripos($html, '</body>', $endOpenBodyTag);
-
-    if (
-      ($startOpenBodyTag === false)
-      || ($endOpenBodyTag === false)
-      || ($endBodyTag === false)
-    )
-    {
-      throw new sfException('brief_layout "' . $layout_bestand . '" bevat geen geldige html body');
-    }
-
-    $this->bericht_body = substr($html, $endOpenBodyTag + 1, $endBodyTag - $endOpenBodyTag - 1);
-
-
-    $startOpenHeadTag = stripos($html, '<head');
-    $endOpenHeadTag = stripos($html, '>', $startOpenHeadTag);
-    $endHeadTag = stripos($html, '</head>', $endOpenHeadTag);
-
-    if (
-      ($startOpenHeadTag === false)
-      || ($endOpenHeadTag === false)
-      || ($endHeadTag === false)
-    )
-    {
-      throw new sfException('brief_layout "' . $layout_bestand . '" bevat geen geldige html head');
-    }
-
-    $this->bericht_head = substr($html, $endOpenHeadTag + 1, $endHeadTag - $endOpenHeadTag - 1);
-
+    
     if ($this->voorbeeld)
     {
       $this->criteria->setLimit(1);
@@ -426,8 +445,8 @@ class briefActions extends sfActions
     $this->defaultPlaceholders = array(
       'datum' => $vandaag->format(),
       'user_naam' => $this->getUser()->getPersoon()->getNaam(),
-      'user_telefoon' => $this->getUser()->getPersoon()->getTelefoon() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
-      'user_email' => $this->getUser()->getPersoon()->getEmail(),
+      'user_telefoon' => $this->getUser()->getPersoon()->getContactTelefoonWerk() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
+      'user_email' => $this->getUser()->getPersoon()->getContactEmail(),
     );
 
     if ($this->emailverzenden)
@@ -445,13 +464,15 @@ class briefActions extends sfActions
 
         if ($object->getMailerPrefersEmail())
         {
+          $culture = $this->calculateCulture($object);
+          
           // replace the placeholders
-          $values = array_merge($object->fillPlaceholders(), $this->defaultPlaceholders);
-          $onderwerp = BriefTemplatePeer::replacePlaceholders($this->onderwerp, $values);
+          $values = array_merge($object->fillPlaceholders(null, $culture), $this->defaultPlaceholders);
+          $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $values);
           $values['onderwerp'] = $onderwerp;
 
-          $brief = BriefTemplatePeer::replacePlaceholders($this->bericht_body, $values);
-          $brief = $this->bericht_head . $brief;
+          $brief = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $values);
+          $brief = $cultureBrieven[$culture]['head'] . $brief;
           $email = $object->getMailerRecipientMail();
 
           $attachements = array();
@@ -466,6 +487,8 @@ class briefActions extends sfActions
               {
                 continue;
               }
+              
+              // TODO: check culture
 
               $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
               $node->saveToFile($tmpFile);
@@ -484,6 +507,8 @@ class briefActions extends sfActions
             }
             else if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
             {
+              // TODO: check culture
+              
               switch ($this->getRequest()->getFileError($fileId))
               {
                 case UPLOAD_ERR_INI_SIZE:
@@ -531,6 +556,7 @@ class briefActions extends sfActions
             $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
             $briefVerzonden->setAdres($email);
             $briefVerzonden->setOnderwerp($onderwerp);
+            $briefVerzonden->setCulture($culture);
             $briefVerzonden->setHtml($brief);
             $briefVerzonden->save();
           }
@@ -567,8 +593,8 @@ class briefActions extends sfActions
     $this->preExecuteVersturen();
 
   	$brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
-    $html = $this->getRequestParameter('html');
-    $onderwerp = $this->getRequestParameter('onderwerp');
+    $html = unserialize($this->getRequestParameter('html'));
+    $onderwerp = unserialize($this->getRequestParameter('onderwerp'));
     $object_ids = explode(',', $this->getRequestParameter('object_ids'));
 
     $c = new Criteria();
@@ -588,12 +614,14 @@ class briefActions extends sfActions
     {
       $object = new $this->bestemmelingenClass();
       $object->hydrate($rs);
+      
+      $culture = $this->calculateCulture($object);
 
       // replace the placeholders
       $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
-      $values['onderwerp'] = BriefTemplatePeer::replacePlaceholders($onderwerp, $values);
+      $values['onderwerp'] = BriefTemplatePeer::replacePlaceholders($onderwerp[$culture], $values);
 
-      $brief = BriefTemplatePeer::replacePlaceholders($html, $values);
+      $brief = BriefTemplatePeer::replacePlaceholders($html[$culture], $values);
 
       $briefVerzonden = new BriefVerzonden();
       $briefVerzonden->setObjectClass($this->bestemmelingenClass);
@@ -602,6 +630,7 @@ class briefActions extends sfActions
       $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
       $briefVerzonden->setAdres($object->getAdres());
       $briefVerzonden->setHtml($brief);
+      $briefVerzonden->setCulture($culture);
       $briefVerzonden->setOnderwerp($values['onderwerp']);
       $briefVerzonden->save();
     }
@@ -644,7 +673,7 @@ class briefActions extends sfActions
   }
 
   /**
-   * Geeft details van Ã©Ã©n verzonden brief weer
+   * Geeft details van één verzonden brief weer
    */
   public function executeShowCommunicatieLog()
   {

@@ -13,7 +13,7 @@ abstract class BaseBriefTemplatePeer {
 	const CLASS_DEFAULT = 'plugins.ttCommunicatiePlugin.lib.model.BriefTemplate';
 
 	
-	const NUM_COLUMNS = 12;
+	const NUM_COLUMNS = 13;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -30,6 +30,9 @@ abstract class BaseBriefTemplatePeer {
 
 	
 	const NAAM = 'brief_template.NAAM';
+
+	
+	const SYSTEEMNAAM = 'brief_template.SYSTEEMNAAM';
 
 	
 	const TYPE = 'brief_template.TYPE';
@@ -61,18 +64,18 @@ abstract class BaseBriefTemplatePeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'BriefLayoutId', 'Onderwerp', 'Naam', 'Type', 'BestemmelingClasses', 'Html', 'EenmaligVersturen', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
-		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID, BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefTemplatePeer::ONDERWERP, BriefTemplatePeer::NAAM, BriefTemplatePeer::TYPE, BriefTemplatePeer::BESTEMMELING_CLASSES, BriefTemplatePeer::HTML, BriefTemplatePeer::EENMALIG_VERSTUREN, BriefTemplatePeer::CREATED_BY, BriefTemplatePeer::UPDATED_BY, BriefTemplatePeer::CREATED_AT, BriefTemplatePeer::UPDATED_AT, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'brief_layout_id', 'onderwerp', 'naam', 'type', 'bestemmeling_classes', 'html', 'eenmalig_versturen', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'BriefLayoutId', 'Onderwerp', 'Naam', 'Systeemnaam', 'Type', 'BestemmelingClasses', 'Html', 'EenmaligVersturen', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
+		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID, BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefTemplatePeer::ONDERWERP, BriefTemplatePeer::NAAM, BriefTemplatePeer::SYSTEEMNAAM, BriefTemplatePeer::TYPE, BriefTemplatePeer::BESTEMMELING_CLASSES, BriefTemplatePeer::HTML, BriefTemplatePeer::EENMALIG_VERSTUREN, BriefTemplatePeer::CREATED_BY, BriefTemplatePeer::UPDATED_BY, BriefTemplatePeer::CREATED_AT, BriefTemplatePeer::UPDATED_AT, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'brief_layout_id', 'onderwerp', 'naam', 'systeemnaam', 'type', 'bestemmeling_classes', 'html', 'eenmalig_versturen', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'BriefLayoutId' => 1, 'Onderwerp' => 2, 'Naam' => 3, 'Type' => 4, 'BestemmelingClasses' => 5, 'Html' => 6, 'EenmaligVersturen' => 7, 'CreatedBy' => 8, 'UpdatedBy' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, ),
-		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID => 0, BriefTemplatePeer::BRIEF_LAYOUT_ID => 1, BriefTemplatePeer::ONDERWERP => 2, BriefTemplatePeer::NAAM => 3, BriefTemplatePeer::TYPE => 4, BriefTemplatePeer::BESTEMMELING_CLASSES => 5, BriefTemplatePeer::HTML => 6, BriefTemplatePeer::EENMALIG_VERSTUREN => 7, BriefTemplatePeer::CREATED_BY => 8, BriefTemplatePeer::UPDATED_BY => 9, BriefTemplatePeer::CREATED_AT => 10, BriefTemplatePeer::UPDATED_AT => 11, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'brief_layout_id' => 1, 'onderwerp' => 2, 'naam' => 3, 'type' => 4, 'bestemmeling_classes' => 5, 'html' => 6, 'eenmalig_versturen' => 7, 'created_by' => 8, 'updated_by' => 9, 'created_at' => 10, 'updated_at' => 11, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'BriefLayoutId' => 1, 'Onderwerp' => 2, 'Naam' => 3, 'Systeemnaam' => 4, 'Type' => 5, 'BestemmelingClasses' => 6, 'Html' => 7, 'EenmaligVersturen' => 8, 'CreatedBy' => 9, 'UpdatedBy' => 10, 'CreatedAt' => 11, 'UpdatedAt' => 12, ),
+		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID => 0, BriefTemplatePeer::BRIEF_LAYOUT_ID => 1, BriefTemplatePeer::ONDERWERP => 2, BriefTemplatePeer::NAAM => 3, BriefTemplatePeer::SYSTEEMNAAM => 4, BriefTemplatePeer::TYPE => 5, BriefTemplatePeer::BESTEMMELING_CLASSES => 6, BriefTemplatePeer::HTML => 7, BriefTemplatePeer::EENMALIG_VERSTUREN => 8, BriefTemplatePeer::CREATED_BY => 9, BriefTemplatePeer::UPDATED_BY => 10, BriefTemplatePeer::CREATED_AT => 11, BriefTemplatePeer::UPDATED_AT => 12, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'brief_layout_id' => 1, 'onderwerp' => 2, 'naam' => 3, 'systeemnaam' => 4, 'type' => 5, 'bestemmeling_classes' => 6, 'html' => 7, 'eenmalig_versturen' => 8, 'created_by' => 9, 'updated_by' => 10, 'created_at' => 11, 'updated_at' => 12, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	
@@ -133,6 +136,8 @@ abstract class BaseBriefTemplatePeer {
 		$criteria->addSelectColumn(BriefTemplatePeer::ONDERWERP);
 
 		$criteria->addSelectColumn(BriefTemplatePeer::NAAM);
+
+		$criteria->addSelectColumn(BriefTemplatePeer::SYSTEEMNAAM);
 
 		$criteria->addSelectColumn(BriefTemplatePeer::TYPE);
 

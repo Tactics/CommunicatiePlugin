@@ -40,6 +40,8 @@ class BriefTemplateMapBuilder {
 
 		$tMap->addColumn('NAAM', 'Naam', 'string', CreoleTypes::VARCHAR, true, 45);
 
+		$tMap->addColumn('SYSTEEMNAAM', 'Systeemnaam', 'string', CreoleTypes::VARCHAR, false, 45);
+
 		$tMap->addColumn('TYPE', 'Type', 'string', CreoleTypes::VARCHAR, true, 45);
 
 		$tMap->addColumn('BESTEMMELING_CLASSES', 'BestemmelingClasses', 'string', CreoleTypes::VARCHAR, false, 1000);

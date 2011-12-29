@@ -127,21 +127,51 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   }
   
   /**
+   * Verschillende cultures & labels ophalen uit settings.yml
+   * 
+   * @return array
+   */
+  public static function getCultureLabelArray()
+  {
+    $languageArray = self::getTranslationLanguageArray();
+    $cultureLabelArray = array();
+    
+    foreach ($languageArray as $language)
+    {
+      $cultureLabelArray[$language['culture']] = $language['label'];
+    }
+    
+    return $cultureLabelArray;
+  }
+  
+  /**
    * Default taal ophalen.
    * 
    * @return array
    */
   public static function getDefaultTranslationLanguage()
   {   
-    foreach ($this->getTranslationLanguageArray() as $languageArr)
+    foreach (self::getTranslationLanguageArray() as $languageArr)
     {
-      if ($this->isDefaultLanguage($languageArr))
+      if (self::isDefaultTranslationLanguage($languageArr))
       {
         return $languageArr;
       }
     }
     
     throw new sfException('Default language not found.');
+  }
+  
+  /**
+   * Default culture ophalen
+   * 
+   * @return string culture
+   */
+  public static function getDefaultCulture()
+  {
+    $languageArray = self::getDefaultTranslationLanguage();
+    
+    return $languageArray['culture'];
   }
   
   /**
@@ -154,4 +184,67 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {
     return array_key_exists('default', $languageArray) && ($languageArray['default'] == true);
   }
+  
+  /**
+   * Catalogue name voor language array ophalen.
+   * 
+   * @param array $language
+   * @return string Catalogue name
+   */
+  public static function getCatalogueName($language)
+  {
+    if (is_array($language) && !array_key_exists('culture', $language))
+    {
+      throw new sfException('Unknown language format.');
+    }
+    return 'brieven.'.self::getCulture($language);
+  }
+
+  /**
+   * Catalogue name voor language array ophalen.
+   * 
+   * @param array $language
+   * @return string Catalogue name
+   */
+  public static function getCulture($language)
+  {
+    if (is_array($language) && !array_key_exists('culture', $language))
+    {
+      throw new sfException('Unknown language format.');
+    }
+    
+    return $language['culture'];
+  }
+ 
+  /**
+   * Catalogue name voor language array ophalen.
+   * 
+   * @param array $language
+   * @return string Catalogue name
+   */
+  public static function getLabel($language)
+  {
+    if (is_array($language) && !array_key_exists('label', $language))
+    {
+      throw new sfException('Unknown language format.');
+    }
+    
+    return $language['label'];
+  }
+  
+  public static function retrieveBySysteemnaam($systeemnaam, $con = null)
+	{
+		if ($con === null) {
+			$con = Propel::getConnection(self::DATABASE_NAME);
+		}
+
+		$criteria = new Criteria(BriefTemplatePeer::DATABASE_NAME);
+
+		$criteria->add(BriefTemplatePeer::SYSTEEMNAAM, $systeemnaam);
+
+
+		$v = BriefTemplatePeer::doSelect($criteria, $con);
+
+		return !empty($v) > 0 ? $v[0] : null;
+	}
 }

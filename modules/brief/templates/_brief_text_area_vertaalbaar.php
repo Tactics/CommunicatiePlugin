@@ -8,19 +8,30 @@
   <?php foreach ($language_array as $language): ?>
     <div id="<?php echo $language['label'] ?>">
       <?php 
-        echo object_input_tag($brief_template, 'getOnderwerp', array(
-          'size' => 80,
-          'name' => 'onderwerp_' . $language['label'],
-          'id' => 'onderwerp_' . $language['label']
-        )); 
-      ?> (Invoegvelden toegestaan) <br /><br />
-      <?php 
-        echo object_textarea_tag($brief_template, 'getHtml', array(
-          'rich' => true,
-          'tinymce_options' => $mceoptions,
-          'name' => 'html_' . $language['label'],
-          'id' => 'html_' . $language['label']
-        )); 
+         if (array_key_exists('default', $language) && $language['default'] == true)
+         {
+           $onderwerp = $brief_template->getOnderwerp();
+           $html = $brief_template->getHtml();
+         }
+         else
+         {
+           $onderwerp = $brief_template->getVertaling($brief_template->getOnderwerpSource($language));
+           $html      = $brief_template->getVertaling($brief_template->getHtmlSource($language));
+         }
+
+        echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', 
+          $onderwerp,
+          array('size' => 80)
+         );
+         echo '(Invoegvelden toegestaan) <br /><br />';
+      
+        echo textarea_tag('html[' . BriefTemplatePeer::getCulture($language) .']',
+          $html,
+          array(
+            'rich' => true,
+            'tinymce_options' => $mceoptions
+          )
+        );
       ?>
     </div>
   <?php endforeach; ?>

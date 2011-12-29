@@ -1,7 +1,7 @@
 <?php include_partial('global/breadcrumb'); ?>
 <?php use_javascript('/ttBericht/js/tinymce/tiny_mce.js'); ?>
 
-<?php echo form_tag('brief/print', array('target' => '_blank', 'multipart' => true, 'onsubmit' => "if (! jQuery('#onderwerp').val()) {alert('Gelieve een onderwerp op te geven'); jQuery('#onderwerp').focus(); return false;}")); ?>
+<?php echo form_tag('brief/print', array('target' => '_blank', 'multipart' => true)); ?>
 
   <h2 class="pageblock">Brief opmaken</h2>
   <div class="pageblock">
@@ -30,18 +30,12 @@
         <th>&nbsp;</th>
         <td>&nbsp;</td>
       </tr>
-      <tr class="required">
-        <th>Onderwerp:</th>
-        <td>
-          <?php echo input_tag('onderwerp', $onderwerp, array('size' => 60)); ?>
-        </td>
-      </tr>
       <tr>
         <th>&nbsp;</th>
         <td>&nbsp;</td>
       </tr>
       <tr class="required">
-        <th>Tekst:</th>
+        <th>Onderwerp/tekst:</th>
         <td>
         <?php
 
@@ -51,10 +45,21 @@
           theme_advanced_buttons3 : ""
           ';
 
-        echo textarea_tag('html', $brief_template->getHtml(), array(
-          'rich' => true,
-          'tinymce_options' => $mceoptions
-        ));
+          if ($is_vertaalbaar)
+          {
+            include_partial('brief_text_area_vertaalbaar', array(
+              'brief_template'  => $brief_template, 
+              'mceoptions' => $mceoptions,
+              'language_array'  => $language_array
+            ));
+          }
+          else
+          {
+            include_partial('brief_text_area', array(
+              'brief_template'  => $brief_template, 
+              'mceoptions' => $mceoptions
+            ));
+          }
         ?>
         </td>
         <td>
@@ -148,6 +153,11 @@
         });
       }
     }).change();
+    
+    
+    <?php if ($is_vertaalbaar): ?>
+      $('#tabs').tt_tabs();
+    <?php endif; ?>
   });
 
   function bijlageToevoegen()

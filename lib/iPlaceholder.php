@@ -5,7 +5,7 @@ interface iPlaceholder
   /**
    * @return array : array[placeholder] = value
    */
-  public function fillPlaceholders();
+  public function fillPlaceholders($placeHoldersToFill, $culture);
   
   /**
    * @return array placeholders voor klasse.

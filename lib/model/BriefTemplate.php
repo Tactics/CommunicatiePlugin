@@ -75,5 +75,52 @@ class BriefTemplate extends BaseBriefTemplate
   {
     return $this->getId();
   }
+  
+  /**
+   * Html source ophalen
+   * 
+   * @param $language
+   * @return string Source
+   */
+  public function getHtmlSource($language)
+  {
+    if (is_array($language) && !array_key_exists('label', $language))
+    {
+      throw new sfException('Unknown language format.');
+    }
+    
+    return 'brieftemplate_' . $this->getId() . '_html_' . BriefTemplatePeer::getLabel($language);    
+  }
+  
+  /**
+   * Onderwerp source ophalen
+   * 
+   * @param $language
+   * @return string Source
+   */
+  public function getOnderwerpSource($language)
+  {
+    if (is_array($language) && !array_key_exists('label', $language))
+    {
+      throw new sfException('Unknown language format.');
+    }
+    
+    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . BriefTemplatePeer::getLabel($language);    
+  }
+  
+  /**
+   * Vertaling ophalen a.d.h.v source en taal
+   * 
+   * @param  string source
+   * @return string vertaling
+   */
+  public function getVertaling($source)
+  {
+    $c = new Criteria();
+    $c->add(TransUnitPeer::SOURCE, $source);
+    $transUnit = TransUnitPeer::doSelectOne($c);
+    
+    return $transUnit ? $transUnit->getTarget() : '';
+  }
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));

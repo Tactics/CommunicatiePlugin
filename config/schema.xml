@@ -6,6 +6,7 @@
     <column name="brief_layout_id" type="INTEGER" required="true"/>
     <column name="onderwerp" type="VARCHAR" size="200"/>
     <column name="naam" type="VARCHAR" size="45" required="true"/>
+    <column name="systeemnaam" type="VARCHAR" size="45"/>
     <column name="type" type="VARCHAR" size="45" required="true"/>
     <column name="bestemmeling_classes" type="VARCHAR" size="1000"/>
     <column name="html" type="LONGVARCHAR"/>
@@ -46,7 +47,7 @@
   </table>
 
   <table name="brief_layout">
-    <column name="id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
     <column name="naam" type="VARCHAR" size="255" required="true"/>
     <column name="print_bestand" type="VARCHAR" size="100"/>
     <column name="mail_bestand" type="VARCHAR" size="100"/>
