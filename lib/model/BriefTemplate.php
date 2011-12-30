@@ -142,7 +142,7 @@ class BriefTemplate extends BaseBriefTemplate
       $catalogue     = CataloguePeer::retrieveByName($catalogueName);
       if (! $catalogue)
       {
-        throw new sfException('Catalogue not found');
+        throw new sfException('Catalogue not found: ' . $catalogueName);
       }
 
       $c = new Criteria();
@@ -235,7 +235,7 @@ class BriefTemplate extends BaseBriefTemplate
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html);
     
     $brief = $headAndBody['head'] . $headAndBody['body'];
-
+    
     // Mail versturen
     BerichtPeer::verstuurEmail($email, $brief, array(
       'onderwerp' => $onderwerp,

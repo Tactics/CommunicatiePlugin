@@ -21,7 +21,7 @@
 
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', 
           $onderwerp,
-          array('size' => 60)
+          array('size' => 60, 'id' => 'onderwerp[' . BriefTemplatePeer::getCulture($language) . ']')
          );
          echo ' (Invoegvelden toegestaan) <br /><br />';
       
@@ -29,7 +29,8 @@
           $html,
           array(
             'rich' => true,
-            'tinymce_options' => $mceoptions
+            'tinymce_options' => $mceoptions,
+            'id' => 'html[' . BriefTemplatePeer::getCulture($language) .']'
           )
         );
       ?>

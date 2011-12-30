@@ -146,10 +146,19 @@
       {
         $('.enkelVoorSjablonen').show();
         $.getJSON('<?php echo url_for('brief/templateHtml?template_id=999');?>'.replace('999', $(this).val()), function(data) {
-          tinyMCE.execCommand('mceSetContent', false, data.html);
+          var cultures  = data.cultures;
+          var html      = data.html;
+          var onderwerp = data.onderwerp;
+
+          //console.log(cultures);
+          $(cultures).each(function(i, culture){
+            var h = html[culture];
+            var o = onderwerp[culture];
+            tinyMCE.getInstanceById('html[' + culture + ']').execCommand('mceSetContent', false, h);
+            $('input[name="onderwerp[' + culture + ']"]').val(o);
+          });
           $('#sjabloon_reedsontvangen').html(data.reedsontvangen);
           $('#sjabloon_eenmalig').html(data.eenmalig);
-          $('#onderwerp').val(data.onderwerp);
         });
       }
     }).change();

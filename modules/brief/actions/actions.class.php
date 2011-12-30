@@ -326,11 +326,35 @@ class briefActions extends sfActions
 
       $rs = $this->getRs();
     }
-
+    
+    $cultures       = BriefTemplatePeer::getCultureLabelArray();
+    $defaultCulture = BriefTemplatePeer::getDefaultCulture();
+    
+    $html        = array();
+    $onderwerp   = array();
+    $culture_arr = array();
+    
+    foreach ($cultures as $culture => $label)
+    {
+      $culture_arr[] = $culture;
+      
+      if ($culture === $defaultCulture)
+      {
+        $html[$culture]      = $this->brief_template->getHtml();
+        $onderwerp[$culture] = $this->brief_template->getOnderwerp();
+      }
+      else
+      {
+        $html[$culture]      = $this->brief_template->getVertaling($this->brief_template->getHtmlSource($culture));
+        $onderwerp[$culture] = $this->brief_template->getVertaling($this->brief_template->getOnderwerpSource($culture));
+      }
+    }
+    
     echo json_encode(array(
-      'html' => $this->brief_template->getHtml(),
-      'eenmalig' => $this->brief_template->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
-      'onderwerp' => $this->brief_template->getOnderwerp()
+      'html'      => $html,
+      'eenmalig'  => $this->brief_template->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
+      'onderwerp' => $onderwerp,
+      'cultures'  => $culture_arr
     ));
 
     exit();
@@ -463,9 +487,7 @@ class briefActions extends sfActions
     foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
     {
       $cultureBrieven[$culture] = $this->brief_template->getBriefLayout()->getHeadAndBody($this->emailverzenden ? 'mail' : 'brief', $culture, $this->html[$culture]);
-      $cultureBrieven[$culture]['onderwerp'] = $this->onderwerp[$culture];
-      $cultureBrieven[$culture]['head']     = $headAndBody['head'];       
-      $cultureBrieven[$culture]['body']     = $headAndBody['body'];       
+      $cultureBrieven[$culture]['onderwerp'] = $this->onderwerp[$culture];      
     }    
     
     if ($this->voorbeeld)
