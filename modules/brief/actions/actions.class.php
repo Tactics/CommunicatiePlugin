@@ -116,11 +116,10 @@ class briefActions extends sfActions
       }  
     }
     
-    
-    /*if (! $this->getRequestParameter('brief_layout_id'))
+    if (! $this->getRequestParameter('brief_layout_id'))
     {
       $this->getRequest()->setError('brief_layout_id', 'Gelieve een layout te selecteren.');
-    }*/
+    }
     
     BriefTemplatePeer::isVertaalbaar() ? $this->validateUpdateVertaalbaar() : $this->validateUpdateNietVertaalbaar();
     
