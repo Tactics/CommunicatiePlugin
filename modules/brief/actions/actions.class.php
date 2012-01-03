@@ -598,7 +598,7 @@ class briefActions extends sfActions
             BerichtPeer::verstuurEmail($email, $brief, array(
               'onderwerp' => $onderwerp,
               'skip_template' => true,
-              'afzender' => 'noreply@stad.antwerpen.be',
+              'afzender' => sfConfig::get("sf_mail_sender"),
               'attachements' => $attachements
             ));
 

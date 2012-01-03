@@ -29,7 +29,7 @@ class BriefVerzonden extends BaseBriefVerzonden
       BerichtPeer::verstuurEmail($this->getAdres(), $this->getHtml(), array(
         'onderwerp' => $this->getOnderwerp(),
         'skip_template' => true,
-        'afzender' => 'noreply@stad.antwerpen.be'
+        'afzender' => sfConfig::get("sf_mail_sender")
       ));
 
       // Log de brief
