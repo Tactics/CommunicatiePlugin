@@ -59,8 +59,8 @@ class BriefLayout extends BaseBriefLayout
     }
     else
     {
-      $layout_bestand = $layout->getPrintBestand();
-      $layout_stylesheets = $layout->getPrintStylesheets();
+      $layout_bestand = $this->getPrintBestand();
+      $layout_stylesheets = $this->getPrintStylesheets();
     }
     
     // Lees alle stylesheets in

@@ -12,11 +12,36 @@
 interface iMailer 
 {
   /**
+   * [OPTIONAL] Geeft verschillende types bestemmeling voor het object terug
    * 
+   * @return array[string]string
+   */
+  // public function getBestemmelingTypes();
+  
+  
+  /**
+   * Geeft het e-mailadres van de recipient terug
    * 
    * @return string E-mailaddress
    */  
+  //public function getMailerRecipientMail($bestemmeling = null);
   public function getMailerRecipientMail();
+
+  
+  /**
+   * [OPTIONAL] Geeft een array van e-mailadressen van voor in CC
+   *  
+   * @return array[]string E-mailaddress
+   */  
+  // public function getMailerRecipientCC();
+  
+  /**
+   * [OPTIONAL] Geeft een array van e-mailadressen van voor in BCC
+   *  
+   * @return array[]string E-mailaddress
+   */  
+  // public function getMailerRecipientBCC();
+  
   
   /**
    * 

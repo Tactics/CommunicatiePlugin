@@ -239,7 +239,9 @@ class BriefTemplate extends BaseBriefTemplate
     // Mail versturen
     BerichtPeer::verstuurEmail($email, $brief, array(
       'onderwerp' => $onderwerp,
-      'skip_template' => true
+      'skip_template' => true,
+      'ccRecipients' => (method_exists($object, 'getMailerRecipientCC') ? $object->getMailerRecipientCC() : array()),
+      'bccRecipients' => (method_exists($object, 'getMailerRecipientBCC') ? $object->getMailerRecipientBCC() : array())
     ));
 
     // Mail loggen
