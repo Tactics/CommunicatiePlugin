@@ -504,19 +504,28 @@ class briefActions extends sfActions
       'user_telefoon' => $this->getUser()->getPersoon()->getContactTelefoonWerk() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
       'user_email' => $this->getUser()->getPersoon()->getContactEmail(),
     );
+    
+    
 
     if ($this->emailverzenden)
     {
+      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0);
+              
       while ($this->rs->next())
       {
         $object = new $this->bestemmelingenClass();
         $object->hydrate($this->rs);
 
+        echo $object->__toString() . ': ';
+        
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
         if ($this->brief_template->getEenmaligVersturen() && $this->brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
         {
+          echo 'Reeds verstuurd.<br/>';
+          $counter['reedsverstuurd']++;
           continue;
         }
+        
 
         if ($object->getMailerPrefersEmail())
         {
@@ -603,6 +612,7 @@ class briefActions extends sfActions
             ));
 
             echo 'Bericht verzonden naar : ' . $email . '<br/>';
+            $counter['verstuurd']++;
 
             // Log de brief
             $briefVerzonden = new BriefVerzonden();
@@ -618,7 +628,10 @@ class briefActions extends sfActions
           }
           catch(sfException $e)
           {
-            echo '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '</font><br/>';
+            echo '<font color=red>Bericht kon niet verzonden worden naar ' . $email . '</font>';
+            echo ' (' . $e->getMessage() . ')';
+            echo '<br/>';
+            $counter['error']++;
           }
 
           foreach($attachements as $tmpFile)
@@ -626,9 +639,19 @@ class briefActions extends sfActions
             unlink($tmpFile);
           }
         }
+        else
+        {
+          echo 'Wenst geen e-mail<br/>';
+          $counter['wenstgeenmail']++;
+        }
       }
-
+      
       echo '<br/><br/>Einde verzendlijst<br/><br/>';
+      echo 'Totaal:<br/>';
+      echo 'Reeds verstuurd: ' . $counter['reedsverstuurd'] . '<br/>';
+      echo 'Verstuurd: ' . $counter['verstuurd'] . '<br />';
+      echo 'Error: ' . $counter['error'] . '<br />';
+      echo 'Wensen geen mail: ' . $counter['wenstgeenmail'] . '<br />';
       echo '<a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
       exit();
     }
