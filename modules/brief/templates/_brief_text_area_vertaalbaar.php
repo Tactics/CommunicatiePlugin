@@ -10,13 +10,13 @@
       <?php 
          if (array_key_exists('default', $language) && $language['default'] == true)
          {
-           $onderwerp = $brief_template->getOnderwerp();
-           $html = $brief_template->getHtml();
+           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getOnderwerp();
+           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') :  $brief_template->getHtml();
          }
          else
          {
-           $onderwerp = $brief_template->getVertaling($brief_template->getOnderwerpSource($language['culture']));
-           $html      = $brief_template->getVertaling($brief_template->getHtmlSource($language['culture']));
+           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getOnderwerpSource($language['culture']));
+           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getHtmlSource($language['culture']));
          }
 
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', 

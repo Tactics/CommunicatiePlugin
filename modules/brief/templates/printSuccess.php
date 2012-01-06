@@ -58,10 +58,6 @@
 
   </script>
 
-  <!-- Brieftemplate HEAD -->
-  <?php echo $bericht_head; ?>
-  <!-- /Brieftemplate HEAD -->
-
 	<style type="text/css">
     .printbox td
     {
@@ -141,13 +137,26 @@
         $aantal_via_email++;
         continue;
       }
+      
+      // Culture voor object ophalen
+      $culture = $object->getMailerCulture();
+      $cultures = BriefTemplatePeer::getCultureLabelArray();
+      if (! $culture)
+      {
+        $culture = $this->getUser()->getCulture();
+      }
+      if (! array_key_exists($culture, $cultures))
+      {
+        $culture = BriefTemplatePeer::getCulture(BriefTemplatePeer::getDefaultCulture());
+      }
 
       // replace the placeholders
-      $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
-      $values['onderwerp'] = BriefTemplatePeer::replacePlaceholders($onderwerp, $values);
+      $values = array_merge($object->fillPlaceholders(null, $culture), $defaultPlaceholders);
+      $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $values);
+      $values['onderwerp'] = $onderwerp;
 
-      $brief = BriefTemplatePeer::replacePlaceholders($bericht_body, $values);
-
+      $brief = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $values);
+      $brief = $cultureBrieven[$culture]['head'] . $brief;
       echo "<!-- Brief " . $aantal_brieven . "-->\n";
       echo $brief;
 

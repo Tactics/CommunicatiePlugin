@@ -482,11 +482,11 @@ class briefActions extends sfActions
     $this->onderwerp = $this->getRequestParameter('onderwerp');
     $this->html = $this->getRequestParameter('html');
 
-    $cultureBrieven = array();
+    $this->cultureBrieven = array();
     foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
     {
-      $cultureBrieven[$culture] = $this->brief_template->getBriefLayout()->getHeadAndBody($this->emailverzenden ? 'mail' : 'brief', $culture, $this->html[$culture]);
-      $cultureBrieven[$culture]['onderwerp'] = $this->onderwerp[$culture];      
+      $this->cultureBrieven[$culture] = $this->brief_template->getBriefLayout()->getHeadAndBody($this->emailverzenden ? 'mail' : 'brief', $culture, $this->html[$culture]);
+      $this->cultureBrieven[$culture]['onderwerp'] = $this->onderwerp[$culture];      
     }    
     
     if ($this->voorbeeld)
@@ -533,11 +533,11 @@ class briefActions extends sfActions
           
           // replace the placeholders
           $values = array_merge($object->fillPlaceholders(null, $culture), $this->defaultPlaceholders);
-          $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $values);
+          $onderwerp = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['onderwerp'], $values);
           $values['onderwerp'] = $onderwerp;
 
-          $brief = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $values);
-          $brief = $cultureBrieven[$culture]['head'] . $brief;
+          $brief = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['body'], $values);
+          $brief = $this->cultureBrieven[$culture]['head'] . $brief;
           $email = $object->getMailerRecipientMail();
 
           $attachements = array();
