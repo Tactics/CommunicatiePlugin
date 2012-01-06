@@ -143,7 +143,7 @@
       $cultures = BriefTemplatePeer::getCultureLabelArray();
       if (! $culture)
       {
-        $culture = $this->getUser()->getCulture();
+        $culture = $sf_user->getCulture();
       }
       if (! array_key_exists($culture, $cultures))
       {
