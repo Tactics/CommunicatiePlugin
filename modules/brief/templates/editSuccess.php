@@ -176,12 +176,12 @@ theme_advanced_buttons3 : ""
             )); ?>
             </td>
             <td>
-              <h2 class="pageblock" style="margin-left: 20px; width: 200px;">Invoegvelden</h2>
-              <div class="pageblock" style="width: 195px; margin-left: 20px;margin-bottom: 0px;border-bottom: 0px;">
+              <h2 class="pageblock" style="margin-left: 20px; width: 280px;">Invoegvelden</h2>
+              <div class="pageblock" style="width: 275px; margin-left: 20px;margin-bottom: 0px;border-bottom: 0px;">
                 <label><input type="checkbox" id="hideUnsupported"> Geef enkel invoegvelden weer die door elk type bestemmeling ondersteund worden.</label>
               </div>
-              <div id="placeholders_summary" class="pageblock" style="overflow: auto; height: 430px; width: 195px; margin-left: 20px; display:none;"></div>
-              <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 195px; margin-left: 20px;">
+              <div id="placeholders_summary" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px; display:none;"></div>
+              <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px;">
               <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
                 <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                 <strong><?php echo $oClass['label']; ?></strong>
