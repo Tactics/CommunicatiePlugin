@@ -501,7 +501,7 @@ class briefActions extends sfActions
     $this->defaultPlaceholders = array(
       'datum' => $vandaag->format(),
       'user_naam' => $this->getUser()->getPersoon()->getNaam(),
-      'user_telefoon' => $this->getUser()->getPersoon()->getContactTelefoonWerk() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
+      'user_telefoon' => $this->getUser()->getPersoon()->getContactTelefoonWerk() ? $this->getUser()->getPersoon()->getContactTelefoon() : '-',
       'user_email' => $this->getUser()->getPersoon()->getContactEmail(),
     );
     
