@@ -57,7 +57,7 @@ theme_advanced_buttons3 : ""
 
   jQuery(function($)
   {
-    $('#bestemmelingen :checkbox').click(function()
+    $('#bestemmelingen :checkbox').change(function()
     {
       // Geef placeholders van de verschillende targets weer
       $('#placeholders #target_' + $(this).val()).toggleClass('active', this.checked);
@@ -107,7 +107,7 @@ theme_advanced_buttons3 : ""
         $('#placeholders_summary').html($('<p>Geen geschikte velden</p>'));
       }
 
-    }).click().click();
+    }).change();
 
     // Checkbox toggled weergave alle placeholders of korte lijst met supported placeholders
     $('#hideUnsupported').click(function(){
