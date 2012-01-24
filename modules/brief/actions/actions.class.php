@@ -32,8 +32,33 @@ class briefActions extends sfActions
     $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', null, 'brieven');
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
-    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
-  }
+    
+    // Some hacking om het mogelijk te maken om ook systeemtemplates te versturen,
+    // momenteel enkel mogelijk naar single bestemmeling.
+    if ($this->getUser()->getAttribute('systeem_template_id', null, 'brieven'))
+    {
+      $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getUser()->getAttribute('systeem_template_id', null, 'brieven'));
+    }
+    else
+    {
+      $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id')); 
+    }
+    
+    // is_systeemtemplate var meegeven aan view om makkelijker te werken.
+    $this->is_systeemtemplate = $this->brief_template && $this->brief_template->isSysteemtemplate();   
+    
+    // Het is onmogelijk om "systeemplaceholders" te gebruiken in de opmaakSuccess template,
+    // systeemplaceholders automatisch vervangen.
+    $systeemvalues = $this->getUser()->getAttribute('systeemvalues', array(), 'brieven');
+    
+    // "%" rond keys zetten zodat deze correct vervangen worden (in template zelf).
+    $keys = array_keys($systeemvalues);
+    foreach ($keys as $key => $val)
+    {
+      $keys[$key] = "%{$val}%";
+    }
+    $this->systeemvalues = array_combine($keys, $systeemvalues);
+   }
   
   /**
    * Standaard index actie
@@ -475,7 +500,7 @@ class briefActions extends sfActions
     }
 
     // laadt template
-    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
+    $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id')); 
     $this->forward404Unless($this->brief_template);
         
     // arrays met onderwerp en content per culture

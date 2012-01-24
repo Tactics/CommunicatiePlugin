@@ -18,7 +18,14 @@
            $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getOnderwerpSource($language['culture']));
            $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getHtmlSource($language['culture']));
          }
-
+         
+         if ($is_systeemtemplate)
+         {
+           $search  = array_keys($systeemvalues);
+           $replace = array_values($systeemvalues);
+           $html    = str_replace($search, $replace, $html);
+         }
+         
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', 
           $onderwerp,
           array('size' => 60, 'id' => 'onderwerp[' . BriefTemplatePeer::getCulture($language) . ']')

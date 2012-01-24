@@ -19,6 +19,16 @@ class BriefTemplate extends BaseBriefTemplate
     $returnString .= $this->getNaam() ? ' ' . $this->getNaam() : '';
     return $returnString;
   }
+  
+  /**
+   * Een BriefTemplate is een systeemtemplate wanneer parameter systeemnaam not null is
+   * 
+   * @return bool
+   */
+  public function isSysteemtemplate()
+  {
+    return $this->getSysteemnaam() != null;
+  }
 
   /**
    * controleer of deze template reeds naar het gegeven object_class/id gestuurd is

@@ -9,7 +9,11 @@
       <tr>
         <th>Sjabloon:</th>
         <td>
-          <?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', $brief_template->getId())); ?>
+          <?php
+            echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', $brief_template->getId()), array('disabled' => $is_systeemtemplate)); 
+            // indien selectbox disabled is, zal er geen "template_id" parameter zijn
+            echo $is_systeemtemplate ? input_hidden_tag('template_id', $brief_template->getId()) : '';
+          ?>
         </td>
       </tr>
       <tr>
@@ -48,16 +52,20 @@
           if ($is_vertaalbaar)
           {
             include_partial('brief_text_area_vertaalbaar', array(
-              'brief_template'  => $brief_template, 
-              'mceoptions' => $mceoptions,
-              'language_array'  => $language_array
+              'brief_template'             => $brief_template, 
+              'mceoptions'                 => $mceoptions,
+              'language_array'             => $language_array,
+              'is_systeemtemplate'         => $is_systeemtemplate,
+              'systeemvalues'              => $systeemvalues
             ));
           }
           else
           {
             include_partial('brief_text_area', array(
-              'brief_template'  => $brief_template, 
-              'mceoptions' => $mceoptions
+              'brief_template'             => $brief_template, 
+              'mceoptions'                 => $mceoptions,
+              'is_systeemtemplate'         => $is_systeemtemplate,
+              'systeemvalues'              => $systeemvalues
             ));
           }
         ?>
