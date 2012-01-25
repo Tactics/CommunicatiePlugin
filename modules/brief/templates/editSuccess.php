@@ -180,14 +180,18 @@ theme_advanced_buttons3 : ""
                   include_partial('brief_text_area_vertaalbaar', array(
                     'brief_template'  => $brief_template, 
                     'mceoptions' => $mceoptions,
-                    'language_array'  => $language_array
+                    'language_array'  => $language_array,
+                    'is_systeemtemplate' => $is_systeemtemplate,
+                    'systeemvalues' => $systeemvalues
                   ));
                 }
                 else
                 {
                   include_partial('brief_text_area', array(
                     'brief_template'  => $brief_template, 
-                    'mceoptions' => $mceoptions
+                    'mceoptions' => $mceoptions,
+                    'is_systeemtemplate' => $is_systeemtemplate,
+                    'systeemvalues' => $systeemvalues
                   ));
                 }
               ?>

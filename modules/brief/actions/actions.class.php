@@ -46,19 +46,22 @@ class briefActions extends sfActions
     
     // is_systeemtemplate var meegeven aan view om makkelijker te werken.
     $this->is_systeemtemplate = $this->brief_template && $this->brief_template->isSysteemtemplate();   
-    
+   
     // Het is onmogelijk om "systeemplaceholders" te gebruiken in de opmaakSuccess template,
     // systeemplaceholders automatisch vervangen.
-    $systeemvalues = $this->getUser()->getAttribute('systeemvalues', array(), 'brieven');
-    
+    $this->systeemvalues = $this->getUser()->getAttribute('systeemvalues', array(), 'brieven');
+
     // "%" rond keys zetten zodat deze correct vervangen worden (in template zelf).
-    $keys = array_keys($systeemvalues);
-    foreach ($keys as $key => $val)
-    {
-      $keys[$key] = "%{$val}%";
+    if (! empty($this->systeemvalues))
+    {      
+      $keys = array_keys($this->systeemvalues);
+      foreach ($keys as $key => $val)
+      {
+        $keys[$key] = "%{$val}%";
+      }
+      $this->systeemvalues = array_combine($keys, $this->systeemvalues);
     }
-    $this->systeemvalues = array_combine($keys, $systeemvalues);
-   }
+  }
   
   /**
    * Standaard index actie
@@ -98,6 +101,8 @@ class briefActions extends sfActions
    */
   public function executeEdit()
   {  
+    $this->preExecuteVersturen();
+    
     $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
     
     if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())

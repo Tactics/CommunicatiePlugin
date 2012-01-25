@@ -172,8 +172,8 @@
   ?>
 
   <div class="printbox">
-    <?php echo input_hidden_tag('onderwerp', $onderwerp); ?>
-    <?php echo input_hidden_tag('html', $html); ?>
+    <?php echo input_hidden_tag('onderwerp', $onderwerp); ?>   
+    <?php echo input_hidden_tag('html', $html[$culture]); ?>
     <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
     <?php echo input_hidden_tag('object_ids', implode(',', $object_ids)); ?>
 
