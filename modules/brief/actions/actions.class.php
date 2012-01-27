@@ -29,7 +29,7 @@ class briefActions extends sfActions
     // fix voor ontbrekende autoload in criteria uit sessie
     ini_set('unserialize_callback_func', '__autoload');
     
-    $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', null, 'brieven');
+    $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', new Criteria(), 'brieven');
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
     
