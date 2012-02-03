@@ -143,6 +143,7 @@ class briefActions extends sfActions
     
     $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', null, 'brieven');
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
+    $this->autoloadClasses = $this->getUser()->getAttribute('autoload_classes', array(), 'brieven');
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';    
     $this->choose_template = $this->getUser()->getAttribute('choose_template', true, 'brieven');   
   }
@@ -184,6 +185,12 @@ class briefActions extends sfActions
    */
   private function getRs()
   {
+    foreach ($this->autoloadClasses as $class)
+    {      
+      $classPeer = sfInflector::camelize($class) . 'Peer';        
+      eval($classPeer . '::TABLE_NAME;'); // autoloaden van de peer gebeurt hier
+    }
+    
     while(true)
     {
       try
@@ -194,13 +201,13 @@ class briefActions extends sfActions
       // load Peerclasses when not yet autoloaded
       catch(Exception $e)
       {
-        $m = $e->getMessage();
+        $m = $e->getMessage();           
         if (strpos($m, 'Cannot fetch TableMap for undefined table') === false)
         {
           throw($e);
         }
-        $table = substr($m, strpos($m, 'table:') + 7, -1);
-        $tablePeer = sfInflector::camelize($table) . 'Peer';
+        $table = substr($m, strpos($m, 'table:') + 7, -1);        
+        $tablePeer = sfInflector::camelize($table) . 'Peer';        
         eval($tablePeer . '::TABLE_NAME;'); // autoloaden van de peer gebeurt hier
       }
     }
@@ -214,7 +221,11 @@ class briefActions extends sfActions
   {
     $this->preExecuteVersturen();
     
+    
+    
     $rs = $this->getRs();
+    
+    
     
     $this->aantalBestemmelingen = $rs->getRecordCount();
 
@@ -379,6 +390,7 @@ class briefActions extends sfActions
     $vandaag = new myDate();
     $defaultPlaceholders = array(
       'datum' => $vandaag->format(),
+      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),
       'user_naam' => $this->getUser()->getPersoon()->getNaam(),
       'user_telefoon' => $this->getUser()->getPersoon()->getTelefoon() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
       'user_email' => $this->getUser()->getPersoon()->getEmail(),
