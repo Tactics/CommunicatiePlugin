@@ -1,4 +1,4 @@
-<?php include_partial('global/breadcrumb'); ?>
+<?php include_partial('breadcrumb'); ?>
 <?php // use_javascript('/ttBericht/js/tinymce/tiny_mce.js'); ?>
 
 <?php $onsubmit = $choose_template ? "if (! jQuery('#onderwerp').val()) {alert('Gelieve een onderwerp op te geven'); jQuery('#onderwerp').focus(); return false;}" : ''; ?>

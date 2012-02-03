@@ -1,6 +1,6 @@
 <?php if (! $sf_request->isXmlHttpRequest()) : ?>
 
-<?php include_partial('global/breadcrumb', array('identifier' => 'Briefsjablonen')) ?>
+<?php include_partial('breadcrumb', array('identifier' => 'Briefsjablonen')) ?>
 
 <h2 class="pageblock">Briefsjablonen</h2>
 <div class="pageblock">

@@ -1,4 +1,4 @@
-<?php include_partial('global/breadcrumb', array('identifier' => 'Brieven', 'object' => $brief_template)); ?>
+<?php include_partial('breadcrumb', array('identifier' => 'Brieven', 'object' => $brief_template)); ?>
 <?php //$mceoptions = 'theme:"simple", width:"600", height:"300", convert_urls:\'false\', language:"nl", relative_urls:\'false\', plugins:""'; ?>
 
 <?php $mceoptions = 'theme : "advanced", width:"600", height:"500", convert_urls:\'false\', language:"nl", relative_urls:\'false\', plugins:"paste",

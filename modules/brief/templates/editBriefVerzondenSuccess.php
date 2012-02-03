@@ -1,4 +1,4 @@
-<?php include_partial('global/breadcrumb', array('object' => $object, 'action' => 'Communicatie bewerken'));  ?>
+<?php include_partial('breadcrumb', array('object' => $object, 'action' => 'Communicatie bewerken'));  ?>
 <h2 class="pageblock">Communicatie bewerken</h2>
 <div class="pageblock">
   <?php echo form_tag('brief/updateBriefVerzonden', array('name' => 'edit_brief_verzonden')) ?>
