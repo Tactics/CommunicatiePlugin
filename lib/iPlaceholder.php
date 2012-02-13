@@ -18,7 +18,7 @@ interface iPlaceholder
   public function getLayoutEnTemplateId();
   
   /**
-   * optional method notifyBriefVerzonden($briefVerzonden)
+   * optional method notifyBriefVerzonden($briefVerzonden, $briefTemplateId)
    * indien deze method bestaat, wordt het object waarnaar een brief wordt verzonden op de hoogte gesteld.
    * dit kan handig zijn voor facturen zodat bijvoorbeeld de datum verzonden kan gezet worden
    */

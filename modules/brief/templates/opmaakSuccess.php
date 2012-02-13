@@ -1,6 +1,22 @@
 <?php include_partial('breadcrumb'); ?>
 <?php // use_javascript('/ttBericht/js/tinymce/tiny_mce.js'); ?>
 
+<?php $mceoptions = '
+  mode: "textareas",
+  theme : "advanced", 
+  width:"600", 
+  height:"454", 
+  convert_urls:\'false\', 
+  language:"nl", 
+  relative_urls:\'false\', 
+  plugins:"paste, pagebreak",
+  pagebreak_separator : "%page_break%",
+  theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword",
+  theme_advanced_buttons2 : "",
+  theme_advanced_buttons3 : "",
+  extended_valid_elements : "img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|class]"
+'; ?>
+
 <?php $onsubmit = $choose_template ? "if (! jQuery('#onderwerp').val()) {alert('Gelieve een onderwerp op te geven'); jQuery('#onderwerp').focus(); return false;}" : ''; ?>
 
 <?php echo form_tag('brief/print', array('target' => '_blank', 'multipart' => true, 'onsubmit' => $onsubmit)); ?>
@@ -19,7 +35,7 @@
               'liefst' => 'Ja, indien gewenst',
               'altijd' => 'Ja, altijd',
               'nee' => 'Nee, alles afdrukkken op papier'
-            ), 'ja'), array('onchange' => 'jQuery(".emailonly").toggle(jQuery(this).val() != "nee");'))?>
+            ), 'ja'), array('onchange' => 'jQuery(this).val() != "nee" ? jQuery(".emailonly").show() : jQuery(".emailonly").hide();'))?>
         </td>
       </tr>
       
@@ -53,15 +69,7 @@
         <tr class="required">
           <th>Tekst:</th>
           <td>
-          <?php
-
-          $mceoptions = 'theme : "advanced", width:"600", height:"454", convert_urls:\'false\', language:"nl", relative_urls:\'false\', plugins:"paste",
-            theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword",
-            theme_advanced_buttons2 : "",
-            theme_advanced_buttons3 : ""
-            ';
-
-          echo textarea_tag('html', $brief_template->getHtml(), array(
+          <?php echo textarea_tag('html', $brief_template->getHtml(), array(
             'rich' => true,
             'tinymce_options' => $mceoptions
           ));

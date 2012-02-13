@@ -100,12 +100,14 @@
 
   <style media="screen">
     html {
-      background-color: #f5f5f5;
+      /*background-color: #f5f5f5;*/
     }
     
     body {
-      width: 560px;
+      /*
+      width: 560px;     
       background-color: white;
+      */
     }
 
   </style>

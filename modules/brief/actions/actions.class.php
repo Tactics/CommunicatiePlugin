@@ -145,7 +145,12 @@ class briefActions extends sfActions
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, 'brieven');
     $this->autoloadClasses = $this->getUser()->getAttribute('autoload_classes', array(), 'brieven');
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';    
-    $this->choose_template = $this->getUser()->getAttribute('choose_template', true, 'brieven');   
+    $this->choose_template = $this->getUser()->getAttribute('choose_template', true, 'brieven');
+    if ($this->getUser()->getAttribute('template_id', null, 'brieven'))
+    {
+      $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getUser()->getAttribute('template_id', null, 'brieven'));
+      $this->forward404Unless($this->brief_template);
+    }
   }
 
   /**
@@ -231,11 +236,18 @@ class briefActions extends sfActions
 
     if ($this->choose_template)
     {
-      $c = new Criteria();
-      $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);
-      $this->brief_templates = BriefTemplatePeer::getSorted($c);
+      if ($this->brief_template)
+      {
+        $this->brief_templates = array($this->brief_template);        
+      }
+      else
+      {
+        $c = new Criteria();
+        $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);      
+        $this->brief_templates = BriefTemplatePeer::getSorted($c);
+        $this->brief_template = reset($this->brief_templates);
+      }
       
-      $this->brief_template = reset($this->brief_templates);
       $this->onderwerp = $this->brief_template->getOnderwerp();
     }
   }
@@ -370,8 +382,6 @@ class briefActions extends sfActions
       $viaemail = (($verzenden_via == 'liefst') || ($verzenden_via == 'altijd'));
     }
 
-    $templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
-
     if ($chooseTemplate)
     {      
       $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
@@ -454,21 +464,26 @@ class briefActions extends sfActions
           $brief = $berichtHead . $brief;          
 
           $tmpAttachments = $this->getAttachments($briefTemplate);
+          $attachments = $tmpAttachments;
           
           if (method_exists($object, 'getBriefAttachments'))
           {
             $objectAttachments = $object->getBriefAttachments();
-            $attachments = array_merge($tmpAttachments, $objectAttachments);            
+            $attachments = array_merge($attachments, $objectAttachments);            
           }         
           
-          try {
+          $verstuurd = false;
+          $nietVerstuurdReden = '';
+          try {            
             BerichtPeer::verstuurEmail($email, $brief, array(
               'onderwerp' => $onderwerp,
               'skip_template' => true,
               'afzender' => 'noreply@stad.antwerpen.be',
-              'attachements' => $attachments
+              'attachements' => $attachments,
+              'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
             ));
 
+            $verstuurd = true;
             echo 'Bericht verzonden naar : ' . $email . '<br/>';
 
             // Log de brief
@@ -485,16 +500,13 @@ class briefActions extends sfActions
             // notify object dat er een brief naar het object verzonden is
             if (method_exists($object, 'notifyBriefVerzonden'))
             {
-              $object->notifyBriefVerzonden($briefVerzonden);
+              $object->notifyBriefVerzonden($briefVerzonden, isset($this->brief_template) ? $this->brief_template->getId() : null);
             }
           }
           catch(Exception $e)
           {
-            if (! $email)
-            {
-              echo '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
-            }
-            
+            $nietVerstuurdReden = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
+            echo $nietVerstuurdReden;
           }
 
           foreach($tmpAttachments as $tmpFile)
@@ -507,13 +519,23 @@ class briefActions extends sfActions
           $email = $object->getMailerRecipientMail();
           if ($email)
           {
-            echo "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";  
+            $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+            echo $nietVerstuurdReden;
           }
           else
           {
-            echo "<font color=red>E-mail werd niet verzonden naar debiteur van factuur {$object->getFactuurNummer()}, reden: debiteur heeft geen e-mail adres.</font><br/>";  
+            $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar " . strtolower(get_class($object)) . " met id: " . $object->getId() . ", reden: geen e-mail adres.</font><br/>";
+            echo $nietVerstuurdReden;
           }       
         }
+        
+        if (method_exists($object, 'addLog') && isset($this->brief_template))
+        {        
+          $email = $object->getMailerRecipientMail();
+          $log = "Brief '" . $this->brief_template->getNaam() . "' werd " . ($verstuurd ? "" : "<b>niet</b> ") . "verstuurd via mail naar " . $email . '.';
+          $log .= $verstuurd ? '' : '  Reden: ' . $nietVerstuurdReden;           
+          $object->addLog($log, $html);     
+        }        
       }
 
       echo '<br/><br/>Einde verzendlijst<br/><br/>';
@@ -537,8 +559,7 @@ class briefActions extends sfActions
       $this->defaultPlaceholders = $defaultPlaceholders;
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
-    }
-    
+    }    
   }
 
   /**
@@ -574,7 +595,7 @@ class briefActions extends sfActions
       // replace the placeholders
       $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
       $values['onderwerp'] = BriefTemplatePeer::replacePlaceholders($onderwerp, $values);
-
+      
       $brief = BriefTemplatePeer::replacePlaceholders($html, $values);
 
       $briefVerzonden = new BriefVerzonden();
@@ -590,7 +611,12 @@ class briefActions extends sfActions
       // notify object dat er een brief naar het object verzonden is
       if (method_exists($object, 'notifyBriefVerzonden'))
       {
-        $object->notifyBriefVerzonden($briefVerzonden);
+        $object->notifyBriefVerzonden($briefVerzonden, isset($this->brief_template) ? $this->brief_template->getId() : null);
+      }
+      
+      if (method_exists($object, 'addLog') && isset($this->brief_template))
+      {        
+        $object->addLog("Brief '" . $this->brief_template->getNaam() . "' werd afgedrukt.", $html);        
       }
       
     }

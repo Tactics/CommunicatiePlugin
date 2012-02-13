@@ -1,10 +1,20 @@
 <?php include_partial('breadcrumb', array('identifier' => 'Brieven', 'object' => $brief_template)); ?>
 <?php //$mceoptions = 'theme:"simple", width:"600", height:"300", convert_urls:\'false\', language:"nl", relative_urls:\'false\', plugins:""'; ?>
 
-<?php $mceoptions = 'theme : "advanced", width:"600", height:"500", convert_urls:\'false\', language:"nl", relative_urls:\'false\', plugins:"paste",
-theme_advanced_buttons1 : "code,bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword",
-theme_advanced_buttons2 : "",
-theme_advanced_buttons3 : ""
+<?php $mceoptions = '
+  mode: "textareas",
+  theme : "advanced", 
+  width:"600", 
+  height:"500", 
+  convert_urls:\'false\', 
+  language:"nl", 
+  relative_urls:\'false\', 
+  plugins:"paste, pagebreak",
+  pagebreak_separator : "%page_break%",
+  theme_advanced_buttons1 : "code,bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword",
+  theme_advanced_buttons2 : "",
+  theme_advanced_buttons3 : "",
+  extended_valid_elements : "img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|class]"
 '; ?>
 
 <style type="text/css">

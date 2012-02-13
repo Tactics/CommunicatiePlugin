@@ -188,7 +188,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       $html = strtr($html_layout, array(
         '%stylesheet%' => $css,
         '%body%' => $html,
-        '%image_dir%' => $viaemail ? 'cid:' : url_for('brief/showImage') . '/image/'
+        '%image_dir%' => $emailVerzenden ? 'cid:' : url_for('brief/showImage') . '/image/'
       ));
     }
     
