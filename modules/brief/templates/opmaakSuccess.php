@@ -10,8 +10,8 @@
   language:"nl", 
   relative_urls:\'false\', 
   plugins:"paste, pagebreak",
-  pagebreak_separator : "%page_break%",
-  theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword",
+  pagebreak_separator : "%pagebreak%",
+  theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak",
   theme_advanced_buttons2 : "",
   theme_advanced_buttons3 : "",
   extended_valid_elements : "img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|class]"

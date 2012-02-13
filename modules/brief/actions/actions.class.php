@@ -408,6 +408,7 @@ class briefActions extends sfActions
       'user_naam' => $this->getUser()->getPersoon()->getNaam(),
       'user_telefoon' => $this->getUser()->getPersoon()->getTelefoon() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
       'user_email' => $this->getUser()->getPersoon()->getEmail(),
+      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
     );
     
     if ($voorbeeld)
@@ -587,9 +588,11 @@ class briefActions extends sfActions
 
     $defaultPlaceholders = array(
       'datum' => $vandaag->format(),
+      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),
       'user_naam' => $this->getUser()->getPersoon()->getNaam(),
       'user_telefoon' => $this->getUser()->getPersoon()->getTelefoon() ? $this->getUser()->getPersoon()->getTelefoon() : '-',
       'user_email' => $this->getUser()->getPersoon()->getEmail(),
+      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;" />'
     );
 
     while ($rs->next())
