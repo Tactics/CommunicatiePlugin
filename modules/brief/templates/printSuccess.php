@@ -136,7 +136,7 @@
       $object = new $bestemmelingenClass();
       $object->hydrate($rs);
 
-      if ($viaemail && $object->getMailerPrefersEmail())
+      if ($viaemail && $object->getMailerPrefersEmail() && $object->getMailerRecipientMail())
       {
         $aantal_via_email++;
         if (! $voorbeeld)
@@ -160,7 +160,7 @@
           continue;
         }
         $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);       
-        $html = BriefTemplatePeer::getBerichtHtml($brief_template, $viaemail, $brief_template->getHtml(), $brief_layout, $emailverzenden);
+        $html = BriefTemplatePeer::getBerichtHtml($brief_template, $emailLayout, $emailverzenden, $brief_template->getHtml(), $brief_layout);
       }
       
       // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
@@ -227,7 +227,7 @@
       <br/>
       <br/>
       <br/>
-      <span style="font-size: 9px;">Totaal aantal <?php echo $viaemail ? 'e-mails' : 'brieven'; ?>: <?php echo $aantal_brieven ?></span>
+      <span style="font-size: 9px;">Totaal aantal <?php echo $viaemail ? 'e-mails: ' . $aantal_via_email : 'brieven: ' . $aantal_brieven; ?></span>
     </div>
 
     <center>

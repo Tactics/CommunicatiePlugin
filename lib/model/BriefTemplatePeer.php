@@ -141,19 +141,19 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   /**
    * geeft bericht_html terug
    * 
-   * @param BriefTemplate $briefTemplate
-   * @param boolean $emailVerzenden
+   * @param BriefTemplate $briefTemplate 
+   * @param boolean $emailLayout : mail of print layout
+   * @param boolean $emailverzenden : mail versturen of display op scherm?
    * @param string $html
    * @param BriefLayout $briefLayout optional, default null
-   * @param boolean $viaemail
    * 
    * @return string $bericht_html
    */
-  public static function getBerichtHtml($briefTemplate, $emailVerzenden, $html, $briefLayout = null, $viaemail = false)
+  public static function getBerichtHtml($briefTemplate, $emailLayout, $emailverzenden, $html, $briefLayout = null)
   {    
     $layout = $briefLayout ? $briefLayout : $briefTemplate->getBriefLayout();
 
-    if ($emailVerzenden)
+    if ($emailLayout)
     {
       $layout_bestand = $layout->getMailBestand();
       $layout_stylesheets = $layout->getMailStylesheets();
@@ -188,7 +188,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       $html = strtr($html_layout, array(
         '%stylesheet%' => $css,
         '%body%' => $html,
-        '%image_dir%' => $emailVerzenden ? 'cid:' : url_for('brief/showImage') . '/image/'
+        '%image_dir%' => $emailverzenden ? 'cid:' : url_for('brief/showImage') . '/image/'
       ));
     }
     

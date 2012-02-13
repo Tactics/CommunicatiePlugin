@@ -367,10 +367,14 @@ class briefActions extends sfActions
   {
     $this->preExecuteVersturen();
 
-    $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
-    $emailverzenden = (! $voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);
     $chooseTemplate = $this->getRequestParameter('choose_template', true);
+    $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
+    // moeten er effectief e-mails verzonden worden?
+    $emailverzenden = (! $voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);    
+    // verzenden via email: liefst, altijd of nooit (nee)
     $verzenden_via = $this->getRequestParameter('verzenden_via', false);
+    // ophalen van de brieftemplate met de correcte layout (email of brief)
+    $emailLayout = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
 
     // Voorbeeld is altijd op papier
     if ($voorbeeld)
@@ -381,14 +385,14 @@ class briefActions extends sfActions
     {      
       $viaemail = (($verzenden_via == 'liefst') || ($verzenden_via == 'altijd'));
     }
-
+    
     if ($chooseTemplate)
     {      
       $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
       $this->forward404Unless($briefTemplate);
       
       $onderwerp = $this->getRequestParameter('onderwerp');            
-      $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailverzenden, $this->getRequestParameter('html'), null, $viaemail);
+      $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailLayout, $emailverzenden, $this->getRequestParameter('html'));
       
       // Knip het resulterende document op in stukken zodat we meerdere
       // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
@@ -437,7 +441,7 @@ class briefActions extends sfActions
           $briefLayout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
           
           $onderwerp = $briefTemplate->getOnderwerp();         
-          $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailverzenden, $briefTemplate->getHtml(), $briefLayout, $viaemail);
+          $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailLayout, $emailverzenden, $briefTemplate->getHtml(), $briefLayout);
 
           // Knip het resulterende document op in stukken zodat we meerdere
           // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
@@ -451,6 +455,7 @@ class briefActions extends sfActions
           continue;
         }
 
+        $verstuurd = false;
         $email = $object->getMailerRecipientMail();
         if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)
         {
@@ -470,9 +475,8 @@ class briefActions extends sfActions
           {
             $objectAttachments = $object->getBriefAttachments();
             $attachments = array_merge($attachments, $objectAttachments);            
-          }         
+          }                   
           
-          $verstuurd = false;
           $nietVerstuurdReden = '';
           try {            
             BerichtPeer::verstuurEmail($email, $brief, array(
@@ -555,7 +559,8 @@ class briefActions extends sfActions
       $this->rs = $rs;
       $this->voorbeeld = $voorbeeld;
       $this->emailverzenden = $emailverzenden;
-      $this->viaemail = $voorbeeld && $viaemail;
+      $this->viaemail = $viaemail;
+      $this->emailLayout = $emailLayout;
       $this->defaultPlaceholders = $defaultPlaceholders;
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
