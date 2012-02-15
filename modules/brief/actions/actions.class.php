@@ -61,7 +61,7 @@ class briefActions extends sfActions
   {
     if (! $this->getRequestParameter('classes'))
     {
-      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens ��n mogelijke bestemmeling in te geven.');
+      $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens 1 mogelijke bestemmeling in te geven.');
     }
     
     return !$this->getRequest()->hasErrors();
