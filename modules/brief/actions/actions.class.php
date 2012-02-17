@@ -370,14 +370,12 @@ class briefActions extends sfActions
       $viaemail = (($verzenden_via == 'liefst') || ($verzenden_via == 'altijd'));
     }
 
-    $templateFolder = SF_ROOT_DIR . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
-
     if ($chooseTemplate)
     {      
       $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));    
       $this->forward404Unless($briefTemplate);
       
-      $onderwerp = $this->getRequestParameter('onderwerp');            
+      $templateOnderwerp = $this->getRequestParameter('onderwerp');            
       $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailverzenden, $this->getRequestParameter('html'), null, $viaemail);
       
       // Knip het resulterende document op in stukken zodat we meerdere
@@ -426,7 +424,7 @@ class briefActions extends sfActions
           
           $briefLayout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
           
-          $onderwerp = $briefTemplate->getOnderwerp();         
+          $templateOnderwerp = $briefTemplate->getOnderwerp();         
           $html = BriefTemplatePeer::getBerichtHtml($briefTemplate, $emailverzenden, $briefTemplate->getHtml(), $briefLayout, $viaemail);
 
           // Knip het resulterende document op in stukken zodat we meerdere
@@ -445,8 +443,8 @@ class briefActions extends sfActions
         if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)
         {
           // replace the placeholders
-          $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);
-          $onderwerp = BriefTemplatePeer::replacePlaceholders($onderwerp, $values);
+          $values = array_merge($object->fillPlaceholders(), $defaultPlaceholders);          
+          $onderwerp = BriefTemplatePeer::replacePlaceholders($templateOnderwerp, $values);
           $values['onderwerp'] = $onderwerp;
 
           $brief = BriefTemplatePeer::replacePlaceholders($berichtBody, $values);

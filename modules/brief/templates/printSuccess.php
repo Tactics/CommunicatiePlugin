@@ -128,7 +128,7 @@
     {
       if ($aantal_brieven > 0)
       {
-        echo "\n\n<div STYLE=\"page-break-before: always\"/>\n\n";
+        echo "\n\n<div style=\"page-break-before: always\"></div>\n\n";
       }
 
       $object = new $bestemmelingenClass();
