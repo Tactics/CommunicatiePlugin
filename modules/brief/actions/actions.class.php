@@ -46,6 +46,10 @@ class briefActions extends sfActions
       $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id')); 
     }
     
+    
+    var_dump($this->brief_template);
+    die();
+    
     // is_systeemtemplate var meegeven aan view om makkelijker te werken.
     $this->is_systeemtemplate = $this->brief_template && $this->brief_template->isSysteemtemplate();   
    
