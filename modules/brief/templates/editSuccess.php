@@ -169,11 +169,7 @@
         </label>
         <?php endforeach; ?>
       </td>
-    </tr>
-    <tr>
-      <th>&nbsp;</th>
-      <td>&nbsp;</td>
-    </tr>
+    </tr>    
     <tr>
       <th>&nbsp;</th>
       <td>&nbsp;</td>

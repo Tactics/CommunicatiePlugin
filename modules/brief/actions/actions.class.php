@@ -438,11 +438,9 @@ class briefActions extends sfActions
   {
     $this->preExecuteVersturen();
     
-    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
-    {
-      $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
-    }
-
+    $this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar();
+    $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
+    
     $rs = $this->getRs();
     $this->aantalBestemmelingen = $rs->getRecordCount();
 

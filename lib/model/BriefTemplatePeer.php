@@ -256,7 +256,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {
     $i18n = sfConfig::get('sf_communicatie_i18n');
     
-    return is_array($i18n['languages']) && (count($i18n['languages']) > 0);
+    return is_array($i18n['languages']) && (count($i18n['languages']) > 1);
   }
   
   /**
@@ -267,6 +267,20 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   public static function getTranslationLanguageArray()
   {
     $i18n = sfConfig::get('sf_communicatie_i18n');
+    
+    // default nl_BE
+    if (! $i18n)
+    {
+      $i18n = array('languages' => array(
+        array(
+          'culture' => 'nl_BE',
+          'label' => 'Nederlands',
+          'default' => true
+         ) 
+      ));   
+    }
+   
+    
     return $i18n['languages'];
   }
   

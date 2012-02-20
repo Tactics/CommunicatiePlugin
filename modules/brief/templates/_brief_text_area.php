@@ -1,5 +1,5 @@
-<?php echo object_input_tag($brief_template, 'getOnderwerp', array(
-  'size' => 60
+<?php echo input_tag('onderwerp[' . $language_array[0]['culture'] . ']', $brief_template->getOnderwerp(), array(
+  'size' => 60, 'id' => 'onderwerp[' . $language_array[0]['culture'] . ']'
 )); ?> (Invoegvelden toegestaan) <br /><br />
 
 <?php 
@@ -11,8 +11,9 @@
     $html    = str_replace($search, $replace, $html);
   }
   
-  echo textarea_tag('html', $html, array(
+  echo textarea_tag('html[' . $language_array[0]['culture'] . ']', $html, array(
     'rich' => true,
-    'tinymce_options' => $mceoptions
+    'tinymce_options' => $mceoptions,
+    'id' => 'html[' . $language_array[0]['culture'] . ']'
   )); 
 ?>

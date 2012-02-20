@@ -62,17 +62,27 @@
       <tr class="required">
         <th>Onderwerp/tekst:</th>
         <td>
-        <?php
-          
+        <?php 
+          if ($is_vertaalbaar)
+          {
             include_partial('brief_text_area_vertaalbaar', array(
-              'brief_template'             => $brief_template, 
-              'mceoptions'                 => $mceoptions,
-              'language_array'             => $language_array,
-              'is_systeemtemplate'         => $is_systeemtemplate,
-              'systeemvalues'              => $systeemvalues
+              'brief_template'  => $brief_template, 
+              'mceoptions' => $mceoptions,
+              'language_array'  => $language_array,
+              'is_systeemtemplate' => $is_systeemtemplate,
+              'systeemvalues' => $systeemvalues
             ));
-          
-          
+          }
+          else
+          {
+            include_partial('brief_text_area', array(
+              'brief_template'  => $brief_template, 
+              'mceoptions' => $mceoptions,
+              'language_array'  => $language_array,
+              'is_systeemtemplate' => $is_systeemtemplate,
+              'systeemvalues' => $systeemvalues
+            ));
+          }
         ?>
         </td>
         <td>
