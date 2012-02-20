@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="propel" package="plugins.ttCommunicatiePlugin.lib.model" noxsd="true"
+>
+  <table name="brief_template">
+    <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="brief_layout_id" type="INTEGER" required="true"/>
+    <column name="onderwerp" type="VARCHAR" size="200"/>
+    <column name="naam" type="VARCHAR" size="45" required="true"/>
+    <column name="type" type="VARCHAR" size="45" required="true"/>
+    <column name="bestemmeling_classes" type="VARCHAR" size="1000"/>
+    <column name="html" type="LONGVARCHAR"/>
+    <column name="eenmalig_versturen" type="BOOLEAN" required="true"/>
+    <column name="systeemnaam" type="VARCHAR" size="45"/>
+    <column name="systeemplaceholders" type="VARCHAR" size="1000"/>
+    <column name="created_by" type="INTEGER"/>
+    <column name="updated_by" type="INTEGER"/>
+    <column name="created_at" type="TIMESTAMP"/>
+    <column name="updated_at" type="TIMESTAMP"/>
+    <foreign-key name="fk_brief_template_brief_layout1" foreignTable="brief_layout">
+      <reference local="brief_layout_id" foreign="id"/>
+    </foreign-key>
+    <index>
+      <index-column name="brief_layout_id"/>
+    </index>
+  </table>
+
+  <table name="brief_verzonden">
+    <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="object_class" type="VARCHAR" size="45" required="true"/>
+    <column name="object_id" type="INTEGER" required="true"/>
+    <column name="brief_template_id" type="INTEGER"/>
+    <column name="onderwerp" type="VARCHAR" size="200"/>
+    <column name="html" type="LONGVARCHAR"/>
+    <column name="medium" type="VARCHAR" size="45"/>
+    <column name="adres" type="VARCHAR" size="1000"/>
+    <column name="custom" type="BOOLEAN"/>
+    <column name="culture" type="VARCHAR" size="45"/>
+    <column name="created_by" type="INTEGER"/>
+    <column name="updated_by" type="INTEGER"/>
+    <column name="created_at" type="TIMESTAMP"/>
+    <column name="updated_at" type="TIMESTAMP"/>
+    <foreign-key name="fk_object_kreeg_brief_brief_template1" foreignTable="brief_template">
+      <reference local="brief_template_id" foreign="id"/>
+    </foreign-key>
+    <index>
+      <index-column name="brief_template_id"/>
+    </index>
+  </table>
+
+  <table name="brief_layout">
+    <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="naam" type="VARCHAR" size="255" required="true"/>
+    <column name="print_bestand" type="VARCHAR" size="100"/>
+    <column name="mail_bestand" type="VARCHAR" size="100"/>
+    <column name="print_stylesheets" type="VARCHAR" size="255"/>
+    <column name="mail_stylesheets" type="VARCHAR" size="255"/>
+    <column name="vertaald" type="BOOLEAN" default="false"/>
+    <column name="created_by" type="INTEGER"/>
+    <column name="updated_by" type="INTEGER"/>
+    <column name="created_at" type="TIMESTAMP"/>
+    <column name="updated_at" type="TIMESTAMP"/>
+  </table>
+
+  <table name="brief_bijlage">
+    <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="brief_template_id" type="INTEGER" required="true"/>
+    <column name="bijlage_node_id" type="INTEGER"/>
+    <column name="culture" type="VARCHAR" size="45"/>
+    <column name="created_at" type="TIMESTAMP"/>
+    <column name="updated_at" type="TIMESTAMP"/>
+    <column name="created_by" type="INTEGER"/>
+    <column name="updated_by" type="INTEGER"/>
+    <foreign-key name="fk_brief_bijlage_brief_template1" foreignTable="brief_template">
+      <reference local="brief_template_id" foreign="id"/>
+    </foreign-key>
+    <index>
+      <index-column name="brief_template_id"/>
+    </index>
+  </table>
+</database>
