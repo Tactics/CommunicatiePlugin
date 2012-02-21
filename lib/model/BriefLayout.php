@@ -93,7 +93,7 @@ class BriefLayout extends BaseBriefLayout
       $html = strtr($html_layout, array(
         '%stylesheet%' => $css,
         '%body%' => $html,
-        '%image_dir%' => $emailverzenden ? 'cid:' : url_for('brief/showImage') . '/image/'
+        '%image_dir%' => $emailverzenden ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/'
       ));
     }
 
