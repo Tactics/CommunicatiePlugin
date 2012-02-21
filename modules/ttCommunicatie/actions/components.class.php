@@ -3,9 +3,9 @@
  * brief componenten
  */
 
-class briefComponents extends sfComponents
+class ttCommunicatieComponents extends sfComponents
 {
-  public static function getCommunicatieLogPager($object_class, $object_id, $sqls)
+  public static function getCommunicatieLogPager($object_class, $object_id/* todo? $sqls */)
   {
     $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::ID, false);
 
