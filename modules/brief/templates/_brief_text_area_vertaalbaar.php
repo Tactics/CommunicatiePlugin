@@ -1,3 +1,5 @@
+<?php $language_array = BriefTemplatePeer::getTranslationLanguageArray(); ?>
+
 <div id="tabs">
   <ul>
     <?php foreach ($language_array as $language): ?>
@@ -10,36 +12,28 @@
       <?php 
          if (array_key_exists('default', $language) && $language['default'] == true)
          {
-           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getOnderwerp();
-           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') :  $brief_template->getHtml();
+           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : '';
+           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') :  '';
          }
          else
          {
-           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getOnderwerpSource($language['culture']));
-           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getHtmlSource($language['culture']));
+           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : '';
+           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') : '';
          }
          
-         if ($is_systeemtemplate)
+         if ($brief_template && $brief_template->isSysteemTemplate())
          {
-           $search  = array_keys($systeemvalues);
-           $replace = array_values($systeemvalues);
+           $search  = array_keys($systeemplaceholders);
+           $replace = array_values($systeemplaceholders);
            $html    = str_replace($search, $replace, $html);
          }
          
-        echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', 
-          $onderwerp,
-          array('size' => 60, 'id' => 'onderwerp[' . BriefTemplatePeer::getCulture($language) . ']')
-         );
-         echo ' (Invoegvelden toegestaan) <br /><br />';
+        echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
+          'style' => 'width: 434px;'
+        ));
+        echo ' (Invoegvelden toegestaan) <br /><br />';
       
-        echo textarea_tag('html[' . BriefTemplatePeer::getCulture($language) .']',
-          $html,
-          array(
-            'rich' => true,
-            'tinymce_options' => $mceoptions,
-            'id' => 'html[' . BriefTemplatePeer::getCulture($language) .']'
-          )
-        );
+        echo textarea_tag('html[' . BriefTemplatePeer::getCulture($language) .']', $html);
       ?>
     </div>
   <?php endforeach; ?>

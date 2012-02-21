@@ -405,4 +405,25 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
 		return !empty($v) > 0 ? $v[0] : null;
 	}
+  
+  /**
+   * geeft de culture terug waarin de brief/email verzonden moet worden
+   */
+  public static function calculateCulture($object)
+  {
+    $culture = $object->getMailerCulture();
+    $cultures = self::getCultureLabelArray();
+    
+    if (! $culture)
+    {
+      $culture = sfContext::getInstance()->getUser()->getCulture();
+    }
+    
+    if (! array_key_exists($culture, $cultures))
+    {
+      $culture = self::getDefaultCulture();
+    }
+    
+    return $culture;
+  }
 }

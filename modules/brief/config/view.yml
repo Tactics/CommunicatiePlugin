@@ -6,9 +6,9 @@ printSuccess:
   stylesheets: [-*]
   
 editSuccess:
-  javascripts: [/ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
+  javascripts: [/ttCommunicatie/js/tinymce/tiny_mce.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
   stylesheets: [/ttBase/ui/css/tabs.css]
   
 opmaakSuccess:
-  javascripts: [/ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
+  javascripts: [/ttCommunicatie/js/tinymce/tiny_mce.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
   stylesheets: [/ttBase/ui/css/tabs.css]

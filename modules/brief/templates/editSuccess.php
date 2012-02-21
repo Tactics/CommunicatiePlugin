@@ -1,21 +1,4 @@
 <?php include_partial('breadcrumb', array('identifier' => 'Brieven', 'object' => $brief_template)); ?>
-<?php //$mceoptions = 'theme:"simple", width:"600", height:"300", convert_urls:\'false\', language:"nl", relative_urls:\'false\', plugins:""'; ?>
-
-<?php $mceoptions = '
-  mode: "textareas",
-  theme : "advanced", 
-  width:"600", 
-  height:"500", 
-  convert_urls:\'false\', 
-  language:"nl", 
-  relative_urls:\'false\', 
-  plugins:"paste, pagebreak",
-  pagebreak_separator : "%pagebreak%",
-  theme_advanced_buttons1 : "code,bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak",
-  theme_advanced_buttons2 : "",
-  theme_advanced_buttons3 : "",
-  extended_valid_elements : "img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|class]"
-'; ?>
 
 <style type="text/css">
   li.unsupported a { color: grey }
@@ -67,6 +50,23 @@
 
   jQuery(function($)
   {
+    // language tabs initialiseren
+    $('#tabs').tt_tabs();
+    
+    tinyMCE.init({        
+      mode : "textareas",
+      theme : "advanced", 
+      theme_advanced_toolbar_location : "top",
+      width : "600", 
+      height : "454",       
+      language : "nl",      
+      plugins: "paste, pagebreak",
+      pagebreak_separator : "%pagebreak%",
+      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak",
+      theme_advanced_buttons2 : "",
+      theme_advanced_buttons3 : ""      
+    });
+    
     $('#bestemmelingen :checkbox').change(function()
     {
       // Geef placeholders van de verschillende targets weer
@@ -137,22 +137,21 @@
   }
 </script>
 
-<?php $disabled = isset($systeemnaam) && $systeemnaam ? true : false; ?>
-
 <h2 class="pageblock"><?php echo $brief_template->getId() ? 'Sjabloon bewerken' : 'Nieuw sjabloon'; ?></h2>
 <div class="pageblock">
-  <?php echo form_tag("brief/update", array('multipart' => true, 'name' => 'edit_template')); ?>
   <?php include_partial('global/formvalidationerrors') ?>  
+  
+  <?php echo form_tag("brief/update", array('multipart' => true, 'name' => 'edit_template')); ?>  
   <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <table class="formtable">
     <tr <?php if ($sf_request->hasError('naam')) {echo 'class="error"';} ?>>
       <th>Naam:</th>
-      <td><?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80, 'disabled' => $disabled)); ?></td>
+      <td><?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80, 'disabled' => $brief_template->isSysteemTemplate())); ?></td>
     </tr>
-    <?php if (isset($systeemnaam) && $systeemnaam): ?>
+    <?php if ($brief_template->isSysteemTemplate()): ?>
     <tr>
       <th>Systeemnaam:</th>
-      <td><?php echo $systeemnaam ?></td>
+      <td><?php echo $brief_template->getSysteemnaam() ?></td>
     </tr>
     <?php endif; ?>
     <tr>
@@ -164,7 +163,7 @@
       <td id="bestemmelingen">
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
         <label>
-          <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray()), array('disabled' => $disabled)); ?>
+          <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray()), array('disabled' => $brief_template->isSysteemTemplate())); ?>
           <?php echo $oClass['label']; ?>
         </label>
         <?php endforeach; ?>
@@ -180,26 +179,11 @@
         <table>
           <tr <?php if ($sf_request->hasError('onderwerp')) {echo 'class="error"';} ?>>
             <td>
-              <?php 
-                if ($is_vertaalbaar)
-                {
-                  include_partial('brief_text_area_vertaalbaar', array(
-                    'brief_template'  => $brief_template, 
-                    'mceoptions' => $mceoptions,
-                    'language_array'  => $language_array,
-                    'is_systeemtemplate' => $is_systeemtemplate,
-                    'systeemvalues' => $systeemvalues
-                  ));
-                }
-                else
-                {
-                  include_partial('brief_text_area', array(
-                    'brief_template'  => $brief_template, 
-                    'mceoptions' => $mceoptions,
-                    'is_systeemtemplate' => $is_systeemtemplate,
-                    'systeemvalues' => $systeemvalues
-                  ));
-                }
+              <?php                 
+                include_partial('brief_text_area_vertaalbaar', array(
+                  'brief_template'  => $brief_template,                                   
+                  'systeemplaceholders' => $systeemplaceholders
+                ));                            
               ?>
             </td>
             <td>
@@ -310,11 +294,3 @@
   &nbsp;<?php echo button_to_function('Annuleren', 'history.back();'); ?>
    </form>
 </div>
-
-<?php if ($is_vertaalbaar): ?>
-  <script type="text/javascript">
-    jQuery(function($){
-      $('#tabs').tt_tabs();
-    });
-  </script>
-<?php endif; ?>

@@ -266,5 +266,57 @@ class BriefTemplate extends BaseBriefTemplate
     $briefVerzonden->setHtml($brief);
     $briefVerzonden->save();
   }
+  
+  /**
+   * geeft een array terug van htmls, geindexeerd op culture
+   * 
+   * @return array[culture] = html
+   */
+  public function getHtmlCultureArr()
+  {
+    $cultures = BriefTemplatePeer::getCultureLabelArray();
+    $defaultCulture = BriefTemplatePeer::getDefaultCulture();
+    
+    $html = array();    
+    foreach ($cultures as $culture => $label)
+    {     
+      if ($culture === $defaultCulture)
+      {
+        $html[$culture] = $this->getHtml();        
+      }
+      else
+      {
+        $html[$culture] = $this->getVertaling($this->getHtmlSource($culture));        
+      }
+    }
+    
+    return $html;
+  }
+  
+  /**
+   * geeft een array terug van htmls, geindexeerd op culture
+   * 
+   * @return array[culture] = html
+   */
+  public function getOnderwerpCultureArr()
+  {
+    $cultures = BriefTemplatePeer::getCultureLabelArray();
+    $defaultCulture = BriefTemplatePeer::getDefaultCulture();
+    
+    $onderwerp = array();    
+    foreach ($cultures as $culture => $label)
+    {     
+      if ($culture === $defaultCulture)
+      {
+        $onderwerp[$culture] = $this->getOnderwerp();        
+      }
+      else
+      {
+        $onderwerp[$culture] = $this->getVertaling($this->getOnderwerpSource($culture));        
+      }
+    }
+    
+    return $onderwerp;
+  }
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));

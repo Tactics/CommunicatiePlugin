@@ -14,17 +14,15 @@
 
       <?php if (! $voorbeeld): ?>
 
-      if (confirm("Heeft u de <?php echo $type ?> correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
+      if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
       {
         jQuery.ajax({
           url: "<?php echo url_for('brief/bevestigAfdrukken'); ?>",
           type: 'POST',
           data: {
-            'onderwerp': jQuery('#onderwerp').val(),
-            'template_ids': jQuery('#template_ids').val(),
-            'layout_ids': jQuery('#layout_ids').val(),
-            'object_ids': jQuery('#object_ids').val(),
-            'html': jQuery('#html').val()
+            'hash': '<?php echo $md5hash; ?>',            
+            'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',            
+            'object_ids': jQuery('#object_ids').val()            
           },
           cache: false,
           success: function(l)
@@ -116,11 +114,9 @@
 
   <?php
     $aantal_brieven = 0;
-    $aantal_via_email = 0;
+    $aantal_via_email = 0;    
     $object_ids = array();
-    $template_ids = array();
-    $layout_ids = array();
-   
+    
     // een eerste kleine optimalisatie om de stylesheets ($berichtHead) slechts 1x te includen
     $vorigeCss = '';
     
@@ -143,22 +139,60 @@
         }
       }
       
-      if (! isset($brief_template))
+      if (! $brief_template)      
       {
-        $layoutEnTemplateId = $object->getLayoutEnTemplateId();
-        if (! $layoutEnTemplateId)
+        // brief_template uit object zelf halen
+        if (method_exists($object, 'getLayoutEnTemplateId'))
         {
-          echo "<font color=red>brief_layout_id en brief_template_id niet gevonden voor {$bestemmelingenClass} (id: {$object->getId()})</font><br/>";
-          continue;
+          // template ophalen
+          $layoutEnTemplateId = $object->getLayoutEnTemplateId();
+          if (isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id'])
+          {
+            $brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);          
+            if (! $brief_template)
+            {
+              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
+              continue;                
+            } 
+          }
+          else
+          {
+            echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
+            continue;  
+          }
+
+          // layout ophalen       
+          if (isset($layoutEnTemplateId['brief_layout_id']) && $layoutEnTemplateId['brief_layout_id'])
+          {
+            $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
+            if (! $brief_layout)
+            {
+              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
+              continue;
+            } 
+          }  
+          else
+          {
+            echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
+            continue;  
+          }
         }
-        $brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
-        if (! $brief_template)
+        else
         {
-          echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefTemplate (id: {$layoutEnTemplateId['brief_template_id']}) niet gevonden.</font><br/>";
-          continue;
-        }
-        $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);       
-        $html = BriefTemplatePeer::getBerichtHtml($brief_template, $emailLayout, $emailverzenden, $brief_template->getHtml(), $brief_layout);
+          echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
+          continue;            
+        }  
+
+        // onderwerp en tekst ophalen
+        $onderwerpen = $brief_template->getOnderwerpCultureArr();
+        $htmls = $brief_template->getHtmlCultureArr();
+
+        $cultureBrieven = array();
+        foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
+        {
+          $cultureBrieven[$culture] = $brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
+          $cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
+        } 
       }
       
       // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
@@ -167,55 +201,29 @@
         continue;
       }
       
-      $brief_layout = isset($brief_layout) ? $brief_layout : BriefLayoutPeer::retrieveByPK($brief_template->getBriefLayoutId());
       if (! $brief_layout)
       {
         echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) niet gevonden.</font><br/>";
         continue;
       }
       
-      $template_ids[] = $brief_template->getId();  
-      $layout_ids[] = $brief_layout->getId();
+      
       
       // Culture voor object ophalen
-      $culture = $object->getMailerCulture();
-      $cultures = BriefTemplatePeer::getCultureLabelArray();
-      if (! $culture)
-      {
-        $culture = $sf_user->getCulture();
-      }
-      if (! array_key_exists($culture, $cultures))
-      {
-        $culture = BriefTemplatePeer::getCulture(BriefTemplatePeer::getDefaultCulture());
-      }
-
-      $onderwerp = $brief_template->getOnderwerp();
-      
-//      // Knip het resulterende document op in stukken zodat we meerdere
-//      // brieven kunnen afdrukken zonder foute HTML te genereren (meerdere HEAD / BODY blokken)
-//      $berichtHead = BriefTemplatePeer::getBerichtHead($html);
-//      $berichtBody = BriefTemplatePeer::getBerichtBody($html);
-//      
-//      /* Brieftemplate HEAD (CSS) */
-//      // @todo: te optimaliseren: slechts 1maal zelfde includen //
-//      if ($berichtHead != $vorigeCss)
-//      {
-//        echo $berichtHead;
-//        $vorigeCss = $berichtHead;
-//      }      
-      
+      $culture = BriefTemplatePeer::calculateCulture($object);
+     
       // replace the placeholders
-      $values = array_merge($object->fillPlaceholders(null, $culture), $defaultPlaceholders);
-      $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $values);
-      $values['onderwerp'] = $onderwerp;
-
-      $brief = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $values);
-      $brief = $cultureBrieven[$culture]['head'] . $brief;
+      $placeholders = array_merge($object->fillPlaceholders(null, $culture), $defaultPlaceholders);
+      $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $placeholders);
+      $placeholders['onderwerp'] = $onderwerp;
+      $body = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
+      $brief = $cultureBrieven[$culture]['head'] . $body;
 
       echo "<!-- Brief " . $aantal_brieven . "-->\n";
       echo $brief;
 
-      $object_ids[] = $object->getId();
+      $object_ids[] = $object->getId();      
+      
       $aantal_brieven++;
     }
 
@@ -226,12 +234,8 @@
     }
   ?>
 
-  <div class="printbox">
-    <?php echo input_hidden_tag('onderwerp', isset($onderwerp) ? $onderwerp : ''); ?>
-    <?php echo input_hidden_tag('html', isset($html) ? $html : ''); ?>
-    <?php echo input_hidden_tag('template_ids', implode(',', $template_ids)); ?>
-    <?php echo input_hidden_tag('layout_ids',implode(',', $layout_ids)); ?>
-    <?php echo input_hidden_tag('object_ids', implode(',', $object_ids)); ?>
+  <div class="printbox">        
+    <?php echo input_hidden_tag('object_ids', implode(',', $object_ids)); ?>    
     <div style='float:right;text-align:right'>
       <a href="javascript:window.close()"><?php echo image_tag("icons/close.png")?></a>
       <br/>
