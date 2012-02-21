@@ -9,7 +9,7 @@
  * @version    1.0
  */
 
-interface ittCommunicatie 
+interface iTtCommunicatie 
 {
   /**
    * [OPTIONAL] Geeft verschillende types bestemmeling voor het object terug
