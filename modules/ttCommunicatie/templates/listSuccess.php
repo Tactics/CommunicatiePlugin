@@ -33,15 +33,15 @@
       foreach($results as $briefTemplate)
       {
         $table->addRow(array(
-          link_to($briefTemplate->getId(),  "brief/edit?template_id=" . $briefTemplate->getId()),
-          link_to_unless_empty($briefTemplate->getNaam(), "brief/edit?template_id=" . $briefTemplate->getId()),
-          link_to_unless_empty($briefTemplate->getOnderwerp(), "brief/edit?template_id=" . $briefTemplate->getId()),
+          link_to($briefTemplate->getId(),  "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
+          link_to_unless_empty($briefTemplate->getNaam(), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
+          link_to_unless_empty($briefTemplate->getOnderwerp(), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
           $briefTemplate->getBriefLayoutId() ? $briefTemplate->getBriefLayout()->getNaam() : '-',
           $briefTemplate->getEenmaligVersturen() ? 'eenmaal' : 'meermaals',
           $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
           array("content" =>
               //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
-              link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "brief/edit?template_id=" . $briefTemplate->getId())
+              link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId())
           )
         ));
       }
