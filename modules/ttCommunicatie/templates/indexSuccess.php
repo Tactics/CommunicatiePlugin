@@ -37,7 +37,7 @@
       </tr>
 		</table>
 	</fieldset>
-  <?php echo button_to("Nieuwe brief", 'brief/create'); ?>
+  <?php echo button_to("Nieuwe brief", 'ttCommunicatie/create'); ?>
 	&nbsp;<?php echo button_to_function("Opmaken brieven", 'toonAanvragen();'); ?>
 </div>
 

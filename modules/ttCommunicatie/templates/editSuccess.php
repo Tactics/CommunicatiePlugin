@@ -141,7 +141,7 @@
 <div class="pageblock">
   <?php include_partial('global/formvalidationerrors') ?>  
   
-  <?php echo form_tag("brief/update", array('multipart' => true, 'name' => 'edit_template')); ?>  
+  <?php echo form_tag("ttCommunicatie/update", array('multipart' => true, 'name' => 'edit_template')); ?>  
   <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <table class="formtable">
     <tr <?php if ($sf_request->hasError('naam')) {echo 'class="error"';} ?>>
@@ -270,7 +270,7 @@
       <td>
         <?php foreach ($brief_template->getBriefBijlages() as $brief_bijlage): ?>
           <?php $node = DmsNodePeer::retrieveByPK($brief_bijlage->getBijlageNodeId()); ?>
-          <?php echo link_to($node->getDiskName(), 'brief/downloadAttachment?file_id=' . $node->getId()) . ' ' . link_to(image_tag('icons/trash_16.gif'), 'brief/deleteAttachment?file_id=' . $node->getId() . '&brief_bijlage_id=' . $brief_bijlage->getId() , array('title' => 'Verwijderen')) . '<br />'; ?>
+          <?php echo link_to($node->getDiskName(), 'ttCommunicatie/downloadAttachment?file_id=' . $node->getId()) . ' ' . link_to(image_tag('icons/trash_16.gif'), 'ttCommunicatie/deleteAttachment?file_id=' . $node->getId() . '&brief_bijlage_id=' . $brief_bijlage->getId() , array('title' => 'Verwijderen')) . '<br />'; ?>
         <?php endforeach; ?>
         <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages')) ?> <br />
         <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>

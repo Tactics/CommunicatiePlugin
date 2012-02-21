@@ -42,7 +42,7 @@
     function showDetail(brief_verzonden_id)
     {
       jQuery.ajax({
-        url: '<?php echo url_for('brief/showCommunicatieLog?view=compact&id=9999') ?>'.replace(9999, brief_verzonden_id),
+        url: '<?php echo url_for('ttCommunicatie/showCommunicatieLog?view=compact&id=9999') ?>'.replace(9999, brief_verzonden_id),
         success: function(html) {
           jQuery('div#log_event_detail').html(html);
         }
@@ -53,7 +53,7 @@
     {
 
       jQuery.ajax({
-        url: '<?php echo url_for('brief/herzendEmail?id=9999') ?>'.replace(9999, brief_verzonden_id),
+        url: '<?php echo url_for('ttCommunicatie/herzendEmail?id=9999') ?>'.replace(9999, brief_verzonden_id),
         success: function(msg) {
           alert(msg);
         }

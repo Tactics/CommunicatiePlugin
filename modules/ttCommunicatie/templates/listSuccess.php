@@ -23,7 +23,7 @@
                           array(
                             "sortfield"  => $pager->getOrderBy(),
                             "sortorder"  => $pager->getOrderAsc() ? "ASC" : "DESC",
-                            "sorturi"    => 'brief/list',
+                            "sorturi"    => 'ttCommunicatie/list',
                             "sorttarget" => 'zoekresultaten',
                           )
                         );
@@ -40,7 +40,7 @@
           $briefTemplate->getEenmaligVersturen() ? 'eenmaal' : 'meermaals',
           $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
           array("content" =>
-              //link_to(image_tag('icons/zoom_16.gif'), 'brief/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
+              //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
               link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "brief/edit?template_id=" . $briefTemplate->getId())
           )
         ));
@@ -50,11 +50,11 @@
       echo $table;
       ?>
   <div style="text-align:center">
-    <?php echo pager_navigation($pager, 'brief/list', "zoekresultaten") ?>
+    <?php echo pager_navigation($pager, 'ttCommunicatie/list', "zoekresultaten") ?>
   </div>
 <?php if (! $sf_request->isXmlHttpRequest()) : ?>
   </div>
   <hr />
-  <?php echo button_to("Nieuw sjabloon", 'brief/create'); ?>
+  <?php echo button_to("Nieuw sjabloon", 'ttCommunicatie/create'); ?>
 </div><!-- /.pageblock -->
 <?php endif; ?>

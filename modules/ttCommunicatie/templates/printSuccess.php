@@ -17,7 +17,7 @@
       if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
       {
         jQuery.ajax({
-          url: "<?php echo url_for('brief/bevestigAfdrukken'); ?>",
+          url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",
           type: 'POST',
           data: {
             'hash': '<?php echo $md5hash; ?>',            
@@ -41,7 +41,7 @@
       if (confirm('Er worden ' + aantal + ' e-mails verzonden.  Doorgaan met verzenden?'))
       {
         jQuery.ajax({
-          url: "<?php echo url_for('brief/verstuurEmail'); ?>",
+          url: "<?php echo url_for('ttCommunicatie/verstuurEmail'); ?>",
           type: 'POST',
           cache: false,
           success: function(html)

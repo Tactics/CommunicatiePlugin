@@ -1,7 +1,7 @@
 <?php include_partial('breadcrumb', array('object' => $object, 'action' => 'Communicatie bewerken'));  ?>
 <h2 class="pageblock">Communicatie bewerken</h2>
 <div class="pageblock">
-  <?php echo form_tag('brief/updateBriefVerzonden', array('name' => 'edit_brief_verzonden')) ?>
+  <?php echo form_tag('ttCommunicatie/updateBriefVerzonden', array('name' => 'edit_brief_verzonden')) ?>
     <?php include_partial('global/formvalidationerrors') ?>
     <?php echo input_hidden_tag('brief_verzonden_id', $brief_verzonden->getId()) ?>
     <?php echo input_hidden_tag('object_class', get_class($object)) ?>

@@ -1,6 +1,6 @@
 <?php include_partial('breadcrumb'); ?>
 
-<?php echo form_tag('brief/print', array('target' => '_blank', 'multipart' => true)); ?>
+<?php echo form_tag('ttCommunicatie/print', array('target' => '_blank', 'multipart' => true)); ?>
   <?php echo input_hidden_tag('hash', $md5hash); ?>  
   <?php if ($brief_template) : ?>
     <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
@@ -156,7 +156,7 @@
     $('#template_id').change(function(){
       if ($(this).val())
       {
-        $.getJSON('<?php echo url_for('brief/templateHtml?template_id=999');?>'.replace('999', $(this).val()), function(data) {
+        $.getJSON('<?php echo url_for('ttCommunicatie/templateHtml?template_id=999');?>'.replace('999', $(this).val()), function(data) {
           var cultures  = data.cultures;
           var html      = data.html;
           var onderwerp = data.onderwerp;

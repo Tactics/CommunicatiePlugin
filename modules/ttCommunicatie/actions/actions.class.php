@@ -17,7 +17,7 @@
  * @subpackage brieven
  * @author     Taco Orens
  */
-class briefActions extends sfActions
+class ttCommunicatieActions extends sfActions
 {
   /**
    * geeft de resultset van objecten weer afh van de gegeven class en object_ids
@@ -71,7 +71,7 @@ class briefActions extends sfActions
    */
   public function executeIndex()
   {
-    $this->forward('brief', 'list');
+    $this->forward('ttCommunicatie', 'list');
   }
 
    /**
@@ -79,7 +79,7 @@ class briefActions extends sfActions
    */
   public function executeList()
   {
-    $this->pager = new myFilteredPager('BriefTemplate', 'brief/list');
+    $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list');
     $this->pager->getCriteria()->add(BriefTemplatePeer::TYPE, BriefTemplatePeer::TYPE_DB);
     $this->pager->init();
   }
@@ -278,7 +278,7 @@ class briefActions extends sfActions
       $briefBijlage->setBijlageNodeId($node->getId());
       $briefBijlage->save();
     }
-    $this->redirect('brief/list');
+    $this->redirect('ttCommunicatie/list');
   }
   
   /**
@@ -288,11 +288,11 @@ class briefActions extends sfActions
   {
     if (!$this->getRequestParameter('template_id'))
     {
-      $this->forward('brief', 'create');
+      $this->forward('ttCommunicatie', 'create');
     }
     else
     {
-      $this->forward('brief', 'edit');
+      $this->forward('ttCommunicatie', 'edit');
     }
   }
  
@@ -1011,11 +1011,11 @@ class briefActions extends sfActions
   {
     if ($this->getRequestParameter('brief_verzonden_id'))
     {
-      $this->forward('brief', 'editBriefVerzonden');
+      $this->forward('ttCommunicatie', 'editBriefVerzonden');
     }
     else
     {
-      $this->forward('brief', 'createBriefVerzonden');
+      $this->forward('ttCommunicatie', 'createBriefVerzonden');
     }
   }
 
@@ -1063,7 +1063,7 @@ class briefActions extends sfActions
     $briefTemplateId = $briefBijlage->getBriefTemplateId();
     $briefBijlage->delete();
 
-    $this->redirect('brief/edit?template_id=' . $briefTemplateId);
+    $this->redirect('ttCommunicatie/edit?template_id=' . $briefTemplateId);
   }
 }
   
