@@ -1,0 +1,17 @@
+fillin:
+  enabled:     on   # activate the form repopulation
+  param:
+    name:      edit_template  # name of the form
+
+fields:
+  naam:
+    required:
+      msg: Gelieve een naam in te geven.
+  
+  onderwerp:
+    required:
+      msg: Gelieve een onderwerp in te geven.
+      
+  brief_layout_id:
+    required:
+      msg: Gelieve een layout te selecteren.

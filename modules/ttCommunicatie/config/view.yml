@@ -1,0 +1,14 @@
+all:
+  has_layout: on
+  javascripts:    [-*, <?php echo (SF_DEBUG ? '/ttCommunicatie/js/jquery-1.7.1.js' : '/ttCommunicatie/js/jquery-1.7.1.min.js'); ?>, firebugx.js]
+
+printSuccess:
+  stylesheets: [-*]
+  
+editSuccess:
+  javascripts: [/ttCommunicatie/js/tinymce/tiny_mce.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
+  stylesheets: [/ttBase/ui/css/tabs.css]
+  
+opmaakSuccess:
+  javascripts: [/ttCommunicatie/js/tinymce/tiny_mce.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
+  stylesheets: [/ttBase/ui/css/tabs.css]
