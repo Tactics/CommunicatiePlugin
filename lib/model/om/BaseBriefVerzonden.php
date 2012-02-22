@@ -41,7 +41,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 
 	
-	protected $custom;
+	protected $custom = false;
 
 
 	
@@ -320,7 +320,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setCustom($v)
 	{
 
-		if ($this->custom !== $v) {
+		if ($this->custom !== $v || $v === false) {
 			$this->custom = $v;
 			$this->modifiedColumns[] = BriefVerzondenPeer::CUSTOM;
 		}
