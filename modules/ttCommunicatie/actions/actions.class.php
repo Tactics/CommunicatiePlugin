@@ -666,7 +666,7 @@ class ttCommunicatieActions extends sfActions
           } 
         }       
 
-        echo $object->__toString() . ': ';
+        echo get_class($object) . ' (id ' . $object->getId() . '): ';
         
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
         if ($this->brief_template->getEenmaligVersturen() && $this->brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
