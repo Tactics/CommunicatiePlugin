@@ -1,7 +1,7 @@
 all:
   has_layout: on
-  javascripts:    [-*, <?php echo (SF_DEBUG ? '/ttCommunicatie/js/jquery-1.7.1.js' : '/ttCommunicatie/js/jquery-1.7.1.min.js'); ?>, firebugx.js]
-
+  javascripts:    [-*, <?php echo (SF_DEBUG ? '/ttCommunicatie/js/jquery-1.7.1.js' : '/ttCommunicatie/js/jquery-1.7.1.min.js'); ?>]
+  
 printSuccess:
   stylesheets: [-*]
   
