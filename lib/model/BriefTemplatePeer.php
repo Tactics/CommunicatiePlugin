@@ -45,6 +45,8 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     {
       $newValues["%$placeholder%"] = $value;      
     }
+    // 2x vervangen, eerste keer kunnen placeholders vervangen worden door opnieuw placeholders
+    $html = strtr($html, $newValues);     
     return strtr($html, $newValues);
   }
   
