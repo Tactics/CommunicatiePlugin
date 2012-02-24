@@ -146,7 +146,15 @@
   <table class="formtable">
     <tr <?php if ($sf_request->hasError('naam')) {echo 'class="error"';} ?>>
       <th>Naam:</th>
-      <td><?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80, 'disabled' => $brief_template->isSysteemTemplate())); ?></td>
+      <td>
+        <?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80, 'disabled' => $brief_template->isSysteemTemplate())); ?>
+        <?php 
+          if ($brief_template->isSysteemTemplate())
+          {
+            echo object_input_hidden_tag($brief_template, 'getNaam');
+          }
+        ?>
+      </td>
     </tr>
     <?php if ($brief_template->isSysteemTemplate()): ?>
     <tr>
