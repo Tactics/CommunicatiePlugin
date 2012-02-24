@@ -47,8 +47,9 @@
           <td>
             <?php 
             include_partial('brief_text_area_vertaalbaar', array(
-              'brief_template'  => $brief_template,                                 
-              'systeemplaceholders' => $systeemplaceholders
+              'brief_template'      => $brief_template,                                 
+              'systeemplaceholders' => $systeemplaceholders,
+              'choose_template'     => $choose_template
             ));
             ?>
           </td>
@@ -151,7 +152,8 @@
       theme_advanced_buttons2 : "",
       theme_advanced_buttons3 : ""      
     });
-      
+    
+    <?php if ($choose_template): ?>
     // Laad template na selectie    
     $('#template_id').change(function(){
       if ($(this).val())
@@ -160,13 +162,15 @@
           var cultures  = data.cultures;
           var html      = data.html;
           var onderwerp = data.onderwerp;
-
+          
           //console.info(cultures);
           <?php if ($edit_template) : ?>
             $(cultures).each(function(i, culture){
               var h = html[culture];
               var o = onderwerp[culture];
-              tinyMCE.getInstanceById('html_' + culture).execCommand('mceSetContent', false, h);
+              var editorId = 'html_' + culture;
+              
+              tinyMCE.getInstanceById(editorId).execCommand('mceSetContent', false, h);
               $('#onderwerp_' + culture).val(o);
             });
           <?php endif; ?>
@@ -174,7 +178,8 @@
           $('#sjabloon_eenmalig').html(data.eenmalig);
         });
       }
-    }).change();    
+    }).change();  
+    <?php endif; ?>
   });
 
   function bijlageToevoegen()

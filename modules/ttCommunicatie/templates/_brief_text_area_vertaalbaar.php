@@ -10,18 +10,33 @@
   <?php foreach ($language_array as $language): ?>
     <div id="<?php echo $language['label'] ?>">
       <?php 
-         if (array_key_exists('default', $language) && $language['default'] == true)
+         if (! $choose_template)
          {
-           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : '';
-           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') :  '';
+           if (array_key_exists('default', $language) && $language['default'] == true)
+           {
+             $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getOnderwerp();
+             $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') :  $brief_template->getHtml();
+           }
+           else
+           {
+             $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getOnderwerpSource($language['culture']));
+             $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') : $brief_template->getVertaling($brief_template->getHtmlSource($language['culture']));;
+           }
          }
+         // Wanneer er de mogelijkheid is om uit templates te kiezen, onderwerp & html
+         // invullen met AJAX script (opmaakSuccess).
          else
          {
-           $onderwerp = $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']') : '';
-           $html      = $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') ? $sf_params->get('html[' . BriefTemplatePeer::getCulture($language) . ']') : '';
+           $onderwerp = '';
+           $html = '';
          }
          
-         if ($brief_template && $brief_template->isSysteemTemplate())
+         // @todo
+         // && $sf_context->getActionName() == 'opmaak' is tijdelijke oplossing.
+         // Wanneer gebruiker klaar is om mails te versturen is het de bedoeling dat 
+         // systeemplaceholders automatisch vervangen worden.
+         // Bij het bewerken van een template is dit niet gewenst.
+         if ($brief_template && $brief_template->isSysteemTemplate() && $sf_context->getActionName() == 'opmaak')
          {
            $search  = array_keys($systeemplaceholders);
            $replace = array_values($systeemplaceholders);

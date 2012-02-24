@@ -421,7 +421,7 @@ class ttCommunicatieActions extends sfActions
     {      
       $c = new Criteria();
       $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);      
-      $this->brief_templates = BriefTemplatePeer::getSorted($c);          
+      $this->brief_templates = BriefTemplatePeer::getSorted($c); 
     }
   }
 
@@ -701,14 +701,28 @@ class ttCommunicatieActions extends sfActions
           }                   
           
           $nietVerstuurdReden = '';
-          try {            
-            BerichtPeer::verstuurEmail($email, $brief, array(
+          try {
+            $options = array(
               'onderwerp' => $onderwerp,
               'skip_template' => true,
               'afzender' => sfConfig::get("sf_mail_sender"),
               'attachements' => $attachments,
               'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
-            ));
+            );
+            
+            // getMailerRecipientCC is optionele methode.
+            if (method_exists($object, 'getMailerRecipientCC') && $object->getMailerRecipientCC())
+            {
+              $options['cc'] = $object->getMailerRecipientCc();
+            }
+            
+            // getMailerRecipientBCC is optionele methode.
+            if (method_exists($object, 'getMailerRecipientBCC') && $object->getMailerRecipientBCC())
+            {
+              $options['bcc'] = $object->getMailerRecipientBCC();
+            }
+            
+            BerichtPeer::verstuurEmail($email, $brief, $options);
 
             $verstuurd = true;
             echo 'Bericht verzonden naar : ' . $email . '<br/>';
