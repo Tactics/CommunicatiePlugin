@@ -95,7 +95,8 @@ class ttCommunicatieActions extends sfActions
     {
       $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
     }
-        
+    
+    $this->systeemplaceholders = $this->brief_template->isSysteemtemplate() ? $this->brief_template->getSysteemplaceholdersArray() : array();
     $this->setTemplate('edit');
   }
 
@@ -216,45 +217,35 @@ class ttCommunicatieActions extends sfActions
     $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
     
-    if (BriefTemplatePeer::isVertaalbaar())
-    {
-      $brief_template->save();
+    $brief_template->save();
       
-      $cultures = BriefTemplatePeer::getCultureLabelArray();
-      $defaultCulture = BriefTemplatePeer::getDefaultCulture();
-      
-      // Array met body en onderwerp per culture.
-      $onderwerpen = $this->getRequestParameter('onderwerp');
-      $htmls       = $this->getRequestParameter('html');
-      
-      foreach ($cultures as $culture => $label)
-      {       
-        // Default culture opslaan in brief_template object
-        if ($culture === $defaultCulture) 
-        {
-          $brief_template->setOnderwerp($onderwerpen[$culture]);
-          $brief_template->setHtml($htmls[$culture]); 
-          $brief_template->save(); 
-        }
-        else // Vertalingen opslaan in TransUnit object
-        {          
-          // @todo getCatalogueName method.
-          $catalogueName = 'brieven.'.$culture;
-          $htmlSource = $brief_template->getHtmlSource($culture);
-          $onderwerpSource = $brief_template->getOnderwerpSource($culture);
+    $cultures = BriefTemplatePeer::getCultureLabelArray();
+    $defaultCulture = BriefTemplatePeer::getDefaultCulture();
 
-          $this->updateOrCreateTransUnit($htmlSource, $htmls[$culture], null, $catalogueName);
-          $this->updateOrCreateTransUnit($onderwerpSource, $onderwerpen[$culture], null, $catalogueName);
-        }
+    // Array met body en onderwerp per culture.
+    $onderwerpen = $this->getRequestParameter('onderwerp');
+    $htmls       = $this->getRequestParameter('html');
+
+    foreach ($cultures as $culture => $label)
+    {       
+      // Default culture opslaan in brief_template object
+      if ($culture === $defaultCulture) 
+      {
+        $brief_template->setOnderwerp($onderwerpen[$culture]);
+        $brief_template->setHtml($htmls[$culture]); 
+        $brief_template->save(); 
+      }
+      else // Vertalingen opslaan in TransUnit object
+      {          
+        // @todo getCatalogueName method.
+        $catalogueName = 'brieven.'.$culture;
+        $htmlSource = $brief_template->getHtmlSource($culture);
+        $onderwerpSource = $brief_template->getOnderwerpSource($culture);
+
+        $this->updateOrCreateTransUnit($htmlSource, $htmls[$culture], null, $catalogueName);
+        $this->updateOrCreateTransUnit($onderwerpSource, $onderwerpen[$culture], null, $catalogueName);
       }
     }
-    else
-    {
-      $brief_template->setOnderwerp($this->getRequestParameter('onderwerp'));
-      $brief_template->setHtml($this->getRequestParameter('html')); 
-      $brief_template->save(); 
-    }
-
 
     foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
     {
@@ -472,11 +463,11 @@ class ttCommunicatieActions extends sfActions
         
         if (function_exists('sys_get_temp_dir'))
         {
-          $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+          $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
         }
         else
         {
-          $tmpFile = tempnam('/tmp', 'hrm_brief_bijlage');
+          $tmpFile = tempnam('/tmp', 'brief_bijlage');
         }
         
         $node->saveToFile($tmpFile);
@@ -520,11 +511,11 @@ class ttCommunicatieActions extends sfActions
       {
         if (function_exists('sys_get_temp_dir'))
         {
-          $tmpFile = tempnam(sys_get_temp_dir(), 'hrm_brief_bijlage');
+          $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
         }
         else
         {
-          $tmpFile = tempnam('/tmp', 'hrm_brief_bijlage');
+          $tmpFile = tempnam('/tmp', 'brief_bijlage');
         }        
         move_uploaded_file($fileInfo['tmp_name'], $tmpFile);
         $attachments[$fileInfo['name']] = $tmpFile;
@@ -538,6 +529,8 @@ class ttCommunicatieActions extends sfActions
    */
   public function executePrint()
   {
+    Misc::use_helper('Url');
+    
     $this->preExecuteVersturen();
 
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
@@ -589,7 +582,7 @@ class ttCommunicatieActions extends sfActions
         $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
         $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
       } 
-    }    
+    }   
     
     $rs = $this->getRs();
 
@@ -598,6 +591,7 @@ class ttCommunicatieActions extends sfActions
     $defaultPlaceholders = array(
       'datum' => $vandaag->format(),
       'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),     
+      'image_dir' => $emailverzenden ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
       'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
     );
 
