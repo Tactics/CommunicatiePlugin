@@ -26,6 +26,9 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       $c = new Criteria();
     }
     
+    // templates met systeemnaam zijn nooit uit de dropdown te kiezen
+    $c->add(self::SYSTEEMNAAM, null, Criteria::ISNULL);
+    
     $c->addAscendingOrderByColumn(self::NAAM);
 
     return self::doSelect($c);
