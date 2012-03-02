@@ -530,6 +530,7 @@ class ttCommunicatieActions extends sfActions
   public function executePrint()
   {
     Misc::use_helper('Url');
+    set_time_limit(0);
     
     $this->preExecuteVersturen();
 
