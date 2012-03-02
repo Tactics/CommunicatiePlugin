@@ -1,3 +1,25 @@
+<?php
+// recursieve functie om alle placeholders weer te geven
+function showPlaceholders($placeholders)
+{   
+  echo '<ul>';                            
+  foreach($placeholders as $id => $placeholder)
+  {
+    if (is_array($placeholder))
+    {
+      echo '<li>' . $id;                         
+      showPlaceholders($placeholder);
+      echo '</li>';
+    }
+    else
+    {
+      echo '<li class="placeholder">' . link_to_function($placeholder, 'insertPlaceholder("' . $placeholder . '");') . '</li>';
+    } 
+  }    
+  echo '</ul>';                            
+}
+?>
+
 <?php include_partial('breadcrumb'); ?>
 
 <?php echo form_tag('ttCommunicatie/print', array('target' => '_blank', 'multipart' => true)); ?>
@@ -55,52 +77,11 @@
           </td>
           <td>
             <h2 class="pageblock" style="margin-left: 20px; width: 300px;">Invoegvelden</h2>
-            <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">
-            <ul>
+            <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">            
             <?php
-              $placeHolders = eval("return $bestemmelingenClass::getPlaceholders();");
-              foreach($placeHolders as $group_id => $placeHolderOfGroup)
-              {
-                if (is_array($placeHolderOfGroup))
-                {
-                  echo '<li>' . $group_id . '</li>';
-                  echo '<ul>';
-                  foreach($placeHolderOfGroup as $group_id => $placeHolderOfGroup)
-                  {
-                    if (is_array($placeHolderOfGroup))
-                    {
-                      echo '<li>' . $group_id . '</li>';
-                      echo '<ul>';
-                      foreach($placeHolderOfGroup as $group_id => $placeHolderOfGroup)
-                      {
-                        if (is_array($placeHolderOfGroup))
-                        {
-                          echo '<li>' . $group_id . '</li>';
-                          echo '<ul>';
-
-                          echo '</ul>';
-                        }
-                        else
-                        {
-                          echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
-                        }
-                      }
-                      echo '</ul>';
-                    }
-                    else
-                    {
-                      echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
-                    }
-                  }
-                  echo '</ul>';
-                }
-                else
-                {
-                  echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
-                }
-              }
+              $placeholders = eval("return $bestemmelingenClass::getPlaceholders();");                                
+              showPlaceholders($placeholders);                      
             ?>
-            </ul>
             </div>
           </td>
         </tr>

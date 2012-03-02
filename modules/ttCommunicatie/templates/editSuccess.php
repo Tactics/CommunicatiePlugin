@@ -137,6 +137,28 @@
   }
 </script>
 
+<?php
+// recursieve functie om alle placeholders weer te geven
+function showPlaceholders($placeholders)
+{   
+  echo '<ul>';                            
+  foreach($placeholders as $id => $placeholder)
+  {
+    if (is_array($placeholder))
+    {
+      echo '<li>' . $id;                         
+      showPlaceholders($placeholder);
+      echo '</li>';
+    }
+    else
+    {
+      echo '<li class="placeholder">' . link_to_function($placeholder, 'insertPlaceholder("' . $placeholder . '");') . '</li>';
+    } 
+  }    
+  echo '</ul>';                            
+}
+?>
+
 <h2 class="pageblock"><?php echo $brief_template->getId() ? 'Sjabloon bewerken' : 'Nieuw sjabloon'; ?></h2>
 <div class="pageblock">
   <?php include_partial('global/formvalidationerrors') ?>  
@@ -207,51 +229,10 @@
                   foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
                     <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                       <strong><?php echo $oClass['label']; ?></strong>
-                      <ul>
-                      <?php    
-                        $placeHolders = eval("return {$oClass['class']}::getPlaceholders();");
-                        foreach($placeHolders as $group_id => $placeHolderOfGroup)
-                        {
-                          if (is_array($placeHolderOfGroup))
-                          {
-                            echo '<li>' . $group_id . '</li>';
-                            echo '<ul>';
-                            foreach($placeHolderOfGroup as $group_id => $placeHolderOfGroup)
-                            {
-                              if (is_array($placeHolderOfGroup))
-                              {
-                                echo '<li>' . $group_id . '</li>';
-                                echo '<ul>';
-                                foreach($placeHolderOfGroup as $group_id => $placeHolderOfGroup)
-                                {
-                                  if (is_array($placeHolderOfGroup))
-                                  {
-                                    echo '<li>' . $group_id . '</li>';
-                                    echo '<ul>';
-
-                                    echo '</ul>';
-                                  }
-                                  else
-                                  {
-                                    echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
-                                  }
-                                }
-                                echo '</ul>';
-                              }
-                              else
-                              {
-                                echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
-                              }
-                            }
-                            echo '</ul>';
-                          }
-                          else
-                          {
-                            echo '<li class="placeholder">' . link_to_function($placeHolderOfGroup, 'insertPlaceholder("' . $placeHolderOfGroup . '");') . '</li>';
-                          }
-                        }
+                      <?php  
+                        $placeholders = eval("return {$oClass['class']}::getPlaceholders();");                        
+                        showPlaceholders($placeholders);                          
                       ?>
-                      </ul>
                     </div>
                   <?php endforeach; ?>
                   </div>
