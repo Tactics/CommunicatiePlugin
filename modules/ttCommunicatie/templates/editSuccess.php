@@ -236,7 +236,7 @@ function showPlaceholders($placeholders)
                     </div>
                   <?php endforeach; ?>
                   </div>
-                <?php if ($briefTemplate->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
+                <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
                   <div class="system">
                     <strong>Briefspecifieke velden</strong>
                       <ul>
