@@ -224,30 +224,30 @@ function showPlaceholders($placeholders)
               </div>
 
               <div id="placeholders_summary" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px; display:none;"></div>
-                <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px;">
-                  <?php 
-                  foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
-                    <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
-                      <strong><?php echo $oClass['label']; ?></strong>
-                      <?php  
-                        $placeholders = eval("return {$oClass['class']}::getPlaceholders();");                        
-                        showPlaceholders($placeholders);                          
-                      ?>
-                    </div>
-                  <?php endforeach; ?>
-                  
-                  <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
-                    <div class="system">
-                      <strong>Briefspecifieke velden</strong>
-                        <ul>
-                          <?php foreach ($systeemplaceholders as $systeemplaceholder): ?>
-                            <li class="placeholder"><a href="#" onClick="insertPlaceholder('<?php echo $systeemplaceholder ?>'); return false;"><?php echo $systeemplaceholder ?></a></li>
-                          <?php endforeach; ?>
-                        </ul>
-                    </div>
-                  <?php endif; ?>
-                </div>
-              </div>
+              
+              <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px;">
+                <?php 
+                foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
+                  <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
+                    <strong><?php echo $oClass['label']; ?></strong>
+                    <?php  
+                      $placeholders = eval("return {$oClass['class']}::getPlaceholders();");                        
+                      showPlaceholders($placeholders);                          
+                    ?>
+                  </div>
+                <?php endforeach; ?>
+
+                <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
+                  <div class="system">
+                    <strong>Briefspecifieke velden</strong>
+                      <ul>
+                        <?php foreach ($systeemplaceholders as $systeemplaceholder): ?>
+                          <li class="placeholder"><a href="#" onClick="insertPlaceholder('<?php echo $systeemplaceholder ?>'); return false;"><?php echo $systeemplaceholder ?></a></li>
+                        <?php endforeach; ?>
+                      </ul>
+                  </div>
+                <?php endif; ?>
+              </div>              
             </td>
           </tr>
         </table>
