@@ -5,6 +5,7 @@
 
   #placeholders > div {display: none;}
   #placeholders > div.active {display: block;}
+  #placeholders > div.system {display: block !important;}
 </style>
 
 <script type="text/javascript">
@@ -236,7 +237,7 @@ function showPlaceholders($placeholders)
                     ?>
                   </div>
                 <?php endforeach; ?>
-
+                 
                 <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
                   <div class="system">
                     <strong>Briefspecifieke velden</strong>
@@ -247,7 +248,8 @@ function showPlaceholders($placeholders)
                       </ul>
                   </div>
                 <?php endif; ?>
-              </div>              
+              </div>     
+              
             </td>
           </tr>
         </table>
