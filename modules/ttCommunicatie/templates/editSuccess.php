@@ -235,17 +235,18 @@ function showPlaceholders($placeholders)
                       ?>
                     </div>
                   <?php endforeach; ?>
-                  </div>
-                <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
-                  <div class="system">
-                    <strong>Briefspecifieke velden</strong>
-                      <ul>
-                        <?php foreach ($systeemplaceholders as $systeemplaceholder): ?>
-                          <li class="placeholder"><a href="#" onClick="insertPlaceholder('<?php echo $systeemplaceholder ?>'); return false;"><?php echo $systeemplaceholder ?></a></li>
-                        <?php endforeach; ?>
-                      </ul>
-                  </div>
-                <?php endif; ?>
+                  
+                  <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
+                    <div class="system">
+                      <strong>Briefspecifieke velden</strong>
+                        <ul>
+                          <?php foreach ($systeemplaceholders as $systeemplaceholder): ?>
+                            <li class="placeholder"><a href="#" onClick="insertPlaceholder('<?php echo $systeemplaceholder ?>'); return false;"><?php echo $systeemplaceholder ?></a></li>
+                          <?php endforeach; ?>
+                        </ul>
+                    </div>
+                  <?php endif; ?>
+                </div>
               </div>
             </td>
           </tr>
