@@ -28,8 +28,9 @@ class BriefVerzonden extends BaseBriefVerzonden
     try {
       BerichtPeer::verstuurEmail($this->getAdres(), $this->getHtml(), array(
         'onderwerp' => $this->getOnderwerp(),
-        'skip_template' => true,
-        'afzender' => sfConfig::get("sf_mail_sender")
+        'skip_template' => true,         
+        'afzender' => sfConfig::get("sf_mail_sender"),
+        'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
       ));
 
       // Log de brief

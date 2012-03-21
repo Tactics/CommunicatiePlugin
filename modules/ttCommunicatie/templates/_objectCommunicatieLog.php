@@ -12,21 +12,26 @@
                           array("name" => "adres", "text" => "Adres"),
                           array("name" => "created_at", "text" => "Tijdstip"),
                           array("name" => "onderwerp", "text" => "Onderwerp"),
-                          array("name" => "acties", "text" => "Acties", "align" => "center")
+                          array("name" => "acties", "text" => "Acties", "align" => "center", "width" => "40")
                         ), array()
                       );
 
 
     foreach($pager->getResults() as $briefVerzonden)
     {
-      $table->addRow(array(
-                      $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
-                      $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
-                      format_date($briefVerzonden->getCreatedAt(), 'f'),
-                      $briefVerzonden->getOnderwerp(),
-                      $briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ? link_to_function(image_tag('icons/mail_16.gif', array('alt' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});") : ' - '),
-                      array('trAttributes' => array ('onclick' => 'showDetail(' . $briefVerzonden->getId() . ')'))
-                      ) ;
+      $table->addRow(
+        array(
+          $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
+          $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
+          format_date($briefVerzonden->getCreatedAt(), 'f'),
+          $briefVerzonden->getOnderwerp(),
+          link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' . 
+          ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ? 
+            link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});") : 
+            ''
+          )
+        )
+      );
     }
 
     echo $table;
@@ -50,14 +55,16 @@
     }
 
     function herzendEmail(brief_verzonden_id)
-    {
-
-      jQuery.ajax({
-        url: '<?php echo url_for('ttCommunicatie/herzendEmail?id=9999') ?>'.replace(9999, brief_verzonden_id),
-        success: function(msg) {
-          alert(msg);
-        }
-      });
+    { 
+      if (confirm('Bent u zeker dat u deze e-mail wil herzenden?'))
+      {
+        jQuery.ajax({
+          url: '<?php echo url_for('ttCommunicatie/herzendEmail?id=9999') ?>'.replace(9999, brief_verzonden_id),
+          success: function(msg) {
+            alert(msg);
+          }
+        });
+      }
     }
   </script>
 </div>
