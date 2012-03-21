@@ -36,6 +36,7 @@ class ttCommunicatieActions extends sfActions
     $this->edit_template = $this->getUser()->getAttribute('edit_template', true, $this->md5hash);
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, $this->md5hash);
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
+    $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
     
     // om classes de in de criteria gebruikt worden te autoloaden
     $this->autoloadClasses = $this->getUser()->getAttribute('autoload_classes', array(), $this->md5hash);    
@@ -194,6 +195,11 @@ class ttCommunicatieActions extends sfActions
    */
   public function executeUpdate()
   {
+    if (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false)
+    {
+      $this->forward('ttCommunicatie', 'voorbeeld');
+    }
+    
     if ($this->getRequestParameter('template_id'))
     {
       $brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
@@ -405,9 +411,10 @@ class ttCommunicatieActions extends sfActions
   {
     $this->preExecuteVersturen();
     
-    $rs = $this->getRs();
-    $this->aantalBestemmelingen = $rs->getRecordCount();
-
+    set_time_limit(0);
+    
+    $this->rs = $this->getRs();
+        
     if ($this->choose_template)
     {      
       $c = new Criteria();
@@ -533,6 +540,11 @@ class ttCommunicatieActions extends sfActions
     set_time_limit(0);
     
     $this->preExecuteVersturen();
+        
+    $this->criteria->add(eval('return ' . $this->bestemmelingenPeer . '::ID;'), 
+      $this->getRequestParameter('niet_verzenden_naar', array()),
+      Criteria::NOT_IN
+    );
 
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
     // moeten er effectief e-mails verzonden worden?
@@ -1073,6 +1085,28 @@ class ttCommunicatieActions extends sfActions
     $briefBijlage->delete();
 
     $this->redirect('ttCommunicatie/edit?template_id=' . $briefTemplateId);
+  }
+  
+  /**
+   * Voorbeeld van brief of e-mail bekijken.
+   * Bekijken van voorbeelden op moment van verzenden in executePrint()
+   */
+  public function executeVoorbeeld()
+  {
+    $culture =  array_search($this->getRequestParameter('language_label'), BriefTemplatePeer::getCultureLabelArray());
+    $brief_layout = BriefLayoutPeer::retrieveByPK($this->getRequestParameter('brief_layout_id'));
+    $this->forward404Unless($culture && $brief_layout);
+    
+    $emailLayout = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
+        
+    $htmlArr = $this->getRequestParameter('html');
+    
+    $briefArr = $brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmlArr[$culture]);
+
+    $this->head = $briefArr['head'];
+    $this->body = $briefArr['body'];
+    
+    $this->setLayout(false);    
   }
 }
   

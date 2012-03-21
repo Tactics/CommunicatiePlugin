@@ -22,7 +22,55 @@ function showPlaceholders($placeholders)
 
 <?php include_partial('breadcrumb'); ?>
 
-<?php echo form_tag('ttCommunicatie/print', array('target' => '_blank', 'multipart' => true)); ?>
+<?php if ($show_bestemmelingen): ?>
+<div id="dialog-bestemmelingen" style="display:none;"> 
+  <?php echo form_tag('', array('name' => 'select_bestemmelingen')) ?>
+    <h2>Bestemmelingen</h2>
+    <span>
+      <?php 
+        echo label_for('search', 'Zoeken');
+        echo '&nbsp;';
+        echo input_tag('search'); 
+      ?>
+    </span><br /><br />
+    <span>
+      <?php 
+        echo checkbox_tag('select_all', 1, 1); 
+        echo '&nbsp;';
+        echo label_for('select_all', 'Selecteer / deselecteer alle');
+      ?>
+    </span>
+    <hr />
+    <div style="height: 170px; overflow: auto;">
+      <ul style="list-style-type:none;">
+        <?php 
+          while ($rs->next()):
+            $bestemmeling = new $bestemmelingenClass();
+            $bestemmeling->hydrate($rs);
+        ?>
+        <li>
+          <?php 
+            echo checkbox_tag('bestemmeling_id', $bestemmeling->getId(), 1, array('id' => 'bestemmelingen_id_' . $bestemmeling->getId()));
+            echo '&nbsp;';
+            echo label_for('bestemmelingen_id_' . $bestemmeling->getId(), $bestemmeling->getMailerRecipientName());
+          ?>
+        </li>
+        <?php endwhile; ?>
+      </ul>
+    </div>
+    <hr />
+    <?php echo button_to_function('Opslaan', 'jQuery("#dialog-bestemmelingen").tt_window().close(); countBestemmelingen();');?>
+  </form>
+</div>
+<?php endif; ?>
+
+<?php 
+  echo form_tag('ttCommunicatie/print', array(
+    'name'      => 'print',
+    'target'    => '_blank', 
+    'multipart' => true
+  )); 
+?>
   <?php echo input_hidden_tag('hash', $md5hash); ?>  
   <?php if ($brief_template) : ?>
     <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
@@ -39,7 +87,15 @@ function showPlaceholders($placeholders)
       
       <tr>
         <th>Aantal bestemmelingen:</th>
-        <td><?php echo $aantalBestemmelingen; ?></td>
+        <td>
+          <span id="record-count"><?php echo $rs->getRecordCount() ?></span>
+          <?php           
+            if ($show_bestemmelingen)
+            {
+              echo '(' . link_to_function('Toon lijst', 'showDialog("#dialog-bestemmelingen");') . ')';
+            }
+          ?>
+        </td>
       </tr>
       <tr>
         <th>Verzenden via e-mail:</th>
@@ -114,9 +170,22 @@ function showPlaceholders($placeholders)
   {
     tinyMCE.execCommand('mceInsertContent', null, '%' + placeholder + '%');
   }
-
-  jQuery(function($){
+  
+  <?php if ($show_bestemmelingen): ?>
+  function showDialog(dialog)
+  {
+    jQuery(dialog).tt_window();
+    jQuery('div.close').remove();
+  }    
     
+  function countBestemmelingen()
+  {
+    var aantal = jQuery('input[name="bestemmeling_id"]:checked').length;
+    $('#record-count').html(aantal);
+  }
+  <?php endif; ?>
+
+  jQuery(function($){    
     // language tabs initialiseren
     $('#tabs').tt_tabs();
     
@@ -133,6 +202,40 @@ function showPlaceholders($placeholders)
       theme_advanced_buttons2 : "",
       theme_advanced_buttons3 : ""      
     });
+    
+    <?php if ($show_bestemmelingen): ?>
+    $('#select_all').change(function(){
+      $('input[name="bestemmeling_id"]').attr('checked', $(this).is(':checked')).change();
+    }).change();        
+        
+    $('input[name="bestemmeling_id"]').change(function(){
+      var checked = $(this).is(':checked');
+      if (checked)
+      {
+        $('input#niet_verzenden_naar_' + $(this).val()).remove();
+        
+        $('input[name="bestemmeling_id"]').each(function()
+        {
+          checked = (checked && $(this).is(':checked'));
+          return checked;
+        }); 
+      }
+      else
+      {
+        var input = '<input id="niet_verzenden_naar_' + $(this).val() + '" type="hidden" value="' + $(this).val() + '" name="niet_verzenden_naar[]">';
+        $('form[name="print"]').prepend(input);
+      }
+      
+      $('#select_all').attr('checked', checked);
+    }).change();
+    
+    $('#search').keyup(function(){
+      var search = $(this).val();
+      
+      $('#dialog-bestemmelingen li').show();
+      $('#dialog-bestemmelingen li > label').not(':contains("' + search + '")').closest('li').hide(); 
+    });
+    <?php endif; ?>
     
     <?php if ($choose_template): ?>
     // Laad template na selectie    

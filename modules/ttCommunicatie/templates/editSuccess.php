@@ -283,7 +283,40 @@ function showPlaceholders($placeholders)
     </tr>
   </table>
   <hr>
-  <?php echo submit_tag('Opslaan'); ?>
-  &nbsp;<?php echo button_to_function('Annuleren', 'history.back();'); ?>
+  <?php 
+    echo input_hidden_tag('language_label');
+    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' 
+    echo submit_tag('Voorbeeld brief', array('class' => 'button-target-blank')); 
+    echo '&nbsp;';
+    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' 
+    echo submit_tag('Voorbeeld e-mail', array('class' => 'button-target-blank')); 
+    echo '&nbsp;';
+    echo submit_tag('Opslaan');
+    echo '&nbsp;';
+    echo button_to_function('Annuleren', 'history.back();'); 
+   ?>
    </form>
 </div>
+
+<script type="text/javascript">
+  jQuery(function($){
+    // Afhankelijk van op welke submit tag gebruiker klikt is target _blank.
+    $('input[name="commit"]').click(function(){
+      var form = $(this).closest('form');
+      
+      if ($(this).attr('class') == 'button-target-blank')
+      {
+        form.attr('target', '_blank');
+      }
+      else
+      {
+        form.removeAttr('target');
+      }
+    });
+
+    // Geselecteerde taal in input_hidden_tag stoppen
+    $('#tabs a').click(function(){
+      $('#language_label').val($(this).attr('title'));
+    }).click();
+  });
+</script>
