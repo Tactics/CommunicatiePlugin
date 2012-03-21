@@ -767,7 +767,15 @@ class ttCommunicatieActions extends sfActions
         }      
         else
         {      
-          $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+          if (! $email)
+          {
+            $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
+          }
+          else
+          {
+            $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+          }
+          
           echo $nietVerstuurdReden;      
           $counter['wenstgeenmail']++;
         }
@@ -949,7 +957,7 @@ class ttCommunicatieActions extends sfActions
   {
     $briefVerzonden = BriefVerzondenPeer::retrieveByPk($this->getRequestParameter('id'));
     $this->forward404Unless($briefVerzonden && $briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL);
-
+    
     echo $briefVerzonden->herzendEmail();
     exit();
   }
