@@ -62,7 +62,7 @@ interface iTtCommunicatie extends iMailer
   public function getAdres();
   
   /**
-   * optional method notifyBriefVerzonden($briefVerzonden, $briefTemplateId)
+   * optional method notifyBriefVerzonden($briefVerzonden)
    * indien deze method bestaat, wordt het object waarnaar een brief wordt verzonden op de hoogte gesteld.
    * dit kan handig zijn voor facturen zodat bijvoorbeeld de datum verzonden kan gezet worden
    */

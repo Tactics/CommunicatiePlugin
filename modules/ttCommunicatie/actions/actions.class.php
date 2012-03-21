@@ -541,10 +541,10 @@ class ttCommunicatieActions extends sfActions
     
     $this->preExecuteVersturen();
         
-    $this->criteria->add(eval('return ' . $this->bestemmelingenPeer . '::ID;'), 
-      $this->getRequestParameter('niet_verzenden_naar', array()),
-      Criteria::NOT_IN
-    );
+    if ($this->show_bestemmelingen)
+    {
+      $this->criteria->add(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $this->getRequestParameter('niet_verzenden_naar', array()), Criteria::NOT_IN);
+    }    
 
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
     // moeten er effectief e-mails verzonden worden?
@@ -739,7 +739,7 @@ class ttCommunicatieActions extends sfActions
             $briefVerzonden = new BriefVerzonden();
             $briefVerzonden->setObjectClass($this->bestemmelingenClass);
             $briefVerzonden->setObjectId($object->getId());
-            $briefVerzonden->setBriefTemplateId($this->brief_template->getId());
+            $briefVerzonden->setBriefTemplate($this->brief_template);
             $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
             $briefVerzonden->setAdres($email);
             $briefVerzonden->setOnderwerp($onderwerp);
@@ -750,7 +750,7 @@ class ttCommunicatieActions extends sfActions
             // notify object dat er een brief naar het object verzonden is
             if (method_exists($object, 'notifyBriefVerzonden'))
             {
-              $object->notifyBriefVerzonden($briefVerzonden, $this->brief_template->getId());
+              $object->notifyBriefVerzonden($briefVerzonden);
             }
           }
           catch(Exception $e)
@@ -896,7 +896,7 @@ class ttCommunicatieActions extends sfActions
         } 
       }
       
-      $briefVerzonden->setBriefTemplateId($briefTemplate->getId());
+      $briefVerzonden->setBriefTemplate($briefTemplate);
         
       if (! $this->edit_template)
       {
@@ -915,7 +915,7 @@ class ttCommunicatieActions extends sfActions
       // notify object dat er een brief naar het object verzonden is
       if (method_exists($object, 'notifyBriefVerzonden'))
       {
-        $object->notifyBriefVerzonden($briefVerzonden, $briefTemplate->getId());
+        $object->notifyBriefVerzonden($briefVerzonden);
       }
       
       if (method_exists($object, 'addLog'))
