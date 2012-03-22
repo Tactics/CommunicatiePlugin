@@ -204,6 +204,11 @@ function showPlaceholders($placeholders)
     });
     
     <?php if ($show_bestemmelingen): ?>
+    $.expr[':'].icontains = function(a, i, m) {            
+      return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0; 
+    };
+
+    
     $('#select_all').change(function(){
       $('input[name="bestemmeling_id"]').attr('checked', $(this).is(':checked')).change();
     }).change();        
@@ -233,7 +238,7 @@ function showPlaceholders($placeholders)
       var search = $(this).val();
       
       $('#dialog-bestemmelingen li').show();
-      $('#dialog-bestemmelingen li > label').not(':contains("' + search + '")').closest('li').hide(); 
+      $('#dialog-bestemmelingen li > label').not(':icontains("' + search + '")').closest('li').hide(); 
     });
     <?php endif; ?>
     

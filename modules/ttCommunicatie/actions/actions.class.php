@@ -31,7 +31,7 @@ class ttCommunicatieActions extends sfActions
     
     $this->md5hash = $this->getRequestParameter('hash');
     
-    $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', new Criteria(), $this->md5hash);    
+    $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', new Criteria(), $this->md5hash); 
     $this->choose_template = $this->getUser()->getAttribute('choose_template', true, $this->md5hash);
     $this->edit_template = $this->getUser()->getAttribute('edit_template', true, $this->md5hash);
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, $this->md5hash);
@@ -540,10 +540,10 @@ class ttCommunicatieActions extends sfActions
     set_time_limit(0);
     
     $this->preExecuteVersturen();
-        
+    
     if ($this->show_bestemmelingen)
     {
-      $this->criteria->add(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $this->getRequestParameter('niet_verzenden_naar', array()), Criteria::NOT_IN);
+      $this->criteria->addAnd(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $this->getRequestParameter('niet_verzenden_naar', array()), Criteria::NOT_IN);
     }    
 
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
