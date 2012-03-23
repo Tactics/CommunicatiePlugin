@@ -13,6 +13,9 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
   const MEDIUM_MAIL = 'e-mail';
   const MEDIUM_PERSOONLIJK = 'persoonlijk';
   const MEDIUM_TELEFOON = 'telefoon';
+  
+  const STATUS_VERZONDEN = 'verzonden';
+  const STATUS_NT_VERZONDEN = 'niet verzonden';
 
   /**
    * Geeft de verschillende media weer in een formaat voor

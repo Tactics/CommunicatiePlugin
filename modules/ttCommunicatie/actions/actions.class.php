@@ -745,6 +745,7 @@ class ttCommunicatieActions extends sfActions
             $briefVerzonden->setOnderwerp($onderwerp);
             $briefVerzonden->setCulture($culture);
             $briefVerzonden->setHtml($body);
+            $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
             $briefVerzonden->save();
             
             // notify object dat er een brief naar het object verzonden is
@@ -817,101 +818,23 @@ class ttCommunicatieActions extends sfActions
   {
     $this->preExecuteVersturen();
     
-    // indien er een brief afgedrukt is, gebaseerd op een niet bewerkbare brieftemplate
-    // dan halen we de volledige tekst/onderwerp op
-    // zoniet, vullen we alleen de template_id in
-    if ($this->getRequestParameter('template_id'))
-    {
-      $genericBriefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));     
-      
-      if (! $this->edit_template)
-      {
-        // brief layout ophalen
-        $genericBriefLayout = $genericBriefTemplate->getBriefLayout();
-
-        // onderwerp en tekst ophalen
-        $onderwerpen = $genericBriefTemplate->getOnderwerpCultureArr();
-        $htmls = $genericBriefTemplate->getHtmlCultureArr();
-
-        $cultureBrieven = array();
-        foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
-        {
-          $cultureBrieven[$culture] = $genericBriefLayout->getHeadAndBody('brief', $culture, $htmls[$culture], false);
-          $cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
-        }    
-      }
-        
-    }    
-
-    $object_ids = explode(',', $this->getRequestParameter('object_ids'));
+    $brief_verzonden_ids = explode(',', $this->getRequestParameter('brief_verzonden_ids'));
     
     $c = new Criteria();
-    $c->add(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $object_ids, Criteria::IN);
-    $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($c);');
-
-    $vandaag = new myDate();
-
-    $defaultPlaceholders = array(
-      'datum' => $vandaag->format(),
-      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),      
-      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;" />'
-    );
-
+    $c->add(BriefVerzondenPeer::ID, $brief_verzonden_ids, Criteria::IN);
+    $c->add(BriefVerzondenPeer::STATUS, BriefVerzondenPeer::STATUS_NT_VERZONDEN);
+    
+    $rs = BriefVerzondenPeer::doSelectRs($c);
     while ($rs->next())
     {     
-      $object = new $this->bestemmelingenClass();
-      $object->hydrate($rs);
-      
-      $briefTemplate = null;
-      
-      $culture = BriefTemplatePeer::calculateCulture($object);
-      
       $briefVerzonden = new BriefVerzonden();
-      $briefVerzonden->setObjectClass($this->bestemmelingenClass);
-      $briefVerzonden->setObjectId($object->getId());
-      $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
-      $briefVerzonden->setAdres($object->getAdres());
-      $briefVerzonden->setCulture($culture);
+      $briefVerzonden->hydrate($rs);
       
-      if ($genericBriefTemplate)
-      {
-        $briefTemplate = $genericBriefTemplate;
-        $briefLayout = $genericBriefTemplate->getBriefLayout();
-      }
-      else
-      { 
-        $layoutEnTemplateId = $object->getLayoutEnTemplateId();
-        $briefTemplate = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
-        $briefLayout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
-        
-        // onderwerp en tekst ophalen
-        $onderwerpen = $briefTemplate->getOnderwerpCultureArr();
-        $htmls = $briefTemplate->getHtmlCultureArr();
-
-        $cultureBrieven = array();
-        foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
-        {
-          $cultureBrieven[$culture] = $briefLayout->getHeadAndBody('brief', $culture, $htmls[$culture], false);
-          $cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
-        } 
-      }
-      
-      $briefVerzonden->setBriefTemplate($briefTemplate);
-        
-      if (! $this->edit_template)
-      {
-        // replace the placeholders        
-        $placeholders = array_merge($object->fillPlaceholders(null, $culture), $defaultPlaceholders);
-        $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $placeholders);    
-        $placeholders['onderwerp'] = $onderwerp; // nodig om placeholder %onderwerp% in body te vervangen
-        $html = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
-
-        $briefVerzonden->setHtml($html);      
-        $briefVerzonden->setOnderwerp($onderwerp);
-      }
-     
+      $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
       $briefVerzonden->save();
-            
+     
+      $object = eval("return {$briefVerzonden->getObjectClass()}Peer::retrieveByPk({$briefVerzonden->getObjectId()});");    
+      
       // notify object dat er een brief naar het object verzonden is
       if (method_exists($object, 'notifyBriefVerzonden'))
       {
@@ -920,9 +843,8 @@ class ttCommunicatieActions extends sfActions
       
       if (method_exists($object, 'addLog'))
       {        
-        $object->addLog("Brief &ldquo;" . $briefTemplate->getNaam() . "&rdquo; werd afgedrukt.", $html);    
-      }
-      
+        $object->addLog("Brief &ldquo;" . $briefVerzonden->getBriefTemplate()->getNaam() . "&rdquo; werd afgedrukt.", $briefVerzonden->getHtml());    
+      }      
     }
 
  		return sfView::NONE;
@@ -1027,6 +949,7 @@ class ttCommunicatieActions extends sfActions
     $briefVerzonden->setOnderwerp($this->getRequestParameter('onderwerp'));
     $briefVerzonden->setHtml($this->getRequestParameter('html'));
     $briefVerzonden->setCustom(true);
+    $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
     $briefVerzonden->save();
 
     $this->redirect(strtolower($briefVerzonden->getObjectClass()) . '/showCommunicatieLog?id=' . $briefVerzonden->getObjectId());

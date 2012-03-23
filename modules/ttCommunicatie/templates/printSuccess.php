@@ -114,8 +114,8 @@
 
   <?php
     $aantal_brieven = 0;
-    $aantal_via_email = 0;    
-    $object_ids = array();
+    $aantal_via_email = 0;        
+    $brief_verzonden_ids = array();
     
     // een eerste kleine optimalisatie om de stylesheets ($berichtHead) slechts 1x te includen
     $vorigeCss = '';
@@ -221,8 +221,21 @@
 
       echo "<!-- Brief " . $aantal_brieven . "-->\n";
       echo $brief;
-
-      $object_ids[] = $object->getId();      
+      
+      // Log de brief tijdelijk om later te kunnen bevestigen
+      $briefVerzonden = new BriefVerzonden();
+      $briefVerzonden->setObjectClass(get_class($object));
+      $briefVerzonden->setObjectId($object->getId());
+      $briefVerzonden->setBriefTemplate($brief_template);
+      $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
+      $briefVerzonden->setAdres($object->getAdres());
+      $briefVerzonden->setOnderwerp($onderwerp);
+      $briefVerzonden->setCulture($culture);
+      $briefVerzonden->setHtml($brief);
+      $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_NT_VERZONDEN);
+      $briefVerzonden->save();
+      
+      $brief_verzonden_ids[] = $briefVerzonden->getId();
       
       $aantal_brieven++;
     }
@@ -234,8 +247,8 @@
     }
   ?>
 
-  <div class="printbox">        
-    <?php echo input_hidden_tag('object_ids', implode(',', $object_ids)); ?>    
+  <div class="printbox">            
+    <?php echo input_hidden_tag('brief_verzonden_ids', implode(',', $brief_verzonden_ids)); ?>    
     <div style='float:right;text-align:right'>
       <a href="javascript:window.close()"><?php echo image_tag("icons/close.png")?></a>
       <br/>

@@ -49,6 +49,10 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 
 	
+	protected $status;
+
+
+	
 	protected $created_by;
 
 
@@ -143,6 +147,13 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	}
 
 	
+	public function getStatus()
+	{
+
+		return $this->status;
+	}
+
+	
 	public function getCreatedBy()
 	{
 
@@ -204,7 +215,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setId($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -218,7 +231,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setObjectClass($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -232,7 +247,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setObjectId($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -246,7 +263,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setBriefTemplateId($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -264,7 +283,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setOnderwerp($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -278,7 +299,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setHtml($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -292,7 +315,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setMedium($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -306,7 +331,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setAdres($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -330,7 +357,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setCulture($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -341,10 +370,28 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setStatus($v)
+	{
+
+		
+		
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->status !== $v) {
+			$this->status = $v;
+			$this->modifiedColumns[] = BriefVerzondenPeer::STATUS;
+		}
+
+	} 
+	
 	public function setCreatedBy($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -358,7 +405,9 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setUpdatedBy($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -427,19 +476,21 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 			$this->culture = $rs->getString($startcol + 9);
 
-			$this->created_by = $rs->getInt($startcol + 10);
+			$this->status = $rs->getString($startcol + 10);
 
-			$this->updated_by = $rs->getInt($startcol + 11);
+			$this->created_by = $rs->getInt($startcol + 11);
 
-			$this->created_at = $rs->getTimestamp($startcol + 12, null);
+			$this->updated_by = $rs->getInt($startcol + 12);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 13, null);
+			$this->created_at = $rs->getTimestamp($startcol + 13, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 14, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 14; 
+						return $startcol + 15; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefVerzonden object", $e);
 		}
@@ -657,15 +708,18 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				return $this->getCulture();
 				break;
 			case 10:
-				return $this->getCreatedBy();
+				return $this->getStatus();
 				break;
 			case 11:
-				return $this->getUpdatedBy();
+				return $this->getCreatedBy();
 				break;
 			case 12:
-				return $this->getCreatedAt();
+				return $this->getUpdatedBy();
 				break;
 			case 13:
+				return $this->getCreatedAt();
+				break;
+			case 14:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -688,10 +742,11 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 			$keys[7] => $this->getAdres(),
 			$keys[8] => $this->getCustom(),
 			$keys[9] => $this->getCulture(),
-			$keys[10] => $this->getCreatedBy(),
-			$keys[11] => $this->getUpdatedBy(),
-			$keys[12] => $this->getCreatedAt(),
-			$keys[13] => $this->getUpdatedAt(),
+			$keys[10] => $this->getStatus(),
+			$keys[11] => $this->getCreatedBy(),
+			$keys[12] => $this->getUpdatedBy(),
+			$keys[13] => $this->getCreatedAt(),
+			$keys[14] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -738,15 +793,18 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				$this->setCulture($value);
 				break;
 			case 10:
-				$this->setCreatedBy($value);
+				$this->setStatus($value);
 				break;
 			case 11:
-				$this->setUpdatedBy($value);
+				$this->setCreatedBy($value);
 				break;
 			case 12:
-				$this->setCreatedAt($value);
+				$this->setUpdatedBy($value);
 				break;
 			case 13:
+				$this->setCreatedAt($value);
+				break;
+			case 14:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -766,10 +824,11 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[7], $arr)) $this->setAdres($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCustom($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setCulture($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCreatedBy($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setUpdatedBy($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCreatedAt($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setUpdatedAt($arr[$keys[13]]);
+		if (array_key_exists($keys[10], $arr)) $this->setStatus($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCreatedBy($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setUpdatedBy($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCreatedAt($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setUpdatedAt($arr[$keys[14]]);
 	}
 
 	
@@ -787,6 +846,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefVerzondenPeer::ADRES)) $criteria->add(BriefVerzondenPeer::ADRES, $this->adres);
 		if ($this->isColumnModified(BriefVerzondenPeer::CUSTOM)) $criteria->add(BriefVerzondenPeer::CUSTOM, $this->custom);
 		if ($this->isColumnModified(BriefVerzondenPeer::CULTURE)) $criteria->add(BriefVerzondenPeer::CULTURE, $this->culture);
+		if ($this->isColumnModified(BriefVerzondenPeer::STATUS)) $criteria->add(BriefVerzondenPeer::STATUS, $this->status);
 		if ($this->isColumnModified(BriefVerzondenPeer::CREATED_BY)) $criteria->add(BriefVerzondenPeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefVerzondenPeer::UPDATED_BY)) $criteria->add(BriefVerzondenPeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefVerzondenPeer::CREATED_AT)) $criteria->add(BriefVerzondenPeer::CREATED_AT, $this->created_at);
@@ -838,6 +898,8 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		$copyObj->setCustom($this->custom);
 
 		$copyObj->setCulture($this->culture);
+
+		$copyObj->setStatus($this->status);
 
 		$copyObj->setCreatedBy($this->created_by);
 
