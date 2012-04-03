@@ -159,8 +159,14 @@ function showPlaceholders($placeholders)
     <hr />
     <?php echo submit_tag('Voorbeeld brief'); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
     <?php echo submit_tag('Voorbeeld e-mail'); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>    
-    <?php echo submit_tag('Brieven afdrukken', array('confirm' => 'Bent u zeker dat u tot ' . $rs->getRecordCount() . ' brieven wilt afdrukken?')); ?>
-    <?php echo submit_tag('E-mails verzenden', array('class' => 'emailonly', 'confirm' => 'Bent u zeker dat u tot ' . $rs->getRecordCount() . ' e-mails wilt verzenden?')); ?>
+    
+    <?php if ($show_bestemmelingen): ?>
+      <?php echo submit_tag('Brieven afdrukken'); ?>
+      <?php echo submit_tag('E-mails verzenden', array('class' => 'emailonly')); ?>
+    <?php else: ?>
+      <?php echo submit_tag('Brieven afdrukken', array('confirm' => 'Bent u zeker dat u tot ' . $rs->getRecordCount() . ' brieven wilt afdrukken?')); ?>
+      <?php echo submit_tag('E-mails verzenden', array('class' => 'emailonly', 'confirm' => 'Bent u zeker dat u tot ' . $rs->getRecordCount() . ' e-mails wilt verzenden?')); ?>
+    <?php endif; ?>
     
   </div>
 </form>
@@ -181,8 +187,9 @@ function showPlaceholders($placeholders)
   function countBestemmelingen()
   {
     var aantal = jQuery('input[name="bestemmeling_id"]:checked').length;
-    $('#record-count').html(aantal);
+    jQuery('#record-count').html(aantal);
   }
+  
   <?php endif; ?>
 
   jQuery(function($){    
@@ -240,6 +247,12 @@ function showPlaceholders($placeholders)
       $('#dialog-bestemmelingen li').show();
       $('#dialog-bestemmelingen li > label').not(':icontains("' + search + '")').closest('li').hide(); 
     });
+    
+    // confirmbox
+    $('form[name=print]').submit(function(){
+      return confirm("Bent u zeker dat u tot " + jQuery('input[name=bestemmeling_id]:checked').length + " e-mails wilt verzenden?");
+    });
+    
     <?php endif; ?>
     
     <?php if ($choose_template): ?>
