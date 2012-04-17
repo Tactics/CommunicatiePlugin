@@ -818,7 +818,9 @@ class ttCommunicatieActions extends sfActions
   {
     $this->preExecuteVersturen();
     
-    $brief_verzonden_ids = explode(',', $this->getRequestParameter('brief_verzonden_ids'));
+    $brief_verzonden_ids = strpos($this->getRequestParameter('brief_verzonden_ids'), ',') !== false ? 
+                            explode(',', $this->getRequestParameter('brief_verzonden_ids')) : 
+                            array($this->getRequestParameter('brief_verzonden_ids'));
     
     $c = new Criteria();
     $c->add(BriefVerzondenPeer::ID, $brief_verzonden_ids, Criteria::IN);

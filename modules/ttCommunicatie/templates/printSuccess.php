@@ -22,7 +22,7 @@
           data: {
             'hash': '<?php echo $md5hash; ?>',            
             'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',            
-            'object_ids': jQuery('#object_ids').val()            
+            'brief_verzonden_ids': jQuery('#brief_verzonden_ids').val()            
           },
           cache: false,
           success: function(l)
