@@ -148,8 +148,8 @@
           $layoutEnTemplateId = $object->getLayoutEnTemplateId();
           if (isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id'])
           {
-            $brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);          
-            if (! $brief_template)
+            $object_brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);          
+            if (! $object_brief_template)
             {
               echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
               continue;                
@@ -184,8 +184,8 @@
         }  
 
         // onderwerp en tekst ophalen
-        $onderwerpen = $brief_template->getOnderwerpCultureArr();
-        $htmls = $brief_template->getHtmlCultureArr();
+        $onderwerpen = $object_brief_template->getOnderwerpCultureArr();
+        $htmls = $object_brief_template->getHtmlCultureArr();
 
         $cultureBrieven = array();
         foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
@@ -194,9 +194,13 @@
           $cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
         } 
       }
+      else
+      {
+        $object_brief_template = $brief_template;
+      }
       
       // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-      if (! $voorbeeld && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($bestemmelingenClass, $object->getId()))
+      if (! $voorbeeld && $object_brief_template->getEenmaligVersturen() && $object_brief_template->ReedsVerstuurdNaar($bestemmelingenClass, $object->getId()))
       {
         continue;
       }
