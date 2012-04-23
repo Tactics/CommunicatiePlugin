@@ -230,7 +230,7 @@
       $briefVerzonden = new BriefVerzonden();
       $briefVerzonden->setObjectClass(get_class($object));
       $briefVerzonden->setObjectId($object->getId());
-      $briefVerzonden->setBriefTemplate($brief_template);
+      $briefVerzonden->setBriefTemplate($object_brief_template);
       $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
       $briefVerzonden->setAdres($object->getAdres());
       $briefVerzonden->setOnderwerp($onderwerp);
