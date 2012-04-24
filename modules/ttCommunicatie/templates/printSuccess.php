@@ -129,8 +129,9 @@
 
       $object = new $bestemmelingenClass();
       $object->hydrate($rs);
-
-      if ($viaemail && $object->getMailerPrefersEmail() && $object->getMailerRecipientMail())
+      
+      $email = $object->getMailerRecipientMail();
+      if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)      
       {
         $aantal_via_email++;
         if (! $voorbeeld)

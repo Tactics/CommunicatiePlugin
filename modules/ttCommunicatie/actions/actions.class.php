@@ -810,6 +810,7 @@ class ttCommunicatieActions extends sfActions
       $this->viaemail = $viaemail;
       $this->emailLayout = $emailLayout;
       $this->defaultPlaceholders = $defaultPlaceholders;
+      $this->verzenden_via = $verzenden_via;
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
     }    
