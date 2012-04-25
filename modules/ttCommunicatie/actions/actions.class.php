@@ -38,6 +38,16 @@ class ttCommunicatieActions extends sfActions
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
     $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
     
+    // indien object gegeven, wordt criteria en bestemmelingenClass/Peer enzo niet gebruikt.
+    $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
+    
+    if ($this->bestemmelingen_object)
+    {
+      $this->criteria = null;
+      $this->bestemmelingenClass = null;
+      $this->bestemmelingenPeer = '';
+    }
+    
     // om classes de in de criteria gebruikt worden te autoloaden
     $this->autoloadClasses = $this->getUser()->getAttribute('autoload_classes', array(), $this->md5hash);    
     
@@ -565,7 +575,7 @@ class ttCommunicatieActions extends sfActions
 
     }    
     
-    if ($voorbeeld)
+    if ($voorbeeld && $this->criteria)
     {
       $this->criteria->setLimit(1);
     }    
@@ -597,8 +607,6 @@ class ttCommunicatieActions extends sfActions
       } 
     }   
     
-    $rs = $this->getRs();
-
     // default placeholders die in layout gebruikt kunnen worden
     $vandaag = new myDate();
     $defaultPlaceholders = array(
@@ -612,6 +620,7 @@ class ttCommunicatieActions extends sfActions
     { 
       $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0);
       
+      $rs = $this->getRs();
       while ($rs->next())      
       {
         $object = new $this->bestemmelingenClass();
@@ -804,7 +813,10 @@ class ttCommunicatieActions extends sfActions
     }
     else
     { 
-      $this->rs = $rs;
+      if ($this->criteria)
+      {
+        $this->rs = $this->getRs();
+      }
       $this->voorbeeld = $voorbeeld;
       $this->emailverzenden = $emailverzenden;
       $this->viaemail = $viaemail;
@@ -1045,6 +1057,22 @@ class ttCommunicatieActions extends sfActions
     $this->body = $briefArr['body'];
     
     $this->setLayout(false);    
+  }
+  
+  /**
+   * uitvoeren van voorbeeldbrief van een gegeven bestemmelingen object 
+   * op deze manier kan de opmaak gebypassed worden
+   * resultaat moet zelfde zijn als opvragen van voorbeeldbrief bij opmaak
+   */
+  public function executeVoorbeeldBrief()
+  {
+    // verzenden_via = alles afdrukken op papier
+    $this->getRequest()->setParameter('verzenden_via', 'nee');
+    
+    // doen alsof er in opmaak op voorbeeld brief gedrukt is
+    $this->getRequest()->setParameter('commit', 'Voorbeeld brief');
+    
+    $this->forward('ttCommunicatie', 'print');
   }
 }
   
