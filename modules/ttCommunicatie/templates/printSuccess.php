@@ -232,7 +232,7 @@
       $brief = $cultureBrieven[$culture]['head'] . $body;
 
       echo "<!-- Brief " . $aantal_brieven . "-->\n";
-      echo $brief;
+      echo BriefTemplatePeer::clearPlaceholders($brief);
       
       // Log de brief tijdelijk om later te kunnen bevestigen
       if (! $voorbeeld)

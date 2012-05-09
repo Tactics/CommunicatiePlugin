@@ -62,7 +62,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function clearPlaceholders($html)
   {    
-    return preg_replace('(%[a-z_]*%)', '', $html);
+    return preg_replace('(%[a-z_0-9]*%)', '', $html);
   }
 
   /**

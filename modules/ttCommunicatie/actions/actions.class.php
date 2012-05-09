@@ -742,7 +742,7 @@ class ttCommunicatieActions extends sfActions
               $options['bcc'] = $object->getMailerRecipientBCC();
             }
             
-            BerichtPeer::verstuurEmail($email, $brief, $options);
+            BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
 
             $verstuurd = true;
             echo 'Bericht verzonden naar : ' . $email . '<br/>';
