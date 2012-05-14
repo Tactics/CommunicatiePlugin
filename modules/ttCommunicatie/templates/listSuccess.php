@@ -43,7 +43,16 @@
           $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
           array("content" =>
               //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
-              link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId())
+              link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()).
+              ($briefTemplate->isVerwijderbaar() ? 
+                link_to(
+                  image_tag('icons/trash_16.gif', array('title' => 'Verwijderen')), 
+                  'ttCommunicatie/delete?template_id=' . $briefTemplate->getId(),
+                  array(
+                    'confirm' => 'Bent u zeker dat u dit sjabloon wenst te verwijderen?'
+                  )) :
+                image_tag('icons/trash_disabled_16.gif', array('title' => 'Verwijderen'))
+              )
           )
         ));
       }

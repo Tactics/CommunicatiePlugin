@@ -143,7 +143,7 @@ class ttCommunicatieActions extends sfActions
     {
       if (! $this->getRequestParameter('classes'))
       {
-        $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens ��n mogelijke bestemmeling in te geven.');
+        $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
       }
     
       if (! $this->getRequestParameter('naam'))
@@ -160,6 +160,19 @@ class ttCommunicatieActions extends sfActions
     BriefTemplatePeer::isVertaalbaar() ? $this->validateUpdateVertaalbaar() : $this->validateUpdateNietVertaalbaar();
     
     return !$this->getRequest()->hasErrors();
+  }
+  
+  /**
+   * Verwijderen van een brieftemplate 
+   */
+  public function executeDelete()
+  {
+    $template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+    $this->forward404Unless($template && $template->isVerwijderbaar());
+    
+    $template->delete();
+    
+    $this->redirect($this->getRequest()->getReferer());
   }
   
   /**

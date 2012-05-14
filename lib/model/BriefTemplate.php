@@ -318,5 +318,17 @@ class BriefTemplate extends BaseBriefTemplate
     
     return $onderwerp;
   }
+  
+  /**
+   * Een briefTemplate is verwijderbaar wanneer:
+   * - er geen BriefVerzonden objecten aan gekoppeld zijn. 
+   * - het geen systeemtemplate is
+   * 
+   * @return boolean
+   */
+  public function isVerwijderbaar()
+  {
+    return ($this->countBriefVerzondens() === 0) && (! $this->isSysteemtemplate());
+  }
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));
