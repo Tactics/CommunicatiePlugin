@@ -628,6 +628,12 @@ class ttCommunicatieActions extends sfActions
       'image_dir' => $emailverzenden ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
       'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
     );
+    
+    if (class_exists('Placeholder'))
+    {
+      $placeholder = new Placeholder();
+      $defaultPlaceholders = array_merge($defaultPlaceholders, $placeholder->fillPlaceholders());
+    }
 
     if ($emailverzenden)
     { 

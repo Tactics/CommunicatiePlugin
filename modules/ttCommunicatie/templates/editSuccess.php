@@ -61,10 +61,10 @@
       width : "600", 
       height : "454",       
       language : "nl",      
-      plugins: "paste, pagebreak",
+      plugins: "paste, pagebreak, table",
       pagebreak_separator : "%pagebreak%",
       theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak",
-      theme_advanced_buttons2 : "",
+      theme_advanced_buttons2 : "tablecontrols",
       theme_advanced_buttons3 : ""      
     });
     
@@ -232,7 +232,12 @@ function showPlaceholders($placeholders)
                   <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                     <strong><?php echo $oClass['label']; ?></strong>
                     <?php  
-                      $placeholders = eval("return {$oClass['class']}::getPlaceholders();");                        
+                      $placeholders = eval("return {$oClass['class']}::getPlaceholders();");
+                      // Algemene placeholders indien gedefinieerd
+                      if (class_exists('Placeholder'))
+                      {
+                        $placeholders = array_merge($placeholders, array('Algemeen' => Placeholder::getPlaceholders()));
+                      }
                       showPlaceholders($placeholders);                          
                     ?>
                   </div>
