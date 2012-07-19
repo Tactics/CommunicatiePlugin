@@ -52,3 +52,5 @@ class BriefVerzonden extends BaseBriefVerzonden
     }
   }
 }
+
+sfPropelBehavior::add('BriefVerzonden', array('updater_loggable'));

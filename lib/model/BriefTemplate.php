@@ -332,3 +332,5 @@ class BriefTemplate extends BaseBriefTemplate
   }
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));
+sfPropelBehavior::add('BriefTemplate', array('updater_loggable'));
+if (sfConfig::get('sf_communicatie_enable_event_log')) sfPropelBehavior::add('BriefTemplate', array('event_log'));
