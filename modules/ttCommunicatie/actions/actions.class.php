@@ -91,7 +91,17 @@ class ttCommunicatieActions extends sfActions
   public function executeList()
   {
     $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list');
+    
     $this->pager->getCriteria()->add(BriefTemplatePeer::TYPE, BriefTemplatePeer::TYPE_DB);
+    
+    $this->pager->add(BriefTemplatePeer::NAAM, array('comparison' => Criteria::LIKE));
+    $this->pager->add(BriefTemplatePeer::ONDERWERP, array('comparison' => Criteria::LIKE));
+    
+    if ($this->pager->add(BriefLayoutPeer::NAAM, array('comparison' => Criteria::LIKE)))
+    {
+      $this->pager->getCriteria()->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID);
+    }
+    
     $this->pager->init();
   }
 
@@ -111,6 +121,26 @@ class ttCommunicatieActions extends sfActions
     $this->setTemplate('edit');
   }
 
+  /**
+   * Kopiëer een sjabloon
+   */
+  public function executeCopy()
+  {
+    $origineel = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
+    
+    $this->brief_template = $origineel->copy();
+    $this->brief_template->setNaam("Kopie van " . $origineel->getNaam());
+    
+    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
+    {
+      $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
+    }
+    
+    $this->systeemplaceholders = $this->brief_template->isSysteemtemplate() ? $this->brief_template->getSysteemplaceholdersArray() : array();
+    $this->setTemplate('edit');
+  }
+  
+  
   /**
    * aanpassen van manuele html brief template
    */
