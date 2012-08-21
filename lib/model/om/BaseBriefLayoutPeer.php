@@ -13,7 +13,7 @@ abstract class BaseBriefLayoutPeer {
 	const CLASS_DEFAULT = 'plugins.ttCommunicatiePlugin.lib.model.BriefLayout';
 
 	
-	const NUM_COLUMNS = 11;
+	const NUM_COLUMNS = 12;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -21,6 +21,9 @@ abstract class BaseBriefLayoutPeer {
 
 	
 	const ID = 'brief_layout.ID';
+
+	
+	const CATEGORIE = 'brief_layout.CATEGORIE';
 
 	
 	const NAAM = 'brief_layout.NAAM';
@@ -58,18 +61,18 @@ abstract class BaseBriefLayoutPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'Naam', 'PrintBestand', 'MailBestand', 'PrintStylesheets', 'MailStylesheets', 'Vertaald', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
-		BasePeer::TYPE_COLNAME => array (BriefLayoutPeer::ID, BriefLayoutPeer::NAAM, BriefLayoutPeer::PRINT_BESTAND, BriefLayoutPeer::MAIL_BESTAND, BriefLayoutPeer::PRINT_STYLESHEETS, BriefLayoutPeer::MAIL_STYLESHEETS, BriefLayoutPeer::VERTAALD, BriefLayoutPeer::CREATED_BY, BriefLayoutPeer::UPDATED_BY, BriefLayoutPeer::CREATED_AT, BriefLayoutPeer::UPDATED_AT, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'naam', 'print_bestand', 'mail_bestand', 'print_stylesheets', 'mail_stylesheets', 'vertaald', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'Categorie', 'Naam', 'PrintBestand', 'MailBestand', 'PrintStylesheets', 'MailStylesheets', 'Vertaald', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
+		BasePeer::TYPE_COLNAME => array (BriefLayoutPeer::ID, BriefLayoutPeer::CATEGORIE, BriefLayoutPeer::NAAM, BriefLayoutPeer::PRINT_BESTAND, BriefLayoutPeer::MAIL_BESTAND, BriefLayoutPeer::PRINT_STYLESHEETS, BriefLayoutPeer::MAIL_STYLESHEETS, BriefLayoutPeer::VERTAALD, BriefLayoutPeer::CREATED_BY, BriefLayoutPeer::UPDATED_BY, BriefLayoutPeer::CREATED_AT, BriefLayoutPeer::UPDATED_AT, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'categorie', 'naam', 'print_bestand', 'mail_bestand', 'print_stylesheets', 'mail_stylesheets', 'vertaald', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Naam' => 1, 'PrintBestand' => 2, 'MailBestand' => 3, 'PrintStylesheets' => 4, 'MailStylesheets' => 5, 'Vertaald' => 6, 'CreatedBy' => 7, 'UpdatedBy' => 8, 'CreatedAt' => 9, 'UpdatedAt' => 10, ),
-		BasePeer::TYPE_COLNAME => array (BriefLayoutPeer::ID => 0, BriefLayoutPeer::NAAM => 1, BriefLayoutPeer::PRINT_BESTAND => 2, BriefLayoutPeer::MAIL_BESTAND => 3, BriefLayoutPeer::PRINT_STYLESHEETS => 4, BriefLayoutPeer::MAIL_STYLESHEETS => 5, BriefLayoutPeer::VERTAALD => 6, BriefLayoutPeer::CREATED_BY => 7, BriefLayoutPeer::UPDATED_BY => 8, BriefLayoutPeer::CREATED_AT => 9, BriefLayoutPeer::UPDATED_AT => 10, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'naam' => 1, 'print_bestand' => 2, 'mail_bestand' => 3, 'print_stylesheets' => 4, 'mail_stylesheets' => 5, 'vertaald' => 6, 'created_by' => 7, 'updated_by' => 8, 'created_at' => 9, 'updated_at' => 10, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Categorie' => 1, 'Naam' => 2, 'PrintBestand' => 3, 'MailBestand' => 4, 'PrintStylesheets' => 5, 'MailStylesheets' => 6, 'Vertaald' => 7, 'CreatedBy' => 8, 'UpdatedBy' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, ),
+		BasePeer::TYPE_COLNAME => array (BriefLayoutPeer::ID => 0, BriefLayoutPeer::CATEGORIE => 1, BriefLayoutPeer::NAAM => 2, BriefLayoutPeer::PRINT_BESTAND => 3, BriefLayoutPeer::MAIL_BESTAND => 4, BriefLayoutPeer::PRINT_STYLESHEETS => 5, BriefLayoutPeer::MAIL_STYLESHEETS => 6, BriefLayoutPeer::VERTAALD => 7, BriefLayoutPeer::CREATED_BY => 8, BriefLayoutPeer::UPDATED_BY => 9, BriefLayoutPeer::CREATED_AT => 10, BriefLayoutPeer::UPDATED_AT => 11, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'categorie' => 1, 'naam' => 2, 'print_bestand' => 3, 'mail_bestand' => 4, 'print_stylesheets' => 5, 'mail_stylesheets' => 6, 'vertaald' => 7, 'created_by' => 8, 'updated_by' => 9, 'created_at' => 10, 'updated_at' => 11, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	
@@ -124,6 +127,8 @@ abstract class BaseBriefLayoutPeer {
 	{
 
 		$criteria->addSelectColumn(BriefLayoutPeer::ID);
+
+		$criteria->addSelectColumn(BriefLayoutPeer::CATEGORIE);
 
 		$criteria->addSelectColumn(BriefLayoutPeer::NAAM);
 

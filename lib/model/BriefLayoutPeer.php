@@ -12,12 +12,25 @@ class BriefLayoutPeer extends BaseBriefLayoutPeer
   /**
    * Geeft alle brieflayouts terug
    *
+   * @param myUser $user
+   * 
    * @return array[]BriefLayout
    */
-  public static function getSorted()
+  public static function getSorted($c = null)
   {
-    $c = new Criteria();
+    if (!$c)
+    {
+      $c = new Criteria();  
+    }
+    
     $c->addAscendingOrderByColumn(self::NAAM);
+    
+    // categories enabled?
+    if (sfConfig::get('sf_communicatie_enable_categories', false))
+    {
+      $user = sfContext::getInstance()->getUser();
+      $c->add(self::CATEGORIE, $user->getTtCommunicatieCategory(), Criteria::EQUAL);
+    }
 
     return self::doSelect($c);
   }

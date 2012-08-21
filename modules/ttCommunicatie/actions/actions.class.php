@@ -92,6 +92,18 @@ class ttCommunicatieActions extends sfActions
   {
     $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list');
     
+    // archief bekijken?
+    if (!$this->getUser()->getAttribute('bekijk_archief', false))
+    {
+      $this->pager->getCriteria()->add(BriefTemplatePeer::GEARCHIVEERD, 0);
+    }
+    
+    // indien enable_categories = true: alleen templates waartoe de user access heeft    
+    if (sfConfig::get('sf_communicatie_enable_categories', false) && !$this->getUser()->isSuperAdmin())
+    {      
+      $this->pager->add(BriefTemplatePeer::CATEGORIE, array('value' => $this->getUser()->getTtCommunicatieCategory()));
+    }
+    
     $this->pager->getCriteria()->add(BriefTemplatePeer::TYPE, BriefTemplatePeer::TYPE_DB);
     
     $this->pager->add(BriefTemplatePeer::NAAM, array('comparison' => Criteria::LIKE));
@@ -265,6 +277,12 @@ class ttCommunicatieActions extends sfActions
       $brief_template = new BriefTemplate();
       $brief_template->setType(BriefTemplatePeer::TYPE_DB);
       
+      // category goed zetten indien enabled
+      if (sfConfig::get('sf_communicatie_enable_categories', false))
+      {
+        $brief_template->setCategorie($this->getUser()->getTtCommunicatieCategory());
+      }      
+      
       $systeem = false;
     }
     
@@ -328,6 +346,7 @@ class ttCommunicatieActions extends sfActions
       $briefBijlage->setBijlageNodeId($node->getId());
       $briefBijlage->save();
     }
+    
     $this->redirect('ttCommunicatie/list');
   }
   
@@ -1123,5 +1142,19 @@ class ttCommunicatieActions extends sfActions
     
     $this->forward('ttCommunicatie', 'print');
   }
+  
+  /**
+	 * (De)Archiveert een sjabloon
+	 */
+	public function executeArchiveer()
+  {
+	  $template = BriefTemplatePeer::retrieveByPk($this->getRequestParameter('id'));
+    $this->forward404Unless($template);
+
+    $template->setGearchiveerd($this->hasRequestParameter('archiveer') ? $this->getRequestParameter('archiveer') : ! $template->getGearchiveerd());    
+    $template->save();
+    
+    return $this->redirect('ttCommunicatie/list');
+	}
 }
   

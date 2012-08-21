@@ -13,6 +13,10 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 
 	
+	protected $categorie;
+
+
+	
 	protected $naam;
 
 
@@ -33,7 +37,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 
 	
-	protected $vertaald = false;
+	protected $vertaald = true;
 
 
 	
@@ -68,6 +72,13 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	{
 
 		return $this->id;
+	}
+
+	
+	public function getCategorie()
+	{
+
+		return $this->categorie;
 	}
 
 	
@@ -187,6 +198,22 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setCategorie($v)
+	{
+
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->categorie !== $v) {
+			$this->categorie = $v;
+			$this->modifiedColumns[] = BriefLayoutPeer::CATEGORIE;
+		}
+
+	} 
+	
 	public function setNaam($v)
 	{
 
@@ -270,7 +297,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setVertaald($v)
 	{
 
-		if ($this->vertaald !== $v || $v === false) {
+		if ($this->vertaald !== $v || $v === true) {
 			$this->vertaald = $v;
 			$this->modifiedColumns[] = BriefLayoutPeer::VERTAALD;
 		}
@@ -349,31 +376,33 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 			$this->id = $rs->getInt($startcol + 0);
 
-			$this->naam = $rs->getString($startcol + 1);
+			$this->categorie = $rs->getInt($startcol + 1);
 
-			$this->print_bestand = $rs->getString($startcol + 2);
+			$this->naam = $rs->getString($startcol + 2);
 
-			$this->mail_bestand = $rs->getString($startcol + 3);
+			$this->print_bestand = $rs->getString($startcol + 3);
 
-			$this->print_stylesheets = $rs->getString($startcol + 4);
+			$this->mail_bestand = $rs->getString($startcol + 4);
 
-			$this->mail_stylesheets = $rs->getString($startcol + 5);
+			$this->print_stylesheets = $rs->getString($startcol + 5);
 
-			$this->vertaald = $rs->getBoolean($startcol + 6);
+			$this->mail_stylesheets = $rs->getString($startcol + 6);
 
-			$this->created_by = $rs->getInt($startcol + 7);
+			$this->vertaald = $rs->getBoolean($startcol + 7);
 
-			$this->updated_by = $rs->getInt($startcol + 8);
+			$this->created_by = $rs->getInt($startcol + 8);
 
-			$this->created_at = $rs->getTimestamp($startcol + 9, null);
+			$this->updated_by = $rs->getInt($startcol + 9);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 10, null);
+			$this->created_at = $rs->getTimestamp($startcol + 10, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 11, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 11; 
+						return $startcol + 12; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefLayout object", $e);
 		}
@@ -563,33 +592,36 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 				return $this->getId();
 				break;
 			case 1:
-				return $this->getNaam();
+				return $this->getCategorie();
 				break;
 			case 2:
-				return $this->getPrintBestand();
+				return $this->getNaam();
 				break;
 			case 3:
-				return $this->getMailBestand();
+				return $this->getPrintBestand();
 				break;
 			case 4:
-				return $this->getPrintStylesheets();
+				return $this->getMailBestand();
 				break;
 			case 5:
-				return $this->getMailStylesheets();
+				return $this->getPrintStylesheets();
 				break;
 			case 6:
-				return $this->getVertaald();
+				return $this->getMailStylesheets();
 				break;
 			case 7:
-				return $this->getCreatedBy();
+				return $this->getVertaald();
 				break;
 			case 8:
-				return $this->getUpdatedBy();
+				return $this->getCreatedBy();
 				break;
 			case 9:
-				return $this->getCreatedAt();
+				return $this->getUpdatedBy();
 				break;
 			case 10:
+				return $this->getCreatedAt();
+				break;
+			case 11:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -603,16 +635,17 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 		$keys = BriefLayoutPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
-			$keys[1] => $this->getNaam(),
-			$keys[2] => $this->getPrintBestand(),
-			$keys[3] => $this->getMailBestand(),
-			$keys[4] => $this->getPrintStylesheets(),
-			$keys[5] => $this->getMailStylesheets(),
-			$keys[6] => $this->getVertaald(),
-			$keys[7] => $this->getCreatedBy(),
-			$keys[8] => $this->getUpdatedBy(),
-			$keys[9] => $this->getCreatedAt(),
-			$keys[10] => $this->getUpdatedAt(),
+			$keys[1] => $this->getCategorie(),
+			$keys[2] => $this->getNaam(),
+			$keys[3] => $this->getPrintBestand(),
+			$keys[4] => $this->getMailBestand(),
+			$keys[5] => $this->getPrintStylesheets(),
+			$keys[6] => $this->getMailStylesheets(),
+			$keys[7] => $this->getVertaald(),
+			$keys[8] => $this->getCreatedBy(),
+			$keys[9] => $this->getUpdatedBy(),
+			$keys[10] => $this->getCreatedAt(),
+			$keys[11] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -632,33 +665,36 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 				$this->setId($value);
 				break;
 			case 1:
-				$this->setNaam($value);
+				$this->setCategorie($value);
 				break;
 			case 2:
-				$this->setPrintBestand($value);
+				$this->setNaam($value);
 				break;
 			case 3:
-				$this->setMailBestand($value);
+				$this->setPrintBestand($value);
 				break;
 			case 4:
-				$this->setPrintStylesheets($value);
+				$this->setMailBestand($value);
 				break;
 			case 5:
-				$this->setMailStylesheets($value);
+				$this->setPrintStylesheets($value);
 				break;
 			case 6:
-				$this->setVertaald($value);
+				$this->setMailStylesheets($value);
 				break;
 			case 7:
-				$this->setCreatedBy($value);
+				$this->setVertaald($value);
 				break;
 			case 8:
-				$this->setUpdatedBy($value);
+				$this->setCreatedBy($value);
 				break;
 			case 9:
-				$this->setCreatedAt($value);
+				$this->setUpdatedBy($value);
 				break;
 			case 10:
+				$this->setCreatedAt($value);
+				break;
+			case 11:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -669,16 +705,17 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 		$keys = BriefLayoutPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setNaam($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setPrintBestand($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setMailBestand($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setPrintStylesheets($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setMailStylesheets($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setVertaald($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCreatedBy($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setUpdatedBy($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCategorie($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setNaam($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setPrintBestand($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setMailBestand($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setPrintStylesheets($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setMailStylesheets($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setVertaald($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCreatedBy($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setUpdatedBy($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCreatedAt($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setUpdatedAt($arr[$keys[11]]);
 	}
 
 	
@@ -687,6 +724,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 		$criteria = new Criteria(BriefLayoutPeer::DATABASE_NAME);
 
 		if ($this->isColumnModified(BriefLayoutPeer::ID)) $criteria->add(BriefLayoutPeer::ID, $this->id);
+		if ($this->isColumnModified(BriefLayoutPeer::CATEGORIE)) $criteria->add(BriefLayoutPeer::CATEGORIE, $this->categorie);
 		if ($this->isColumnModified(BriefLayoutPeer::NAAM)) $criteria->add(BriefLayoutPeer::NAAM, $this->naam);
 		if ($this->isColumnModified(BriefLayoutPeer::PRINT_BESTAND)) $criteria->add(BriefLayoutPeer::PRINT_BESTAND, $this->print_bestand);
 		if ($this->isColumnModified(BriefLayoutPeer::MAIL_BESTAND)) $criteria->add(BriefLayoutPeer::MAIL_BESTAND, $this->mail_bestand);
@@ -726,6 +764,8 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	
 	public function copyInto($copyObj, $deepCopy = false)
 	{
+
+		$copyObj->setCategorie($this->categorie);
 
 		$copyObj->setNaam($this->naam);
 

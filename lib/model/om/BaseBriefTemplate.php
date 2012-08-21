@@ -13,6 +13,10 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 
 	
+	protected $categorie;
+
+
+	
 	protected $brief_layout_id;
 
 
@@ -46,6 +50,10 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	
 	protected $systeemplaceholders;
+
+
+	
+	protected $gearchiveerd = 0;
 
 
 	
@@ -89,6 +97,13 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 		return $this->id;
+	}
+
+	
+	public function getCategorie()
+	{
+
+		return $this->categorie;
 	}
 
 	
@@ -155,6 +170,13 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	}
 
 	
+	public function getGearchiveerd()
+	{
+
+		return $this->gearchiveerd;
+	}
+
+	
 	public function getCreatedBy()
 	{
 
@@ -216,7 +238,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setId($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -227,10 +251,28 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setCategorie($v)
+	{
+
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->categorie !== $v) {
+			$this->categorie = $v;
+			$this->modifiedColumns[] = BriefTemplatePeer::CATEGORIE;
+		}
+
+	} 
+	
 	public function setBriefLayoutId($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -248,7 +290,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setOnderwerp($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -262,7 +306,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setNaam($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -276,7 +322,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setType($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -290,7 +338,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setBestemmelingClasses($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -304,7 +354,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setHtml($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -328,7 +380,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setSysteemnaam($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -342,7 +396,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setSysteemplaceholders($v)
 	{
 
-						if ($v !== null && !is_string($v)) {
+		
+		
+		if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -353,10 +409,28 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setGearchiveerd($v)
+	{
+
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->gearchiveerd !== $v || $v === 0) {
+			$this->gearchiveerd = $v;
+			$this->modifiedColumns[] = BriefTemplatePeer::GEARCHIVEERD;
+		}
+
+	} 
+	
 	public function setCreatedBy($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -370,7 +444,9 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setUpdatedBy($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
+		
+		
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -421,37 +497,41 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			$this->id = $rs->getInt($startcol + 0);
 
-			$this->brief_layout_id = $rs->getInt($startcol + 1);
+			$this->categorie = $rs->getInt($startcol + 1);
 
-			$this->onderwerp = $rs->getString($startcol + 2);
+			$this->brief_layout_id = $rs->getInt($startcol + 2);
 
-			$this->naam = $rs->getString($startcol + 3);
+			$this->onderwerp = $rs->getString($startcol + 3);
 
-			$this->type = $rs->getString($startcol + 4);
+			$this->naam = $rs->getString($startcol + 4);
 
-			$this->bestemmeling_classes = $rs->getString($startcol + 5);
+			$this->type = $rs->getString($startcol + 5);
 
-			$this->html = $rs->getString($startcol + 6);
+			$this->bestemmeling_classes = $rs->getString($startcol + 6);
 
-			$this->eenmalig_versturen = $rs->getBoolean($startcol + 7);
+			$this->html = $rs->getString($startcol + 7);
 
-			$this->systeemnaam = $rs->getString($startcol + 8);
+			$this->eenmalig_versturen = $rs->getBoolean($startcol + 8);
 
-			$this->systeemplaceholders = $rs->getString($startcol + 9);
+			$this->systeemnaam = $rs->getString($startcol + 9);
 
-			$this->created_by = $rs->getInt($startcol + 10);
+			$this->systeemplaceholders = $rs->getString($startcol + 10);
 
-			$this->updated_by = $rs->getInt($startcol + 11);
+			$this->gearchiveerd = $rs->getInt($startcol + 11);
 
-			$this->created_at = $rs->getTimestamp($startcol + 12, null);
+			$this->created_by = $rs->getInt($startcol + 12);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 13, null);
+			$this->updated_by = $rs->getInt($startcol + 13);
+
+			$this->created_at = $rs->getTimestamp($startcol + 14, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 15, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 14; 
+						return $startcol + 16; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefTemplate object", $e);
 		}
@@ -674,42 +754,48 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				return $this->getId();
 				break;
 			case 1:
-				return $this->getBriefLayoutId();
+				return $this->getCategorie();
 				break;
 			case 2:
-				return $this->getOnderwerp();
+				return $this->getBriefLayoutId();
 				break;
 			case 3:
-				return $this->getNaam();
+				return $this->getOnderwerp();
 				break;
 			case 4:
-				return $this->getType();
+				return $this->getNaam();
 				break;
 			case 5:
-				return $this->getBestemmelingClasses();
+				return $this->getType();
 				break;
 			case 6:
-				return $this->getHtml();
+				return $this->getBestemmelingClasses();
 				break;
 			case 7:
-				return $this->getEenmaligVersturen();
+				return $this->getHtml();
 				break;
 			case 8:
-				return $this->getSysteemnaam();
+				return $this->getEenmaligVersturen();
 				break;
 			case 9:
-				return $this->getSysteemplaceholders();
+				return $this->getSysteemnaam();
 				break;
 			case 10:
-				return $this->getCreatedBy();
+				return $this->getSysteemplaceholders();
 				break;
 			case 11:
-				return $this->getUpdatedBy();
+				return $this->getGearchiveerd();
 				break;
 			case 12:
-				return $this->getCreatedAt();
+				return $this->getCreatedBy();
 				break;
 			case 13:
+				return $this->getUpdatedBy();
+				break;
+			case 14:
+				return $this->getCreatedAt();
+				break;
+			case 15:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -723,19 +809,21 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$keys = BriefTemplatePeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
-			$keys[1] => $this->getBriefLayoutId(),
-			$keys[2] => $this->getOnderwerp(),
-			$keys[3] => $this->getNaam(),
-			$keys[4] => $this->getType(),
-			$keys[5] => $this->getBestemmelingClasses(),
-			$keys[6] => $this->getHtml(),
-			$keys[7] => $this->getEenmaligVersturen(),
-			$keys[8] => $this->getSysteemnaam(),
-			$keys[9] => $this->getSysteemplaceholders(),
-			$keys[10] => $this->getCreatedBy(),
-			$keys[11] => $this->getUpdatedBy(),
-			$keys[12] => $this->getCreatedAt(),
-			$keys[13] => $this->getUpdatedAt(),
+			$keys[1] => $this->getCategorie(),
+			$keys[2] => $this->getBriefLayoutId(),
+			$keys[3] => $this->getOnderwerp(),
+			$keys[4] => $this->getNaam(),
+			$keys[5] => $this->getType(),
+			$keys[6] => $this->getBestemmelingClasses(),
+			$keys[7] => $this->getHtml(),
+			$keys[8] => $this->getEenmaligVersturen(),
+			$keys[9] => $this->getSysteemnaam(),
+			$keys[10] => $this->getSysteemplaceholders(),
+			$keys[11] => $this->getGearchiveerd(),
+			$keys[12] => $this->getCreatedBy(),
+			$keys[13] => $this->getUpdatedBy(),
+			$keys[14] => $this->getCreatedAt(),
+			$keys[15] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -755,42 +843,48 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$this->setId($value);
 				break;
 			case 1:
-				$this->setBriefLayoutId($value);
+				$this->setCategorie($value);
 				break;
 			case 2:
-				$this->setOnderwerp($value);
+				$this->setBriefLayoutId($value);
 				break;
 			case 3:
-				$this->setNaam($value);
+				$this->setOnderwerp($value);
 				break;
 			case 4:
-				$this->setType($value);
+				$this->setNaam($value);
 				break;
 			case 5:
-				$this->setBestemmelingClasses($value);
+				$this->setType($value);
 				break;
 			case 6:
-				$this->setHtml($value);
+				$this->setBestemmelingClasses($value);
 				break;
 			case 7:
-				$this->setEenmaligVersturen($value);
+				$this->setHtml($value);
 				break;
 			case 8:
-				$this->setSysteemnaam($value);
+				$this->setEenmaligVersturen($value);
 				break;
 			case 9:
-				$this->setSysteemplaceholders($value);
+				$this->setSysteemnaam($value);
 				break;
 			case 10:
-				$this->setCreatedBy($value);
+				$this->setSysteemplaceholders($value);
 				break;
 			case 11:
-				$this->setUpdatedBy($value);
+				$this->setGearchiveerd($value);
 				break;
 			case 12:
-				$this->setCreatedAt($value);
+				$this->setCreatedBy($value);
 				break;
 			case 13:
+				$this->setUpdatedBy($value);
+				break;
+			case 14:
+				$this->setCreatedAt($value);
+				break;
+			case 15:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -801,19 +895,21 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$keys = BriefTemplatePeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setBriefLayoutId($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setOnderwerp($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setNaam($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setType($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setBestemmelingClasses($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setHtml($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setEenmaligVersturen($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setSysteemnaam($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setSysteemplaceholders($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCreatedBy($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setUpdatedBy($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCreatedAt($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setUpdatedAt($arr[$keys[13]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCategorie($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setBriefLayoutId($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setOnderwerp($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setNaam($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setType($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setBestemmelingClasses($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setHtml($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setEenmaligVersturen($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setSysteemnaam($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setSysteemplaceholders($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setGearchiveerd($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCreatedBy($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setUpdatedBy($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCreatedAt($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setUpdatedAt($arr[$keys[15]]);
 	}
 
 	
@@ -822,6 +918,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$criteria = new Criteria(BriefTemplatePeer::DATABASE_NAME);
 
 		if ($this->isColumnModified(BriefTemplatePeer::ID)) $criteria->add(BriefTemplatePeer::ID, $this->id);
+		if ($this->isColumnModified(BriefTemplatePeer::CATEGORIE)) $criteria->add(BriefTemplatePeer::CATEGORIE, $this->categorie);
 		if ($this->isColumnModified(BriefTemplatePeer::BRIEF_LAYOUT_ID)) $criteria->add(BriefTemplatePeer::BRIEF_LAYOUT_ID, $this->brief_layout_id);
 		if ($this->isColumnModified(BriefTemplatePeer::ONDERWERP)) $criteria->add(BriefTemplatePeer::ONDERWERP, $this->onderwerp);
 		if ($this->isColumnModified(BriefTemplatePeer::NAAM)) $criteria->add(BriefTemplatePeer::NAAM, $this->naam);
@@ -831,6 +928,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefTemplatePeer::EENMALIG_VERSTUREN)) $criteria->add(BriefTemplatePeer::EENMALIG_VERSTUREN, $this->eenmalig_versturen);
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMNAAM)) $criteria->add(BriefTemplatePeer::SYSTEEMNAAM, $this->systeemnaam);
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMPLACEHOLDERS)) $criteria->add(BriefTemplatePeer::SYSTEEMPLACEHOLDERS, $this->systeemplaceholders);
+		if ($this->isColumnModified(BriefTemplatePeer::GEARCHIVEERD)) $criteria->add(BriefTemplatePeer::GEARCHIVEERD, $this->gearchiveerd);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_BY)) $criteria->add(BriefTemplatePeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefTemplatePeer::UPDATED_BY)) $criteria->add(BriefTemplatePeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_AT)) $criteria->add(BriefTemplatePeer::CREATED_AT, $this->created_at);
@@ -865,6 +963,8 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCategorie($this->categorie);
+
 		$copyObj->setBriefLayoutId($this->brief_layout_id);
 
 		$copyObj->setOnderwerp($this->onderwerp);
@@ -882,6 +982,8 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$copyObj->setSysteemnaam($this->systeemnaam);
 
 		$copyObj->setSysteemplaceholders($this->systeemplaceholders);
+
+		$copyObj->setGearchiveerd($this->gearchiveerd);
 
 		$copyObj->setCreatedBy($this->created_by);
 

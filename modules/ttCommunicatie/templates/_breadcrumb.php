@@ -26,15 +26,15 @@ if (!isset($module_show_action))
 
 <ul class="breadcrumb">
   <li><?php echo link_to("Home", "@homepage") ?></li>
-  <li>&gt; <?php echo link_to_unless((! isset($object)), $identifier, $module_name . '/' . $module_list_action) ?></li>
+  <li><?php echo link_to_unless((! isset($object)), $identifier, $module_name . '/' . $module_list_action) ?></li>
 	<?php if (isset($object) && $object): ?>
   	<?php if ( $object->getId()) : ?>
-	<li>&gt; <?php echo link_to_unless(! isset($action), $object->__toString(), $module_name . '/' . $module_show_action . '?id=' . $object->getId()) ?></li>
+	<li><?php echo link_to_unless(! isset($action), $object->__toString(), $module_name . '/' . $module_show_action . '?id=' . $object->getId()) ?></li>
 	 <?php else : ?>
-	<li>&gt; Nieuwe <?php echo ucfirst(strToLower(get_class($object)));?></li>
+	<li>Nieuwe <?php echo ucfirst(strToLower(get_class($object)));?></li>
 	 <?php endif ?>
  <?php endif ?>
  <?php if (isset($action) && $action) : ?>
-	<li>&gt; <?php echo $action ?></li>
+	<li><?php echo $action ?></li>
  <?php endif ?>
 </ul>

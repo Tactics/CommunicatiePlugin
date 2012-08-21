@@ -29,6 +29,14 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     // templates met systeemnaam zijn nooit uit de dropdown te kiezen
     $c->add(self::SYSTEEMNAAM, null, Criteria::ISNULL);
     
+    // categories enabled?
+    if (sfConfig::get('sf_communicatie_enable_categories', false))
+    {
+      $user = sfContext::getInstance()->getUser();
+      $c->add(self::CATEGORIE, $user->getTtCommunicatieCategory(), Criteria::EQUAL);
+    }
+    
+    
     $c->addAscendingOrderByColumn(self::NAAM);
 
     return self::doSelect($c);

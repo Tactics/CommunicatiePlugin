@@ -77,14 +77,14 @@
     <?php
       $table = new myTable(
                           array(
-                            array("name" => BriefTemplatePeer::ID, "text" => "Nr", "align" => "right", "width" => 50, "sortable" => true),
+                            //array("name" => BriefTemplatePeer::ID, "text" => "Nr", "align" => "right", "width" => 50, "sortable" => true),
                             array("name" => BriefTemplatePeer::NAAM, "text" => "Naam", "sortable" => true ),
                             array("name" => BriefTemplatePeer::ONDERWERP, "text" => "Onderwerp", "sortable" => true ),
                             array("name" => BriefTemplatePeer::BESTEMMELING_CLASSES, "text" => "Bestemmeling(en)", "sortable" => false, 'width' => 120),
                             array("name" => BriefTemplatePeer::BRIEF_LAYOUT_ID, "text" => "Layout", "sortable" => true, 'width' => 120),
                             array("name" => BriefTemplatePeer::EENMALIG_VERSTUREN, "text" => "Versturen", "sortable" => true, 'width' => 60 ),
                             array("name" => BriefTemplatePeer::SYSTEEMNAAM, "text" => "Systeemnaam", 'width' => 30, 'align' => 'center'),
-                            array("text" => "Acties", "width" => 60, "align" => "center"	),
+                            array("text" => "Acties", "width" => 85, "align" => "center"	),
                           ),
                           array(
                             "sortfield"  => $pager->getOrderBy(),
@@ -99,7 +99,7 @@
       foreach($results as $briefTemplate)
       {
         $table->addRow(array(
-          link_to($briefTemplate->getId(),  "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
+          //link_to($briefTemplate->getId(),  "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
           link_to_unless_empty($briefTemplate->getNaam(), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
           link_to_unless_empty($briefTemplate->getOnderwerp(), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
           trim($briefTemplate->getBestemmelingClasses(), '|'),
@@ -107,10 +107,14 @@
           $briefTemplate->getEenmaligVersturen() ? 'eenmaal' : 'meermaals',
           $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
           array("content" =>
-              //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
-              link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()).
-              link_to(image_tag("/ttCommunicatie/images/icons/copy_16.gif", array('title' => 'Kopiëren')), "ttCommunicatie/copy?template_id=" . $briefTemplate->getId(), array('confirm' => 'Bent u zeker dat u een kopie wil maken van dit briefsjabloon?')).
-              ($briefTemplate->isVerwijderbaar() ? 
+            //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
+            link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()). ' ' .
+            link_to(image_tag("/ttCommunicatie/images/icons/copy_16.gif", array('title' => 'Kopiëren')), "ttCommunicatie/copy?template_id=" . $briefTemplate->getId(), array('confirm' => 'Bent u zeker dat u een kopie wil maken van dit briefsjabloon?')). ' ' .
+            link_to(image_tag("icons/" . ($briefTemplate->getGearchiveerd() ? 'dearchiveer.png' : 'archiveer.png'), array('style' => 'width: 16px;', 'title' => $briefTemplate->getGearchiveerd() ? "Maak archiveren ongedaan" : 'Archiveer sjabloon')),  'ttCommunicatie/archiveer?id=' . $briefTemplate->getId(), array(
+              'confirm' => $briefTemplate->getGearchiveerd() ? "Bent u zeker dat u dit sjabloon uit het archief wenst te halen?" : "Bent u zeker dat u dit sjabloon wenst te archiveren?"
+            )) . ' ' . 
+            ($sf_user->isSuperAdmin() ? 
+              ($briefTemplate->isVerwijderbaar() ?
                 link_to(
                   image_tag('icons/trash_16.gif', array('title' => 'Verwijderen')), 
                   'ttCommunicatie/delete?template_id=' . $briefTemplate->getId(),
@@ -118,7 +122,8 @@
                     'confirm' => 'Bent u zeker dat u dit sjabloon wenst te verwijderen?'
                   )) :
                 image_tag('icons/trash_disabled_16.gif', array('title' => 'Verwijderen'))
-              )
+              ) : ''
+            )
           )
         ));
       }

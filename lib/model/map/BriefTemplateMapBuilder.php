@@ -34,6 +34,8 @@ class BriefTemplateMapBuilder {
 
 		$tMap->addPrimaryKey('ID', 'Id', 'int', CreoleTypes::INTEGER, true, null);
 
+		$tMap->addColumn('CATEGORIE', 'Categorie', 'int', CreoleTypes::INTEGER, false, null);
+
 		$tMap->addForeignKey('BRIEF_LAYOUT_ID', 'BriefLayoutId', 'int', CreoleTypes::INTEGER, 'brief_layout', 'ID', true, null);
 
 		$tMap->addColumn('ONDERWERP', 'Onderwerp', 'string', CreoleTypes::VARCHAR, false, 200);
@@ -51,6 +53,8 @@ class BriefTemplateMapBuilder {
 		$tMap->addColumn('SYSTEEMNAAM', 'Systeemnaam', 'string', CreoleTypes::VARCHAR, false, 45);
 
 		$tMap->addColumn('SYSTEEMPLACEHOLDERS', 'Systeemplaceholders', 'string', CreoleTypes::VARCHAR, false, 1000);
+
+		$tMap->addColumn('GEARCHIVEERD', 'Gearchiveerd', 'int', CreoleTypes::INTEGER, true, null);
 
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 

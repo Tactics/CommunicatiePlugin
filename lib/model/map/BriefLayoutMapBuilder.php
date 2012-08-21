@@ -34,6 +34,8 @@ class BriefLayoutMapBuilder {
 
 		$tMap->addPrimaryKey('ID', 'Id', 'int', CreoleTypes::INTEGER, true, null);
 
+		$tMap->addColumn('CATEGORIE', 'Categorie', 'int', CreoleTypes::INTEGER, false, null);
+
 		$tMap->addColumn('NAAM', 'Naam', 'string', CreoleTypes::VARCHAR, true, 255);
 
 		$tMap->addColumn('PRINT_BESTAND', 'PrintBestand', 'string', CreoleTypes::VARCHAR, false, 100);
