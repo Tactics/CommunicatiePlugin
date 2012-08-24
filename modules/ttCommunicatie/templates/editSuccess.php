@@ -277,7 +277,7 @@ function showPlaceholders($placeholders)
     <tr <?php if ($sf_request->hasError('brief_layout_id')) {echo 'class="error"';} ?>>
       <th>Layout:</th>
       <td>
-        <?php echo select_tag('brief_layout_id', objects_for_select(BriefLayoutPeer::getSorted($sf_user), 'getId', 'getNaam', $brief_template->getBriefLayoutId(), array('include_blank' => true))); ?>
+        <?php echo select_tag('brief_layout_id', objects_for_select(BriefLayoutPeer::getSorted(), 'getId', 'getNaam', $brief_template->getBriefLayoutId(), array('include_blank' => true))); ?>
       </td>
     </tr>
     <tr>
