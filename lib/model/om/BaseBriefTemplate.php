@@ -238,9 +238,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setId($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -254,9 +252,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setCategorie($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -270,9 +266,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setBriefLayoutId($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -290,9 +284,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setOnderwerp($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -306,9 +298,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setNaam($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -322,9 +312,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setType($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -338,9 +326,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setBestemmelingClasses($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -354,9 +340,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setHtml($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -380,9 +364,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setSysteemnaam($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -396,9 +378,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setSysteemplaceholders($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -412,9 +392,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setGearchiveerd($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -428,9 +406,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setCreatedBy($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -444,9 +420,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setUpdatedBy($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 

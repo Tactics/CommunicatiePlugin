@@ -185,9 +185,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setId($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -201,9 +199,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setCategorie($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -217,9 +213,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setNaam($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -233,9 +227,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setPrintBestand($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -249,9 +241,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setMailBestand($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -265,9 +255,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setPrintStylesheets($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -281,9 +269,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setMailStylesheets($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -307,9 +293,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setCreatedBy($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -323,9 +307,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setUpdatedBy($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
