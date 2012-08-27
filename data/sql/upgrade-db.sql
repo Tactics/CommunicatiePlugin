@@ -8,3 +8,4 @@
 ALTER TABLE `brief_template` ADD `gearchiveerd` INT NOT NULL DEFAULT 0 AFTER `systeemplaceholders`;
 ALTER TABLE `brief_template` ADD `categorie` INT NULL AFTER `id`;
 ALTER TABLE `brief_layout` ADD `categorie` INT NULL AFTER `id`;
+ALTER TABLE `brief_layout` CHANGE `id` `id` INT( 11 ) NOT NULL AUTO_INCREMENT;
