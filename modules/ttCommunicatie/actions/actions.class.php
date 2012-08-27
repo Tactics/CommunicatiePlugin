@@ -99,7 +99,7 @@ class ttCommunicatieActions extends sfActions
     }
     
     // indien enable_categories = true: alleen templates waartoe de user access heeft    
-    if (sfConfig::get('sf_communicatie_enable_categories', false) && !$this->getUser()->isSuperAdmin())
+    if (sfConfig::get('sf_communicatie_enable_categories', false))
     {      
       $this->pager->add(BriefTemplatePeer::CATEGORIE, array('value' => $this->getUser()->getTtCommunicatieCategory()));
     }
