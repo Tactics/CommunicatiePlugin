@@ -330,6 +330,96 @@ class BriefTemplate extends BaseBriefTemplate
   {
     return ($this->countBriefVerzondens() === 0) && (! $this->isSysteemtemplate());
   }
+  
+  /**
+   * geeft een array terug met attachments uit
+   * a) de template
+   * b) on-the-fly toegevoegd
+   * 
+   * @param sfWebRequest $request
+   * 
+   * @return array
+   */
+  public function getAttachments($request = null)
+  {
+    $attachments = array();
+    if ($this->countBriefBijlages())
+    {
+      foreach ($this->getBriefBijlages() as $briefBijlage)
+      {
+        $node = DmsNodePeer::retrieveByPk($briefBijlage->getBijlageNodeId());
+
+        if (! $node)
+        {
+          continue;
+        }
+        
+        if (function_exists('sys_get_temp_dir'))
+        {
+          $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
+        }
+        else
+        {
+          $tmpFile = tempnam('/tmp', 'brief_bijlage');
+        }
+        
+        $node->saveToFile($tmpFile);
+
+        $attachments[$node->getName()] = $tmpFile;
+      }
+    }
+
+    // Bijlagen die worden bijgevoegd op moment van versturen
+    if ($request)
+    {
+      foreach ($request->getFiles() as $fileId => $fileInfo)
+      {
+        // Controleren of bestand correct werd opgehaald.
+        if ($request->getFileError($fileId) == UPLOAD_ERR_NO_FILE)
+        {
+          // doe niets
+        }
+        else if ($request->getFileError($fileId) != UPLOAD_ERR_OK)
+        {
+          switch ($request->getFileError($fileId))
+          {
+            case UPLOAD_ERR_INI_SIZE:
+              echo  'Opgeladen bestand groter dan ' . ini_get('upload_max_filesize') . '.';
+              break;
+            case UPLOAD_ERR_PARTIAL:
+              echo 'Bestand werd gedeeltelijk opgeladen.';
+              break;
+            case UPLOAD_ERR_NO_TMP_DIR:
+              echo 'bestand', 'Systeem kon geen tijdelijke folder vinden.';
+              break;
+            case UPLOAD_ERR_CANT_WRITE:
+              echo 'bestand', 'Systeem kon niet schrijven naar schijf.';
+              break;
+            case UPLOAD_ERR_EXTENSION:
+              echo 'bestand', 'Incorrecte extensie.';
+              break;
+          }
+          echo '<br /><a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
+          exit();
+        }
+        else
+        {
+          if (function_exists('sys_get_temp_dir'))
+          {
+            $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
+          }
+          else
+          {
+            $tmpFile = tempnam('/tmp', 'brief_bijlage');
+          }        
+          move_uploaded_file($fileInfo['tmp_name'], $tmpFile);
+          $attachments[$fileInfo['name']] = $tmpFile;
+        }
+      }
+    }
+    
+    return $attachments;
+  }
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));
 sfPropelBehavior::add('BriefTemplate', array('updater_loggable'));

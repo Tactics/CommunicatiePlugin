@@ -498,91 +498,7 @@ class ttCommunicatieActions extends sfActions
     return false;
   }
   
-  /**
-   * geeft een array terug met attachments uit
-   * a) de template
-   * b) on-the-fly toegevoegd
-   * 
-   * @param BriefTemplate $briefTemplate
-   * 
-   * @return array
-   */
-  private function getAttachments($briefTemplate)
-  {
-    $attachments = array();
-    if ($briefTemplate->getBriefBijlages())
-    {
-      foreach ($briefTemplate->getBriefBijlages() as $briefBijlage)
-      {
-        $node = DmsNodePeer::retrieveByPk($briefBijlage->getBijlageNodeId());
-
-        if (! $node)
-        {
-          continue;
-        }
-        
-        if (function_exists('sys_get_temp_dir'))
-        {
-          $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
-        }
-        else
-        {
-          $tmpFile = tempnam('/tmp', 'brief_bijlage');
-        }
-        
-        $node->saveToFile($tmpFile);
-
-        $attachments[$node->getName()] = $tmpFile;
-      }
-    }
-
-    // Bijlagen die worden bijgevoegd op moment van versturen
-    foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
-    {
-      // Controleren of bestand correct werd opgehaald.
-      if ($this->getRequest()->getFileError($fileId) == UPLOAD_ERR_NO_FILE)
-      {
-        // doe niets
-      }
-      else if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
-      {
-        switch ($this->getRequest()->getFileError($fileId))
-        {
-          case UPLOAD_ERR_INI_SIZE:
-            echo  'Opgeladen bestand groter dan ' . ini_get('upload_max_filesize') . '.';
-            break;
-          case UPLOAD_ERR_PARTIAL:
-            echo 'Bestand werd gedeeltelijk opgeladen.';
-            break;
-          case UPLOAD_ERR_NO_TMP_DIR:
-            echo 'bestand', 'Systeem kon geen tijdelijke folder vinden.';
-            break;
-          case UPLOAD_ERR_CANT_WRITE:
-            echo 'bestand', 'Systeem kon niet schrijven naar schijf.';
-            break;
-          case UPLOAD_ERR_EXTENSION:
-            echo 'bestand', 'Incorrecte extensie.';
-            break;
-        }
-        echo '<br /><a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
-        exit();
-      }
-      else
-      {
-        if (function_exists('sys_get_temp_dir'))
-        {
-          $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
-        }
-        else
-        {
-          $tmpFile = tempnam('/tmp', 'brief_bijlage');
-        }        
-        move_uploaded_file($fileInfo['tmp_name'], $tmpFile);
-        $attachments[$fileInfo['name']] = $tmpFile;
-      }
-    }
-    return $attachments;
-  }
+  
   
   /**
    * Afdrukken of e-mail verzenden
@@ -759,7 +675,7 @@ class ttCommunicatieActions extends sfActions
           $body = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['body'], $placeholders);
           $brief = $this->cultureBrieven[$culture]['head'] . $body;          
 
-          $tmpAttachments = $this->getAttachments($brief_template);
+          $tmpAttachments = $brief_template->getAttachments($this->getRequest());
           $attachments = $tmpAttachments;
           
           // object-eigen attachements
