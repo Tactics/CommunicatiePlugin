@@ -55,7 +55,7 @@
     <column name="mail_bestand" type="VARCHAR" size="100"/>
     <column name="print_stylesheets" type="VARCHAR" size="255"/>
     <column name="mail_stylesheets" type="VARCHAR" size="255"/>
-    <column name="vertaald" type="BOOLEAN" default="false"/>
+    <column name="vertaald" type="INTEGER" default="0"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>

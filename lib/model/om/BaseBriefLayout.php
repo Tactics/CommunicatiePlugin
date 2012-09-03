@@ -33,7 +33,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 
 	
-	protected $vertaald = false;
+	protected $vertaald = 0;
 
 
 	
@@ -174,9 +174,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setId($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -190,9 +188,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setNaam($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -206,9 +202,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setPrintBestand($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -222,9 +216,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setMailBestand($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -238,9 +230,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setPrintStylesheets($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -254,9 +244,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setMailStylesheets($v)
 	{
 
-		
-		
-		if ($v !== null && !is_string($v)) {
+						if ($v !== null && !is_string($v)) {
 			$v = (string) $v; 
 		}
 
@@ -270,7 +258,11 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setVertaald($v)
 	{
 
-		if ($this->vertaald !== $v || $v === false) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->vertaald !== $v || $v === 0) {
 			$this->vertaald = $v;
 			$this->modifiedColumns[] = BriefLayoutPeer::VERTAALD;
 		}
@@ -280,9 +272,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setCreatedBy($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -296,9 +286,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setUpdatedBy($v)
 	{
 
-		
-		
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
 			$v = (int) $v;
 		}
 
@@ -359,7 +347,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 			$this->mail_stylesheets = $rs->getString($startcol + 5);
 
-			$this->vertaald = $rs->getBoolean($startcol + 6);
+			$this->vertaald = $rs->getInt($startcol + 6);
 
 			$this->created_by = $rs->getInt($startcol + 7);
 

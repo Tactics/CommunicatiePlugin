@@ -44,7 +44,7 @@ class BriefLayoutMapBuilder {
 
 		$tMap->addColumn('MAIL_STYLESHEETS', 'MailStylesheets', 'string', CreoleTypes::VARCHAR, false, 255);
 
-		$tMap->addColumn('VERTAALD', 'Vertaald', 'boolean', CreoleTypes::BOOLEAN, false, null);
+		$tMap->addColumn('VERTAALD', 'Vertaald', 'int', CreoleTypes::INTEGER, false, null);
 
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 
