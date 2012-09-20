@@ -29,7 +29,9 @@ class BriefLayoutPeer extends BaseBriefLayoutPeer
     if (sfConfig::get('sf_communicatie_enable_categories', false))
     {
       $user = sfContext::getInstance()->getUser();
-      $c->add(self::CATEGORIE, $user->getTtCommunicatieCategory(), Criteria::EQUAL);
+      $catCton = $c->getNewCriterion(self::CATEGORIE, $user->getTtCommunicatieCategory(), Criteria::EQUAL);
+      $catCton->addOr($c->getNewCriterion(self::CATEGORIE, null, Criteria::ISNULL)); // generieke
+      $c->add($catCton);
     }
 
     return self::doSelect($c);
