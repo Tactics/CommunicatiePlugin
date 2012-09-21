@@ -223,6 +223,11 @@
       
       // Culture voor object ophalen
       $culture = BriefTemplatePeer::calculateCulture($object);
+      
+      // Adres ophalen als placeholder
+      $defaultPlaceholders = array_merge($defaultPlaceholders, array(
+          'bestemmeling_adres' => nl2br($object->getAdres())
+      ));
      
       // replace the placeholders
       $placeholders = array_merge($object->fillPlaceholders(null, $culture), $defaultPlaceholders);
