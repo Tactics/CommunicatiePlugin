@@ -230,21 +230,25 @@ class BriefTemplate extends BaseBriefTemplate
       throw new sfException("Mail already sent.");
     }
     
+    // default placeholders die in layout gebruikt kunnen worden
+    $vandaag = new myDate();
+    $defaultPlaceholders = array(
+      'datum' => $vandaag->format(),
+      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),     
+      'image_dir' => 'cid:',
+      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
+    );
+    
     $culture    = $object->getMailerCulture();
     $values     = $object->fillPlaceholders(null, $culture);
-    // @todo isSysteemTemplate functie ?
-    if ($this->getSysteemnaam())
-    {
-      $values = array_merge($values, $systeemvalues);
-    }
-    $email      = $object->getMailerRecipientMail();   
-    
+    $values     = array_merge($defaultPlaceholders, $values, $systeemvalues);
+
+    $email       = $object->getMailerRecipientMail();   
     $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
-    $html        = BriefTemplatePeer::replacePlaceholders($this->getTranslatedHtml($culture), $values);
-    
+    $html        = $this->getTranslatedHtml($culture);
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
     
-    $brief = $headAndBody['head'] . $headAndBody['body'];
+    $brief = BriefTemplatePeer::replacePlaceholders($headAndBody['head'] . $headAndBody['body'], $values);
     
     // Mail versturen
     BerichtPeer::verstuurEmail($email, $brief, array(
