@@ -11,7 +11,12 @@
   }
 </style>
 
-<h2 class="pageblock">Verzonden brief #<?php echo sprintf('%010u', $briefVerzonden->getId()); ?></h2>
+<h2 class="pageblock">  
+  <div style="float:right; padding-right: 3px; margin-top: -3px;">
+    <?php echo link_to_function(image_tag('icons/close_16.gif'), "jQuery('div#log_event_detail').html('')"); ?>
+  </div>
+  Verzonden brief #<?php echo sprintf('%010u', $briefVerzonden->getId()); ?>
+</h2>
 <div class="pageblock">
 
 <table style="width:100%;"><tr>
