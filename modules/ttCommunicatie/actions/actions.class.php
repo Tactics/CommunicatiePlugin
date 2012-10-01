@@ -596,7 +596,7 @@ class ttCommunicatieActions extends sfActions
     if (class_exists('Placeholder'))
     {
       $placeholder = new Placeholder();
-      $defaultPlaceholders = array_merge($defaultPlaceholders, $placeholder->fillPlaceholders());
+      $defaultPlaceholders = array_merge($defaultPlaceholders, $placeholder->fillPlaceholders(null, BriefTemplatePeer::getDefaultCulture()));
     }
 
     if ($emailverzenden)
