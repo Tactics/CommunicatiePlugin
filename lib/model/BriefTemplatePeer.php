@@ -70,7 +70,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function clearPlaceholders($html)
   {    
-    return preg_replace('(%[a-z_0-9]*%)', '', $html);
+    return preg_replace('(%[A-Za-z0-9_:]+%)', '', $html);
   }
 
   /**
@@ -113,6 +113,8 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   /**
    * Helper functie die placeholders selecteert op basis van een prefix.
    * Het prefix wordt ook verwijderd.
+   * 
+   * @return array
    */
   public static function filterByPrefix($prefix, $placeholders)
   {
@@ -122,7 +124,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     {
       if (strpos($p, $prefix . self::PLACEHOLDER_PREFIX_SEPARATOR) === 0)
       {
-        $subset[] = substr($p, strlen($p) + strlen(self::PLACEHOLDER_PREFIX_SEPARATOR));
+        $subset[] = substr($p, strlen($prefix) + strlen(self::PLACEHOLDER_PREFIX_SEPARATOR));
       }
     }
 
