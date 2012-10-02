@@ -690,8 +690,15 @@ class ttCommunicatieActions extends sfActions
           $defaultPlaceholders = array_merge($defaultPlaceholders, array(
               'bestemmeling_adres' => nl2br($object->getAdres())
           ));
+          
+          // nodige placeholders uit template halen
+          $usedPlaceholders = array();
+          if(preg_match_all('/\%([A-Za-z0-9_:]+)\%/', $this->cultureBrieven[$culture]['onderwerp'] . $this->cultureBrieven[$culture]['body'], $matches)) {
+              $usedPlaceholders = $matches[1];
+          }
+          
           // replace the placeholders
-          $placeholders = array_merge($object->fillPlaceholders(null, $culture), $defaultPlaceholders);
+          $placeholders = array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders);
           $onderwerp = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['onderwerp'], $placeholders);    
           $placeholders['onderwerp'] = $onderwerp; // nodig om placeholder %onderwerp% in body te vervangen
           $body = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['body'], $placeholders);

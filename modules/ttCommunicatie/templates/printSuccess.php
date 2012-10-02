@@ -228,9 +228,15 @@
       $defaultPlaceholders = array_merge($defaultPlaceholders, array(
           'bestemmeling_adres' => nl2br($object->getAdres())
       ));
-     
+           
+      // nodige placeholders uit template halen
+      $usedPlaceholders = array();
+      if(preg_match_all('/\%([A-Za-z0-9_:]+)\%/', $cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $matches)) {
+          $usedPlaceholders = $matches[1];
+      }
+      
       // replace the placeholders
-      $placeholders = array_merge($object->fillPlaceholders(null, $culture), $defaultPlaceholders);
+      $placeholders = array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders);      
       $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $placeholders);
       $placeholders['onderwerp'] = $onderwerp;
       $body = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
