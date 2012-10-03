@@ -63,7 +63,7 @@
       language : "nl",      
       plugins: "paste, pagebreak, table",
       pagebreak_separator : "%pagebreak%",
-      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak",
+      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
       theme_advanced_buttons2 : "tablecontrols",
       theme_advanced_buttons3 : ""      
     });

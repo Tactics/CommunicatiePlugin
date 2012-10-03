@@ -210,7 +210,7 @@ function showPlaceholders($placeholders)
       language : "nl",      
       plugins: "paste, pagebreak",
       pagebreak_separator : "%pagebreak%",
-      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak",
+      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
       theme_advanced_buttons2 : "",
       theme_advanced_buttons3 : ""      
     });
