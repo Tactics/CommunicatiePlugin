@@ -241,6 +241,18 @@
       $placeholders['onderwerp'] = $onderwerp;
       $body = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
       $brief = $cultureBrieven[$culture]['head'] . $body;
+      
+      // voorbeeld melding om te vermijden dat dit wordt gebruikt om effectief af te drukken
+      if ($voorbeeld)
+      {
+        $watermerkDiv = '
+          <div style="position: absolute; left: 50px; top: 450px; -moz-transform: rotate(60deg); font-size:80px; color:red; opacity:0.4">
+            VOORBEELD 
+          </div>
+        ';
+
+        $brief = $watermerkDiv . $brief;
+      }      
 
       echo "<!-- Brief " . $aantal_brieven . "-->\n";
       echo BriefTemplatePeer::clearPlaceholders($brief);
