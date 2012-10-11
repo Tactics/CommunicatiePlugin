@@ -263,11 +263,11 @@
         $brief_verzonden_ids[] = $briefVerzonden->getId();
       }      
       
-      $aantal_brieven++;
+      $aantal_brieven++;      
       
       if (isset($bestemmelingen_object))
       {
-        exit();
+        break;
       }
     }
 
@@ -278,7 +278,7 @@
     }
   ?>
 
-  <div class="printbox">            
+  <div class="printbox">        
     <?php echo input_hidden_tag('brief_verzonden_ids', implode(',', $brief_verzonden_ids)); ?>    
     <div style='float:right;text-align:right'>
       <a href="javascript:window.close()"><?php echo image_tag("icons/close.png")?></a>
