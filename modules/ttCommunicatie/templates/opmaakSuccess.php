@@ -254,9 +254,9 @@ function showPlaceholders($placeholders)
     });
     
     // confirmbox
-    $('form[name=print]').submit(function(){
-      return confirm("Bent u zeker dat u tot " + jQuery('input[name=bestemmeling_id]:checked').length + " e-mails wilt verzenden?");
-    });
+    //$('form[name=print]').submit(function(){
+    //  return confirm("Bent u zeker dat u tot " + jQuery('input[name=bestemmeling_id]:checked').length + " e-mails wilt verzenden?");
+    //});
     
     <?php endif; ?>
     
