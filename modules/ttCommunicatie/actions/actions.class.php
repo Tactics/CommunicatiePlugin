@@ -1092,5 +1092,66 @@ class ttCommunicatieActions extends sfActions
     
     return $this->redirect('ttCommunicatie/list');
 	}
+  
+  /**
+   * uitvoeren van de object communicatielog
+   */
+  public function executeObjectCommunicatieLog()
+  {
+    $objectClass = $this->getRequestParameter('object_class');
+    $objectId = $this->getRequestParameter('object_id');
+    $this->object = eval("return {$objectClass}Peer::retrieveByPK({$objectId});");
+    $this->forward404Unless($this->object);
+    
+    $this->type = $this->getRequestParameter('type');
+    
+    $this->pager = $this->getObjectCommunicatieLogPager($objectClass, $objectId, $this->type);
+    $this->pager->init();
+    
+    $this->setTemplate(('_objectCommunicatie'));
+    return 'Log';
+  }
+  
+  /**
+   * 
+   * @param string $object_class
+   * @param int $object_id
+   * @param string $type default|bestemmeling
+   * 
+   * @return \myFilteredPager
+   */
+  private function getObjectCommunicatieLogPager($object_class, $object_id, $type = '' /* todo? $sqls */)
+  {
+    $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::CREATED_AT, false);
+
+    if ($type == 'bestemmeling')
+    {
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, $object_class);
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, $object_id);
+    }
+    else
+    {
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID, $object_id);
+    }    
+    
+    /*
+     TODO: BasePeer::createSelectSql(Criteria $criteria, &$params)
+      
+      $sql = 'SELECT * from (select * from ' . BriefVerzondenPeer::TABLE_NAME . ' where object_class = "' . $object_class . '" AND object_id = ' . $object_id . ')';
+
+    foreach($sqls as $s)
+    {
+      $sql .= ' UNION ' . $s;
+    }
+    
+    $sql .= ' ORDER BY '*/
+    
+    //filters
+    $pager->add(BriefVerzondenPeer::ONDERWERP, array('comparison' => Criteria::LIKE));
+    $pager->add(BriefVerzondenPeer::HTML, array('comparison' => Criteria::LIKE));
+     
+    return $pager;
+  }
 }
   

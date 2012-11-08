@@ -15,7 +15,7 @@ class ttCommunicatieComponents extends sfComponents
    */
   public static function getCommunicatieLogPager($object_class, $object_id, $type = '' /* todo? $sqls */)
   {
-    $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::ID, false);
+    $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::CREATED_AT, false);
 
     if ($type == 'bestemmeling')
     {
@@ -39,8 +39,6 @@ class ttCommunicatieComponents extends sfComponents
     }
     
     $sql .= ' ORDER BY '*/
-    
-    
      
     return $pager;
   }
@@ -58,9 +56,10 @@ class ttCommunicatieComponents extends sfComponents
       throw new sfException('object communicatie log component verwacht een parameter "object" .');
     }
     
-    $type = $this->type ? $this->type : '';
+    $this->type = isset($this->type) ? $this->type : '';
+    $this->metFilter = isset($this->metFilter) ? $this->metFilter : false;
     
-    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $type);
+    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type);
     $this->pager->init();
   }
   
