@@ -741,11 +741,21 @@ class ttCommunicatieActions extends sfActions
             $verstuurd = true;
             echo 'Bericht verzonden naar : ' . $email . '<br/>';
             $counter['verstuurd']++;
-
+            
+            $bestemmeling = null;
+            if (method_exists($object, 'getBestemmeling'))
+            {
+              $bestemmeling =  $object->getBestemmeling();
+            }           
+            
             // Log de brief
             $briefVerzonden = new BriefVerzonden();
+            // object dat verzonden wordt bv factuur
             $briefVerzonden->setObjectClass($this->bestemmelingenClass);
             $briefVerzonden->setObjectId($object->getId());
+            // eindbestemmeling naar waar effectief verzonden wordt bv debituer
+            $briefVerzonden->setObjectClassBestemmeling(isset($bestemmeling) ? get_class($bestemmeling) : null);
+            $briefVerzonden->setObjectIdBestemmeling(isset($bestemmeling) ? $bestemmeling->getId() : null);
             $briefVerzonden->setBriefTemplate($brief_template);
             $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
             $briefVerzonden->setAdres($email);

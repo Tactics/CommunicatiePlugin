@@ -37,7 +37,7 @@
     echo $table;
   ?>
 
-  <?php echo pager_navigation($pager,  $object_class . $object_id . 'Communicatielog', 'eventlist') ?>
+  <?php echo pager_navigation($pager,  get_class($object) . $object->getId() . 'Communicatielog', 'eventlist') ?>
 
   <br />
   <div id="log_event_detail">

@@ -38,6 +38,10 @@ class BriefVerzondenMapBuilder {
 
 		$tMap->addColumn('OBJECT_ID', 'ObjectId', 'int', CreoleTypes::INTEGER, true, null);
 
+		$tMap->addColumn('OBJECT_CLASS_BESTEMMELING', 'ObjectClassBestemmeling', 'string', CreoleTypes::VARCHAR, false, 45);
+
+		$tMap->addColumn('OBJECT_ID_BESTEMMELING', 'ObjectIdBestemmeling', 'int', CreoleTypes::INTEGER, false, null);
+
 		$tMap->addForeignKey('BRIEF_TEMPLATE_ID', 'BriefTemplateId', 'int', CreoleTypes::INTEGER, 'brief_template', 'ID', false, null);
 
 		$tMap->addColumn('ONDERWERP', 'Onderwerp', 'string', CreoleTypes::VARCHAR, false, 200);

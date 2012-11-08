@@ -13,7 +13,7 @@ abstract class BaseBriefVerzondenPeer {
 	const CLASS_DEFAULT = 'plugins.ttCommunicatiePlugin.lib.model.BriefVerzonden';
 
 	
-	const NUM_COLUMNS = 15;
+	const NUM_COLUMNS = 17;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -27,6 +27,12 @@ abstract class BaseBriefVerzondenPeer {
 
 	
 	const OBJECT_ID = 'brief_verzonden.OBJECT_ID';
+
+	
+	const OBJECT_CLASS_BESTEMMELING = 'brief_verzonden.OBJECT_CLASS_BESTEMMELING';
+
+	
+	const OBJECT_ID_BESTEMMELING = 'brief_verzonden.OBJECT_ID_BESTEMMELING';
 
 	
 	const BRIEF_TEMPLATE_ID = 'brief_verzonden.BRIEF_TEMPLATE_ID';
@@ -70,18 +76,18 @@ abstract class BaseBriefVerzondenPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'ObjectClass', 'ObjectId', 'BriefTemplateId', 'Onderwerp', 'Html', 'Medium', 'Adres', 'Custom', 'Culture', 'Status', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
-		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID, BriefVerzondenPeer::OBJECT_CLASS, BriefVerzondenPeer::OBJECT_ID, BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefVerzondenPeer::ONDERWERP, BriefVerzondenPeer::HTML, BriefVerzondenPeer::MEDIUM, BriefVerzondenPeer::ADRES, BriefVerzondenPeer::CUSTOM, BriefVerzondenPeer::CULTURE, BriefVerzondenPeer::STATUS, BriefVerzondenPeer::CREATED_BY, BriefVerzondenPeer::UPDATED_BY, BriefVerzondenPeer::CREATED_AT, BriefVerzondenPeer::UPDATED_AT, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'object_class', 'object_id', 'brief_template_id', 'onderwerp', 'html', 'medium', 'adres', 'custom', 'culture', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'ObjectClass', 'ObjectId', 'ObjectClassBestemmeling', 'ObjectIdBestemmeling', 'BriefTemplateId', 'Onderwerp', 'Html', 'Medium', 'Adres', 'Custom', 'Culture', 'Status', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
+		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID, BriefVerzondenPeer::OBJECT_CLASS, BriefVerzondenPeer::OBJECT_ID, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefVerzondenPeer::ONDERWERP, BriefVerzondenPeer::HTML, BriefVerzondenPeer::MEDIUM, BriefVerzondenPeer::ADRES, BriefVerzondenPeer::CUSTOM, BriefVerzondenPeer::CULTURE, BriefVerzondenPeer::STATUS, BriefVerzondenPeer::CREATED_BY, BriefVerzondenPeer::UPDATED_BY, BriefVerzondenPeer::CREATED_AT, BriefVerzondenPeer::UPDATED_AT, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'object_class', 'object_id', 'object_class_bestemmeling', 'object_id_bestemmeling', 'brief_template_id', 'onderwerp', 'html', 'medium', 'adres', 'custom', 'culture', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'ObjectClass' => 1, 'ObjectId' => 2, 'BriefTemplateId' => 3, 'Onderwerp' => 4, 'Html' => 5, 'Medium' => 6, 'Adres' => 7, 'Custom' => 8, 'Culture' => 9, 'Status' => 10, 'CreatedBy' => 11, 'UpdatedBy' => 12, 'CreatedAt' => 13, 'UpdatedAt' => 14, ),
-		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID => 0, BriefVerzondenPeer::OBJECT_CLASS => 1, BriefVerzondenPeer::OBJECT_ID => 2, BriefVerzondenPeer::BRIEF_TEMPLATE_ID => 3, BriefVerzondenPeer::ONDERWERP => 4, BriefVerzondenPeer::HTML => 5, BriefVerzondenPeer::MEDIUM => 6, BriefVerzondenPeer::ADRES => 7, BriefVerzondenPeer::CUSTOM => 8, BriefVerzondenPeer::CULTURE => 9, BriefVerzondenPeer::STATUS => 10, BriefVerzondenPeer::CREATED_BY => 11, BriefVerzondenPeer::UPDATED_BY => 12, BriefVerzondenPeer::CREATED_AT => 13, BriefVerzondenPeer::UPDATED_AT => 14, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'object_class' => 1, 'object_id' => 2, 'brief_template_id' => 3, 'onderwerp' => 4, 'html' => 5, 'medium' => 6, 'adres' => 7, 'custom' => 8, 'culture' => 9, 'status' => 10, 'created_by' => 11, 'updated_by' => 12, 'created_at' => 13, 'updated_at' => 14, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'ObjectClass' => 1, 'ObjectId' => 2, 'ObjectClassBestemmeling' => 3, 'ObjectIdBestemmeling' => 4, 'BriefTemplateId' => 5, 'Onderwerp' => 6, 'Html' => 7, 'Medium' => 8, 'Adres' => 9, 'Custom' => 10, 'Culture' => 11, 'Status' => 12, 'CreatedBy' => 13, 'UpdatedBy' => 14, 'CreatedAt' => 15, 'UpdatedAt' => 16, ),
+		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID => 0, BriefVerzondenPeer::OBJECT_CLASS => 1, BriefVerzondenPeer::OBJECT_ID => 2, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING => 3, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING => 4, BriefVerzondenPeer::BRIEF_TEMPLATE_ID => 5, BriefVerzondenPeer::ONDERWERP => 6, BriefVerzondenPeer::HTML => 7, BriefVerzondenPeer::MEDIUM => 8, BriefVerzondenPeer::ADRES => 9, BriefVerzondenPeer::CUSTOM => 10, BriefVerzondenPeer::CULTURE => 11, BriefVerzondenPeer::STATUS => 12, BriefVerzondenPeer::CREATED_BY => 13, BriefVerzondenPeer::UPDATED_BY => 14, BriefVerzondenPeer::CREATED_AT => 15, BriefVerzondenPeer::UPDATED_AT => 16, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'object_class' => 1, 'object_id' => 2, 'object_class_bestemmeling' => 3, 'object_id_bestemmeling' => 4, 'brief_template_id' => 5, 'onderwerp' => 6, 'html' => 7, 'medium' => 8, 'adres' => 9, 'custom' => 10, 'culture' => 11, 'status' => 12, 'created_by' => 13, 'updated_by' => 14, 'created_at' => 15, 'updated_at' => 16, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	
@@ -140,6 +146,10 @@ abstract class BaseBriefVerzondenPeer {
 		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_CLASS);
 
 		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_ID);
+
+		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING);
+
+		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING);
 
 		$criteria->addSelectColumn(BriefVerzondenPeer::BRIEF_TEMPLATE_ID);
 

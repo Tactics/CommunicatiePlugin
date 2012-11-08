@@ -21,6 +21,14 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 
 	
+	protected $object_class_bestemmeling;
+
+
+	
+	protected $object_id_bestemmeling;
+
+
+	
 	protected $brief_template_id;
 
 
@@ -95,6 +103,20 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 		return $this->object_id;
+	}
+
+	
+	public function getObjectClassBestemmeling()
+	{
+
+		return $this->object_class_bestemmeling;
+	}
+
+	
+	public function getObjectIdBestemmeling()
+	{
+
+		return $this->object_id_bestemmeling;
 	}
 
 	
@@ -250,6 +272,34 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		if ($this->object_id !== $v) {
 			$this->object_id = $v;
 			$this->modifiedColumns[] = BriefVerzondenPeer::OBJECT_ID;
+		}
+
+	} 
+	
+	public function setObjectClassBestemmeling($v)
+	{
+
+						if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->object_class_bestemmeling !== $v) {
+			$this->object_class_bestemmeling = $v;
+			$this->modifiedColumns[] = BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING;
+		}
+
+	} 
+	
+	public function setObjectIdBestemmeling($v)
+	{
+
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->object_id_bestemmeling !== $v) {
+			$this->object_id_bestemmeling = $v;
+			$this->modifiedColumns[] = BriefVerzondenPeer::OBJECT_ID_BESTEMMELING;
 		}
 
 	} 
@@ -438,35 +488,39 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 			$this->object_id = $rs->getInt($startcol + 2);
 
-			$this->brief_template_id = $rs->getInt($startcol + 3);
+			$this->object_class_bestemmeling = $rs->getString($startcol + 3);
 
-			$this->onderwerp = $rs->getString($startcol + 4);
+			$this->object_id_bestemmeling = $rs->getInt($startcol + 4);
 
-			$this->html = $rs->getString($startcol + 5);
+			$this->brief_template_id = $rs->getInt($startcol + 5);
 
-			$this->medium = $rs->getString($startcol + 6);
+			$this->onderwerp = $rs->getString($startcol + 6);
 
-			$this->adres = $rs->getString($startcol + 7);
+			$this->html = $rs->getString($startcol + 7);
 
-			$this->custom = $rs->getBoolean($startcol + 8);
+			$this->medium = $rs->getString($startcol + 8);
 
-			$this->culture = $rs->getString($startcol + 9);
+			$this->adres = $rs->getString($startcol + 9);
 
-			$this->status = $rs->getString($startcol + 10);
+			$this->custom = $rs->getBoolean($startcol + 10);
 
-			$this->created_by = $rs->getInt($startcol + 11);
+			$this->culture = $rs->getString($startcol + 11);
 
-			$this->updated_by = $rs->getInt($startcol + 12);
+			$this->status = $rs->getString($startcol + 12);
 
-			$this->created_at = $rs->getTimestamp($startcol + 13, null);
+			$this->created_by = $rs->getInt($startcol + 13);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 14, null);
+			$this->updated_by = $rs->getInt($startcol + 14);
+
+			$this->created_at = $rs->getTimestamp($startcol + 15, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 16, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 15; 
+						return $startcol + 17; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefVerzonden object", $e);
 		}
@@ -663,39 +717,45 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				return $this->getObjectId();
 				break;
 			case 3:
-				return $this->getBriefTemplateId();
+				return $this->getObjectClassBestemmeling();
 				break;
 			case 4:
-				return $this->getOnderwerp();
+				return $this->getObjectIdBestemmeling();
 				break;
 			case 5:
-				return $this->getHtml();
+				return $this->getBriefTemplateId();
 				break;
 			case 6:
-				return $this->getMedium();
+				return $this->getOnderwerp();
 				break;
 			case 7:
-				return $this->getAdres();
+				return $this->getHtml();
 				break;
 			case 8:
-				return $this->getCustom();
+				return $this->getMedium();
 				break;
 			case 9:
-				return $this->getCulture();
+				return $this->getAdres();
 				break;
 			case 10:
-				return $this->getStatus();
+				return $this->getCustom();
 				break;
 			case 11:
-				return $this->getCreatedBy();
+				return $this->getCulture();
 				break;
 			case 12:
-				return $this->getUpdatedBy();
+				return $this->getStatus();
 				break;
 			case 13:
-				return $this->getCreatedAt();
+				return $this->getCreatedBy();
 				break;
 			case 14:
+				return $this->getUpdatedBy();
+				break;
+			case 15:
+				return $this->getCreatedAt();
+				break;
+			case 16:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -711,18 +771,20 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 			$keys[0] => $this->getId(),
 			$keys[1] => $this->getObjectClass(),
 			$keys[2] => $this->getObjectId(),
-			$keys[3] => $this->getBriefTemplateId(),
-			$keys[4] => $this->getOnderwerp(),
-			$keys[5] => $this->getHtml(),
-			$keys[6] => $this->getMedium(),
-			$keys[7] => $this->getAdres(),
-			$keys[8] => $this->getCustom(),
-			$keys[9] => $this->getCulture(),
-			$keys[10] => $this->getStatus(),
-			$keys[11] => $this->getCreatedBy(),
-			$keys[12] => $this->getUpdatedBy(),
-			$keys[13] => $this->getCreatedAt(),
-			$keys[14] => $this->getUpdatedAt(),
+			$keys[3] => $this->getObjectClassBestemmeling(),
+			$keys[4] => $this->getObjectIdBestemmeling(),
+			$keys[5] => $this->getBriefTemplateId(),
+			$keys[6] => $this->getOnderwerp(),
+			$keys[7] => $this->getHtml(),
+			$keys[8] => $this->getMedium(),
+			$keys[9] => $this->getAdres(),
+			$keys[10] => $this->getCustom(),
+			$keys[11] => $this->getCulture(),
+			$keys[12] => $this->getStatus(),
+			$keys[13] => $this->getCreatedBy(),
+			$keys[14] => $this->getUpdatedBy(),
+			$keys[15] => $this->getCreatedAt(),
+			$keys[16] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -748,39 +810,45 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				$this->setObjectId($value);
 				break;
 			case 3:
-				$this->setBriefTemplateId($value);
+				$this->setObjectClassBestemmeling($value);
 				break;
 			case 4:
-				$this->setOnderwerp($value);
+				$this->setObjectIdBestemmeling($value);
 				break;
 			case 5:
-				$this->setHtml($value);
+				$this->setBriefTemplateId($value);
 				break;
 			case 6:
-				$this->setMedium($value);
+				$this->setOnderwerp($value);
 				break;
 			case 7:
-				$this->setAdres($value);
+				$this->setHtml($value);
 				break;
 			case 8:
-				$this->setCustom($value);
+				$this->setMedium($value);
 				break;
 			case 9:
-				$this->setCulture($value);
+				$this->setAdres($value);
 				break;
 			case 10:
-				$this->setStatus($value);
+				$this->setCustom($value);
 				break;
 			case 11:
-				$this->setCreatedBy($value);
+				$this->setCulture($value);
 				break;
 			case 12:
-				$this->setUpdatedBy($value);
+				$this->setStatus($value);
 				break;
 			case 13:
-				$this->setCreatedAt($value);
+				$this->setCreatedBy($value);
 				break;
 			case 14:
+				$this->setUpdatedBy($value);
+				break;
+			case 15:
+				$this->setCreatedAt($value);
+				break;
+			case 16:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -793,18 +861,20 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setObjectClass($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setObjectId($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setBriefTemplateId($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setOnderwerp($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setHtml($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setMedium($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setAdres($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCustom($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCulture($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setStatus($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCreatedBy($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setUpdatedBy($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCreatedAt($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setUpdatedAt($arr[$keys[14]]);
+		if (array_key_exists($keys[3], $arr)) $this->setObjectClassBestemmeling($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setObjectIdBestemmeling($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setBriefTemplateId($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setOnderwerp($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setHtml($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setMedium($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setAdres($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCustom($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCulture($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setStatus($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCreatedBy($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setUpdatedBy($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCreatedAt($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setUpdatedAt($arr[$keys[16]]);
 	}
 
 	
@@ -815,6 +885,8 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefVerzondenPeer::ID)) $criteria->add(BriefVerzondenPeer::ID, $this->id);
 		if ($this->isColumnModified(BriefVerzondenPeer::OBJECT_CLASS)) $criteria->add(BriefVerzondenPeer::OBJECT_CLASS, $this->object_class);
 		if ($this->isColumnModified(BriefVerzondenPeer::OBJECT_ID)) $criteria->add(BriefVerzondenPeer::OBJECT_ID, $this->object_id);
+		if ($this->isColumnModified(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING)) $criteria->add(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, $this->object_class_bestemmeling);
+		if ($this->isColumnModified(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING)) $criteria->add(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, $this->object_id_bestemmeling);
 		if ($this->isColumnModified(BriefVerzondenPeer::BRIEF_TEMPLATE_ID)) $criteria->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, $this->brief_template_id);
 		if ($this->isColumnModified(BriefVerzondenPeer::ONDERWERP)) $criteria->add(BriefVerzondenPeer::ONDERWERP, $this->onderwerp);
 		if ($this->isColumnModified(BriefVerzondenPeer::HTML)) $criteria->add(BriefVerzondenPeer::HTML, $this->html);
@@ -860,6 +932,10 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		$copyObj->setObjectClass($this->object_class);
 
 		$copyObj->setObjectId($this->object_id);
+
+		$copyObj->setObjectClassBestemmeling($this->object_class_bestemmeling);
+
+		$copyObj->setObjectIdBestemmeling($this->object_id_bestemmeling);
 
 		$copyObj->setBriefTemplateId($this->brief_template_id);
 

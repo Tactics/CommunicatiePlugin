@@ -5,12 +5,28 @@
 
 class ttCommunicatieComponents extends sfComponents
 {
-  public static function getCommunicatieLogPager($object_class, $object_id/* todo? $sqls */)
+  /**
+   * 
+   * @param string $object_class
+   * @param int $object_id
+   * @param string $type default|bestemmeling
+   * 
+   * @return \myFilteredPager
+   */
+  public static function getCommunicatieLogPager($object_class, $object_id, $type = '' /* todo? $sqls */)
   {
     $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::ID, false);
 
-    $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
-    $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID, $object_id);
+    if ($type == 'bestemmeling')
+    {
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, $object_class);
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, $object_id);
+    }
+    else
+    {
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
+      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID, $object_id);
+    }    
     
     /*
      TODO: BasePeer::createSelectSql(Criteria $criteria, &$params)
@@ -41,11 +57,10 @@ class ttCommunicatieComponents extends sfComponents
     {
       throw new sfException('object communicatie log component verwacht een parameter "object" .');
     }
-
-    $this->object_class = get_class($this->object);
-    $this->object_id = $this->object->getId();
-
-    $this->pager = self::getCommunicatieLogPager($this->object_class, $this->object_id);
+    
+    $type = $this->type ? $this->type : '';
+    
+    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $type);
     $this->pager->init();
   }
   

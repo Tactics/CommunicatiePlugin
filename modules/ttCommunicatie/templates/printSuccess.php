@@ -246,8 +246,8 @@
       if ($voorbeeld)
       {
         $watermerkDiv = '
-          <div style="position: absolute; left: 50px; top: 450px; -moz-transform: rotate(60deg); font-size:80px; color:red; opacity:0.4">
-            VOORBEELD 
+          <div style="width: 560px; position: absolute; left: 50px; top: 450px; -moz-transform: rotate(-300deg); font-size:80px; color:red; opacity:0.4">
+            VOORBEELD
           </div>
         ';
 
@@ -260,9 +260,17 @@
       // Log de brief tijdelijk om later te kunnen bevestigen
       if (! $voorbeeld)
       {
+        $bestemmeling = null;
+        if (method_exists($object, 'getBestemmeling'))
+        {
+          $bestemmeling =  $object->getBestemmeling();
+        }                   
+        
         $briefVerzonden = new BriefVerzonden();
         $briefVerzonden->setObjectClass(get_class($object));
         $briefVerzonden->setObjectId($object->getId());
+        $briefVerzonden->setObjectClassBestemmeling(isset($bestemmeling) ? get_class($bestemmeling) : null);
+        $briefVerzonden->setObjectIdBestemmeling(isset($bestemmeling) ? $bestemmeling->getId() : null);
         $briefVerzonden->setBriefTemplate($object_brief_template);
         $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
         $briefVerzonden->setAdres($object->getAdres());

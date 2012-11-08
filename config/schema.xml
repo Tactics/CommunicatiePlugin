@@ -30,6 +30,8 @@
     <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
     <column name="object_class" type="VARCHAR" size="45" required="true"/>
     <column name="object_id" type="INTEGER" required="true"/>
+    <column name="object_class_bestemmeling" type="VARCHAR" size="45"/>
+    <column name="object_id_bestemmeling" type="INTEGER"/>
     <column name="brief_template_id" type="INTEGER"/>
     <column name="onderwerp" type="VARCHAR" size="200"/>
     <column name="html" type="LONGVARCHAR"/>
