@@ -1,0 +1,1 @@
+<?php include_component('ttCommunicatie', 'objectCommunicatieLog', array('object' => $object, 'type' => $type)); ?>

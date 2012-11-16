@@ -84,7 +84,7 @@
     echo $table;
   ?>
 
-  <?php echo pager_navigation($pager,  get_class($object) . $object->getId() . 'Communicatielog', 'eventlist') ?>
+  <?php echo pager_navigation($pager, 'ttCommunicatie/objectCommunicatieLog?object_class=' . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type, 'eventlist') ?>
 
 <?php if (!$sf_request->isXmlHttpRequest()) : ?>
     </div> <!-- end zoekresultaten -->
