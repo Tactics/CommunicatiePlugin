@@ -76,6 +76,15 @@ class ttCommunicatieActions extends sfActions
     {
       $this->edit_template = false;
     }
+    
+    // check of bestemmeling class een communicatie target is volgend de config
+    // indien geen target, worden invoegvelden e.d. niet weergegeven.
+    $targets = array();
+    foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo)
+    {
+      $targets[] = $targetInfo['class'];
+    }
+    $this->is_target = in_array($this->bestemmelingenClass, $targets);    
   }
   
   /**

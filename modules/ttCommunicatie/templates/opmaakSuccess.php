@@ -132,18 +132,20 @@ function showPlaceholders($placeholders)
             ?>
           </td>
           <td>
-            <h2 class="pageblock" style="margin-left: 20px; width: 300px;">Invoegvelden</h2>
-            <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">            
-            <?php
-              $placeholders = eval("return $bestemmelingenClass::getPlaceholders();");   
-              // Algemene placeholders indien gedefinieerd
-              if (class_exists('Placeholder'))
-              {
-                $placeholders = array_merge($placeholders, Placeholder::getPlaceholders());
-              }
-              showPlaceholders($placeholders);                      
-            ?>
-            </div>
+            <?php if ($is_target) : ?>
+              <h2 class="pageblock" style="margin-left: 20px; width: 300px;">Invoegvelden</h2>
+              <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">            
+              <?php
+                $placeholders = eval("return $bestemmelingenClass::getPlaceholders();");   
+                // Algemene placeholders indien gedefinieerd
+                if (class_exists('Placeholder'))
+                {
+                  $placeholders = array_merge($placeholders, Placeholder::getPlaceholders());
+                }
+                showPlaceholders($placeholders);                      
+              ?>
+              </div>
+            <?php endif; ?>
           </td>
         </tr>
         <tr>
