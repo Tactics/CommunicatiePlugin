@@ -499,9 +499,19 @@ class ttCommunicatieActions extends sfActions
         
     if ($this->choose_template)
     {      
-      $c = new Criteria();
-      $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);      
-      $this->brief_templates = BriefTemplatePeer::getSorted($c); 
+      // indien bestemmeling een communicatie target is (zie settings.yml)
+      if ($this->is_target)
+      {
+        $c = new Criteria();
+        $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);      
+        $this->brief_templates = BriefTemplatePeer::getSorted($c); 
+      }
+      else
+      {
+        $c = new Criteria();
+        $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|Algemeen|%', Criteria::LIKE); 
+        $this->brief_templates = BriefTemplatePeer::getSorted($c);
+      } 
     }
   }
 
@@ -707,7 +717,9 @@ class ttCommunicatieActions extends sfActions
           }
           
           // replace the placeholders
-          $placeholders = array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders);
+          $placeholders = $this->is_target 
+            ? array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders)
+            : $defaultPlaceholders;
           $onderwerp = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['onderwerp'], $placeholders);    
           $placeholders['onderwerp'] = $onderwerp; // nodig om placeholder %onderwerp% in body te vervangen
           $body = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['body'], $placeholders);

@@ -195,7 +195,7 @@ function showPlaceholders($placeholders)
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
         <label>
           <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray()), array('disabled' => $brief_template->isSysteemTemplate())); ?>
-          <?php echo $oClass['label']; ?>
+          <?php echo $oClass['label']; ?>          
         </label>
         <?php endforeach; ?>
       </td>
@@ -229,6 +229,9 @@ function showPlaceholders($placeholders)
               <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px;">
                 <?php 
                 foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
+                  <?php if ('Algemeen' == $oClass['class']) : 
+                    continue;
+                  endif; ?>
                   <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                     <strong><?php echo $oClass['label']; ?></strong>
                     <?php  

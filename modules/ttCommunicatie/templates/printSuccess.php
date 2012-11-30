@@ -236,7 +236,10 @@
       }
       
       // replace the placeholders
-      $placeholders = array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders);      
+      
+      $placeholders = $is_target 
+        ? array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders)
+        : $defaultPlaceholders;      
       $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $placeholders);
       $placeholders['onderwerp'] = $onderwerp;
       $body = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
