@@ -84,7 +84,7 @@ class ttCommunicatieActions extends sfActions
     {
       $targets[] = $targetInfo['class'];
     }
-    $this->is_target = in_array($this->bestemmelingenClass, $targets);    
+    $this->is_target = in_array($this->bestemmelingen_object ? get_class($this->bestemmelingen_object) : $this->bestemmelingenClass, $targets);    
   }
   
   /**
