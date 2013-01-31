@@ -33,15 +33,12 @@ class BriefVerzonden extends BaseBriefVerzonden
         'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
       ));
 
-      // Log de brief
-      $briefVerzonden = new BriefVerzonden();
-      $briefVerzonden->setObjectClass($this->getObjectClass());
-      $briefVerzonden->setObjectId($this->getObjectId());
-      $briefVerzonden->setBriefTemplateId($this->getBriefTemplateId());
-      $briefVerzonden->setMedium($this->getMedium());
-      $briefVerzonden->setAdres($this->getAdres());
-      $briefVerzonden->setOnderwerp($this->getOnderwerp());
-      $briefVerzonden->setHtml($this->getHtml());
+      // log een kopie, maar met aangepaste created_at/by en updated_at/by
+      $briefVerzonden = $this->copy();
+      $briefVerzonden->setCreatedAt(null);
+      $briefVerzonden->setCreatedBy(null);
+      $briefVerzonden->setUpdatedAt(null);
+      $briefVerzonden->setUpdatedBy(null);
       $briefVerzonden->save();
 
       return "Mail verzonden.";
