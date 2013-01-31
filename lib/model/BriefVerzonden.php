@@ -33,12 +33,9 @@ class BriefVerzonden extends BaseBriefVerzonden
         'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
       ));
 
-      // log een kopie, maar met aangepaste created_at/by en updated_at/by
+      // log een kopie, maar met aangepaste created_at
       $briefVerzonden = $this->copy();
-      $briefVerzonden->setCreatedAt(null);
-      $briefVerzonden->setCreatedBy(null);
-      $briefVerzonden->setUpdatedAt(null);
-      $briefVerzonden->setUpdatedBy(null);
+      $briefVerzonden->setCreatedAt(time());
       $briefVerzonden->save();
 
       return "Mail verzonden.";
