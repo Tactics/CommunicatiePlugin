@@ -231,7 +231,7 @@
            
       // nodige placeholders uit template halen
       $usedPlaceholders = array();
-      if(preg_match_all('/\%([A-Za-z0-9_:]+)\%/', $cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $matches)) {
+      if(preg_match_all('/\%([A-Za-z0-9_:\[\]]+)\%/', $cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $matches)) {
           $usedPlaceholders = $matches[1];
       }
       
