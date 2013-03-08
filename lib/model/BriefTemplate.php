@@ -211,6 +211,8 @@ class BriefTemplate extends BaseBriefTemplate
    * 
    * @param iMailer interface $object
    * @param array $options
+   * @return int The number of successful recipients
+   * @throws Swift_ConnectionException If sending fails for any reason.
    */
   public function sendMailToObject(iMailer $object, $options = array())
   {
@@ -236,22 +238,24 @@ class BriefTemplate extends BaseBriefTemplate
       'datum' => $vandaag->format(),
       'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),     
       'image_dir' => 'cid:',
-      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
+      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>',
+      'bestemmeling_adres' => nl2br($object->getAdres())
     );
     
     $culture    = $object->getMailerCulture();
     $values     = $object->fillPlaceholders(null, $culture);
     $values     = array_merge($defaultPlaceholders, $values, $systeemvalues);
-
-    $email       = $object->getMailerRecipientMail();   
     $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
+    $values['onderwerp'] = $onderwerp;
+    
+    $email       = $object->getMailerRecipientMail();    
     $html        = $this->getTranslatedHtml($culture);
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
     
     $brief = BriefTemplatePeer::replacePlaceholders($headAndBody['head'] . $headAndBody['body'], $values);
     
     // Mail versturen
-    BerichtPeer::verstuurEmail($email, $brief, array(
+    $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
       'onderwerp' => $onderwerp,
       'skip_template' => true,
       'cc' => (method_exists($object, 'getMailerRecipientCC') ? $object->getMailerRecipientCC() : array()),
@@ -269,6 +273,8 @@ class BriefTemplate extends BaseBriefTemplate
     $briefVerzonden->setCulture($culture);
     $briefVerzonden->setHtml($brief);
     $briefVerzonden->save();
+    
+    return $mailSent;
   }
   
   /**
