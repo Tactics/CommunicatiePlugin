@@ -228,15 +228,17 @@
       $defaultPlaceholders = array_merge($defaultPlaceholders, array(
           'bestemmeling_adres' => nl2br($object->getAdres())
       ));
-           
+      
+      // parse If statements
+      $cultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($cultureBrieven[$culture]['body'], $object, $defaultPlaceholders);      
+        
       // nodige placeholders uit template halen
       $usedPlaceholders = array();
-      if(preg_match_all('/\%([A-Za-z0-9_:\[\]]+)\%/', $cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $matches)) {
+      if (preg_match_all('/\%([A-Za-z0-9_:\[\]]+)\%/', $cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $matches)) {
           $usedPlaceholders = $matches[1];
       }
       
       // replace the placeholders
-      
       $placeholders = $is_target 
         ? array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders)
         : $defaultPlaceholders;      

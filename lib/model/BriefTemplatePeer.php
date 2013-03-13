@@ -14,6 +14,8 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
   const PLACEHOLDER_PREFIX_SEPARATOR = '::';
   
+  private static $targets = array();
+  
   /**
    * Geeft alle templates terug (alfabetisch geordend)
    *
@@ -441,4 +443,106 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     
     return $culture;
   }
+  
+  /**
+   * verwerkt de ifstaments van de html
+   * 
+   * @param string $html 
+   * @param mixed $object
+   * @param array $defaultPlaceholders
+   * @return string
+   */
+  public static function parseIfStatements($html, $object, $defaultPlaceholders)
+  {     
+    while (preg_match_all('/{% if [^{]*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
+    { 
+      $changeInOffset = 0;
+      $ifBlocks = $matches[0];        
+
+      foreach ($ifBlocks as $index => $ifBlock)
+      {
+        // at the moment, only a == b is supported
+        if (preg_match('/^{%\s*if\s+([^{]*)\s+%}/', $ifBlock[0], $condition))
+        {
+          // nodige placeholders uit template halen
+          $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $defaultPlaceholders);
+          
+          // single quotes rond left and right operand zetten en condition evalueren
+          if (eval("return $condition[1];"))
+          { 
+            // {% endif %} er eerst uitknippen, want dat veranderd de offset van de if niet
+            $offsetEndif = $matches[1][$index][1] - $changeInOffset;
+            $lengthEndif = strlen($matches[1][$index][0]);
+            $html = substr_replace($html, '', $offsetEndif, $lengthEndif);              
+
+            // {% if ... %} eruit knippen
+            $offsetIf = $ifBlock[1] - $changeInOffset;
+            $lengthIf = strlen($condition[0]);
+            $html = substr_replace($html, '', $offsetIf, $lengthIf);
+
+            // change in offset bijhouden
+            $changeInOffset += $lengthIf + $lengthEndif;
+          }
+          else
+          {
+            // heel de ifblock uit de body knippen
+            $offsetIfBlock = $ifBlock[1] - $changeInOffset;
+            $lengthIfBlock = strlen($ifBlock[0]);
+            $html = substr_replace($html, '', $offsetIfBlock, $lengthIfBlock);
+
+            // change in offset bijhouden
+            $changeInOffset += $lengthIfBlock;              
+          }
+        }
+      }
+    }
+    
+    return $html;
+  }
+  
+  /**
+   * vervangt de placeholders in de html met de values
+   * 
+   * @param string $html
+   * @param mixed $object
+   * @param array $defaultPlaceholders
+   * @return string The html with replaced placeholders
+   */
+  public static function replacePlaceholdersFromObject($html, $object, $defaultPlaceholders)
+  {
+    $usedPlaceholders = array();
+    if (preg_match_all('/\%([A-Za-z0-9_:\[\]]+)\%/', $html, $placeholderMatches)) {
+        $usedPlaceholders = $placeholderMatches[1];
+    }
+
+    $culture = self::calculateCulture($object);
+    
+    $placeholders = self::isTarget($object)
+      ? array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders)
+      : $defaultPlaceholders;                  
+    
+    $html = BriefTemplatePeer::replacePlaceholders($html, $placeholders);
+    
+    return self::clearPlaceholders($html);
+  }
+  
+  /**
+   * geeft terug of object een ttCommunicatie target is
+   * 
+   * @param type $object
+   * @return typegeeft ter
+   */
+  private static function isTarget($object)
+  {
+    if (empty(self::$targets))
+    {
+      foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo)
+      {
+        self::$targets[] = $targetInfo['class'];
+      }      
+    }
+    
+    return in_array(get_class($object), self::$targets);   
+  }
+  
 }
