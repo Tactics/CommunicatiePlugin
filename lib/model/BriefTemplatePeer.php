@@ -17,6 +17,26 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   private static $targets = array();
   
   /**
+   *  Geeft alle templates terug van een bepaald object type 
+   * 
+   * @param string $objectType
+   * @param boolean $inclusief
+   * 
+   * @return array
+   */
+  public static function getObjectTemplates($object_class, $inclusief_archief = false) 
+  {
+    $c = new Criteria();
+    if(!$inclusief_archief)
+    {
+      $c->add(BriefTemplatePeer::GEARCHIVEERD, 0);
+    }
+    
+    $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $object_class . '|%', Criteria::LIKE);
+    return self::getSorted($c);
+  }
+  
+  /**
    * Geeft alle templates terug (alfabetisch geordend)
    *
    * @return array[]BriefTemplate

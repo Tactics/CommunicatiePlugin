@@ -98,6 +98,9 @@
 
       foreach($results as $briefTemplate)
       {
+        $options = array();
+        if ($briefTemplate->getGearchiveerd()) $options["rowClass"] = "gearchiveerd";   
+  
         $table->addRow(array(
           //link_to($briefTemplate->getId(),  "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
           link_to_unless_empty($briefTemplate->getNaam(), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
@@ -109,8 +112,8 @@
           array("content" =>
             //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
             link_to(image_tag("icons/document_write_16.gif", array('title' => 'Bewerken')), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()). ' ' .
-            link_to(image_tag("/ttCommunicatie/images/icons/copy_16.gif", array('title' => 'Kopiëren')), "ttCommunicatie/copy?template_id=" . $briefTemplate->getId(), array('confirm' => 'Bent u zeker dat u een kopie wil maken van dit briefsjabloon?')). ' ' .
-            link_to(image_tag("icons/" . ($briefTemplate->getGearchiveerd() ? 'dearchiveer.png' : 'archiveer.png'), array('style' => 'width: 16px;', 'title' => $briefTemplate->getGearchiveerd() ? "Maak archiveren ongedaan" : 'Archiveer sjabloon')),  'ttCommunicatie/archiveer?id=' . $briefTemplate->getId(), array(
+            link_to_unless($briefTemplate->isSysteemtemplate(),  image_tag("/ttCommunicatie/images/icons/copy_16.gif", array('title' => 'Kopieeren')), "ttCommunicatie/copy?template_id=" . $briefTemplate->getId(), array('confirm' => 'Bent u zeker dat u een kopie wil maken van dit briefsjabloon?')). ' ' .
+            link_to_unless($briefTemplate->isSysteemtemplate(), image_tag("icons/" . ($briefTemplate->getGearchiveerd() ? 'dearchiveer.png' : 'archiveer.png'), array('style' => 'width: 16px;', 'title' => $briefTemplate->getGearchiveerd() ? "Maak archiveren ongedaan" : 'Archiveer sjabloon')),  'ttCommunicatie/archiveer?id=' . $briefTemplate->getId(), array(
               'confirm' => $briefTemplate->getGearchiveerd() ? "Bent u zeker dat u dit sjabloon uit het archief wenst te halen?" : "Bent u zeker dat u dit sjabloon wenst te archiveren?"
             )) . ' ' . 
             ($sf_user->isSuperAdmin() ? 
@@ -125,7 +128,7 @@
               ) : ''
             )
           )
-        ));
+        ), $options);
       }
 
 
