@@ -1,0 +1,58 @@
+/* editSuccess */
+li.unsupported a { 
+  color: grey 
+}
+
+#placeholders > div {
+  display: none;
+}
+
+#placeholders > div.active {
+  display: block;
+}
+
+#placeholders > div.system {
+  display: block !important;
+}
+
+/* printSuccess */
+.printbox td
+{
+  font-size: 10px !important;
+  font-family: verdana !important;
+}
+
+.printbox
+{
+  position: fixed !important;
+  opacity: 0.9 !important;
+  bottom: 0px !important;
+  right: 0px !important;
+  left: 0px !important;
+  background-color: #EEEEEE !important;
+  border: 1px solid black !important;
+  text-align: center !important;
+  padding: 4px !important;
+  font-size: 10px !important;
+  font-family: verdana !important;
+}
+
+.printbox a {
+  text-decoration: none !important;
+}
+
+.printbox a img {
+  border: 0px !important;
+}
+
+/* showCommunicatieLogCompact */
+table.objectdetails th
+{
+  width: 100px;
+}
+
+table.grid tbody td > div {
+    height: 17px;
+    line-height: 17px;
+    overflow: hidden;
+}
