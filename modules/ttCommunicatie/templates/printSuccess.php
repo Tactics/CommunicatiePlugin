@@ -6,112 +6,9 @@
 	<?php echo include_metas() ?>
 
 	<?php echo include_title() ?>
-
-   <script type="text/javascript">
-    function voerPrintenUit()
-    {
-      window.print();
-
-      <?php if (! $voorbeeld): ?>
-
-      if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
-      {
-        jQuery.ajax({
-          url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",
-          type: 'POST',
-          data: {
-            'hash': '<?php echo $md5hash; ?>',            
-            'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',            
-            'brief_verzonden_ids': jQuery('#brief_verzonden_ids').val()            
-          },
-          cache: false,
-          success: function(l)
-          {
-             alert('De documenten werden gemarkeerd als afgedrukt.');
-             //window.close();
-          }
-        });
-      }
-
-      <?php endif; ?>
-    }
-
-    function voerEmailUit(aantal)
-    {
-      if (confirm('Er worden ' + aantal + ' e-mails verzonden.  Doorgaan met verzenden?'))
-      {
-        jQuery.ajax({
-          url: "<?php echo url_for('ttCommunicatie/verstuurEmail'); ?>",
-          type: 'POST',
-          cache: false,
-          success: function(html)
-          {
-             alert('Alle e-mails werden verzonden.');
-             window.close();
-             $('#mailsversturen').hide();
-             $('#geenmailsversturen').show();
-          }
-        });
-      }
-    }
-
-  </script>
-
-	<style type="text/css">
-    .printbox td
-    {
-			font-size: 10px !important;
-			font-family: verdana !important;
-    }
-    
-    .printbox
-    {
-			position: fixed !important;
-			opacity: 0.9 !important;
-			bottom: 0px !important;
-			right: 0px !important;
-			left: 0px !important;
-			background-color: #EEEEEE !important;
-			border: 1px solid black !important;
-			text-align: center !important;
-			padding: 4px !important;
-			font-size: 10px !important;
-			font-family: verdana !important;
-		}
-
-		.printbox a {
-			text-decoration: none !important;
-		}
-
-		.printbox a img {
-			border: 0px !important;
-		}
-	</style>
-
-	<style media="print">
-	  .printbox, #sfWebDebug {
-			display:none !important;
-		}
-	</style>
-
-  <style media="screen">
-    html {
-      /*background-color: #f5f5f5;*/
-    }
-    
-    body {
-      /*
-      width: 560px;     
-      background-color: white;
-      */
-    }
-
-  </style>
-
 </head>
 
 <body>
-
   <?php
     $aantal_brieven = 0;
     $aantal_via_email = 0;        
@@ -120,22 +17,15 @@
     // een eerste kleine optimalisatie om de stylesheets ($berichtHead) slechts 1x te includen
     $vorigeCss = '';
     
-    while (isset($rs) ? $rs->next() : true)
+    while ($rs->next())
     {
       if ($aantal_brieven > 0)
       {
         echo "\n\n<div STYLE=\"page-break-before: always\"/>\n\n";
       }
 
-      if (isset($rs))
-      {
-        $object = new $bestemmelingenClass();
-        $object->hydrate($rs);
-      }
-      else
-      {
-        $object = $bestemmelingen_object;
-      }      
+      $object = new $bestemmelingenClass();
+      $object->hydrate($rs);
       
       $email = $object->getMailerRecipientMail();
       if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)      
@@ -229,23 +119,18 @@
           'bestemmeling_adres' => nl2br($object->getAdres())
       ));
       
-      // parse If statements
-      $cultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($cultureBrieven[$culture]['body'], $object, $defaultPlaceholders);      
-        
-      // nodige placeholders uit template halen
-      $usedPlaceholders = array();
-      if (preg_match_all('/\%([A-Za-z0-9_:\[\]]+)\%/', $cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $matches)) {
-          $usedPlaceholders = $matches[1];
-      }
+      // work with copy of culturebrieven
+      $tmpCultureBrieven = $cultureBrieven;
       
-      // replace the placeholders
-      $placeholders = $is_target 
-        ? array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders)
-        : $defaultPlaceholders;      
-      $onderwerp = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $placeholders);
-      $placeholders['onderwerp'] = $onderwerp;
-      $body = BriefTemplatePeer::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
-      $brief = $cultureBrieven[$culture]['head'] . $body;
+      // parse If statements
+      $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $object);
+      
+      // replace placeholders
+      $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $object);
+      $head = $tmpCultureBrieven[$culture]['head'];
+      $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
+      $body = $tmpCultureBrieven[$culture]['body'];
+      $brief = $head . $body;
       
       // voorbeeld melding om te vermijden dat dit wordt gebruikt om effectief af te drukken
       if ($voorbeeld)
@@ -288,12 +173,7 @@
         $brief_verzonden_ids[] = $briefVerzonden->getId();
       }      
       
-      $aantal_brieven++;      
-      
-      if (isset($bestemmelingen_object))
-      {
-        break;
-      }
+      $aantal_brieven++;
     }
 
     if (! $aantal_brieven)
@@ -344,6 +224,55 @@
     </div>
     </center>
   </div>
+  
+  <script type="text/javascript">
+    function voerPrintenUit()
+    {
+      window.print();
 
+      <?php if (! $voorbeeld): ?>
+
+      if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
+      {
+        jQuery.ajax({
+          url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",
+          type: 'POST',
+          data: {
+            'hash': '<?php echo $md5hash; ?>',            
+            'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',            
+            'brief_verzonden_ids': jQuery('#brief_verzonden_ids').val()            
+          },
+          cache: false,
+          success: function(l)
+          {
+             alert('De documenten werden gemarkeerd als afgedrukt.');
+             //window.close();
+          }
+        });
+      }
+
+      <?php endif; ?>
+    }
+
+    function voerEmailUit(aantal)
+    {
+      if (confirm('Er worden ' + aantal + ' e-mails verzonden.  Doorgaan met verzenden?'))
+      {
+        jQuery.ajax({
+          url: "<?php echo url_for('ttCommunicatie/verstuurEmail'); ?>",
+          type: 'POST',
+          cache: false,
+          success: function(html)
+          {
+             alert('Alle e-mails werden verzonden.');
+             window.close();
+             $('#mailsversturen').hide();
+             $('#geenmailsversturen').show();
+          }
+        });
+      }
+    }
+
+  </script>
 </body>
 </html>

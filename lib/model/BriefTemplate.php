@@ -233,14 +233,7 @@ class BriefTemplate extends BaseBriefTemplate
     }
     
     // default placeholders die in layout gebruikt kunnen worden
-    $vandaag = new myDate();
-    $defaultPlaceholders = array(
-      'datum' => $vandaag->format(),
-      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),     
-      'image_dir' => 'cid:',
-      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>',
-      'bestemmeling_adres' => nl2br($object->getAdres())
-    );
+    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($object, true);
     
     $culture    = $object->getMailerCulture();
     $values     = $object->fillPlaceholders(null, $culture);

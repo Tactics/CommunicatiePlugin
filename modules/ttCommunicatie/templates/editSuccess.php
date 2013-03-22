@@ -1,13 +1,5 @@
 <?php include_partial('breadcrumb', array('identifier' => 'Briefsjablonen', 'object' => $brief_template)); ?>
 
-<style type="text/css">
-  li.unsupported a { color: grey }
-
-  #placeholders > div {display: none;}
-  #placeholders > div.active {display: block;}
-  #placeholders > div.system {display: block !important;}
-</style>
-
 <script type="text/javascript">
   function insertAtCaret(areaId,text) {
     var txtarea = document.getElementById(areaId);

@@ -48,6 +48,12 @@
         ));
         echo ' (Invoegvelden toegestaan) <br /><br />';
       
+        // indien 1 bestemmeling, kunnen we de brief reeds parsen
+        if (isset($bestemmelingen_object))
+        {
+          $html = BriefTemplatePeer::parseIfStatements($html, $bestemmelingen_object);
+          $html = BriefTemplatePeer::replacePlaceholdersFromObject($html, $bestemmelingen_object);
+        }        
         echo textarea_tag('html[' . BriefTemplatePeer::getCulture($language) .']', $html);
       ?>
     </div>

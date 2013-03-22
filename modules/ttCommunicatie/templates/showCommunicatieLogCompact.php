@@ -1,16 +1,3 @@
-<style>
-  table.objectdetails th
-  {
-    width: 100px;
-  }
-
-  table.grid tbody td > div {
-      height: 17px;
-      line-height: 17px;
-      overflow: hidden;
-  }
-</style>
-
 <h2 class="pageblock">  
   <div style="float:right; padding-right: 3px; margin-top: -3px;">
     <?php echo link_to_function(image_tag('icons/close_16.gif'), "jQuery('div#log_event_detail').html('')"); ?>

@@ -469,11 +469,13 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * 
    * @param string $html 
    * @param mixed $object
-   * @param array $defaultPlaceholders
-   * @return string
+   * @param bool $email
+   * @return string The html with parsed if statements
    */
-  public static function parseIfStatements($html, $object, $defaultPlaceholders)
+  public static function parseIfStatements($html, $object, $email = false)
   {     
+    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email);
+    
     while (preg_match_all('/{% if [^{]*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
     { 
       $changeInOffset = 0;
@@ -485,7 +487,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
         if (preg_match('/^{%\s*if\s+([^{]*)\s+%}/', $ifBlock[0], $condition))
         {
           // nodige placeholders uit template halen
-          $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $defaultPlaceholders);
+          $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $email);
           
           // single quotes rond left and right operand zetten en condition evalueren
           if (eval("return $condition[1];"))
@@ -521,15 +523,67 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   }
   
   /**
+   * replaced de placeholders van de culture brief afh vh gegeven object
+   * 
+   * @param array $cultureBrieven 
+   * @param mixed $object
+   * @param bool $email
+   * @return array The $cultureBrieven with replaced placeholders for the object culture
+   */
+  public static function replacePlaceholdersFromCultureBrieven($cultureBrieven, $object, $email = false)
+  {
+    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email);    
+    $culture = self::calculateCulture($object);
+    
+    $placeholders = array_merge(
+      $defaultPlaceholders,
+      self::getObjectPlaceholderValues($cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $object)
+    );
+    
+    // eerst onderwerp placeholders vervangen omdat onderwerp zelf een placeholder is in de body      
+    $placeholders['onderwerp'] = self::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $placeholders);
+    $cultureBrieven[$culture]['onderwerp'] = $placeholders['onderwerp'];
+    $cultureBrieven[$culture]['body'] = self::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
+    
+    return $cultureBrieven;
+  }
+  
+  /**
    * vervangt de placeholders in de html met de values
    * 
    * @param string $html
    * @param mixed $object
-   * @param array $defaultPlaceholders
+   * @param bool $email
    * @return string The html with replaced placeholders
    */
-  public static function replacePlaceholdersFromObject($html, $object, $defaultPlaceholders)
+  public static function replacePlaceholdersFromObject($html, $object, $email = false)
   {
+    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email);
+    
+    $placeholders = array_merge(
+      self::getObjectPlaceholderValues($html, $object),
+      $defaultPlaceholders
+    );    
+    
+    $html = self::replacePlaceholders($html, $placeholders);
+    
+    return self::clearPlaceholders($html);
+  }
+  
+  /**
+   * geeft de gebruikte placeholder values terug van gegeven object
+   * 
+   * @param string $html
+   * @param mixed $object
+   * @return array[placeholder] => placeholder_value
+   */
+  private static function getObjectPlaceholderValues($html, $object)
+  {
+    if (! self::isTarget($object))
+    {
+      return array();
+    }
+    
     $usedPlaceholders = array();
     if (preg_match_all('/\%([A-Za-z0-9_:\[\]]+)\%/', $html, $placeholderMatches)) {
         $usedPlaceholders = $placeholderMatches[1];
@@ -537,13 +591,36 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
     $culture = self::calculateCulture($object);
     
-    $placeholders = self::isTarget($object)
-      ? array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders)
-      : $defaultPlaceholders;                  
+    return $object->fillPlaceholders($usedPlaceholders, $culture);
+  }
+  
+  /**
+   * Geeft de default placeholers terug
+   * 
+   * @param mixed $object
+   * @param bool $email
+   * @return array default placeholders
+   */
+  public static function getDefaultPlaceholders($object = null, $email = false)
+  {
+    Misc::use_helper('Url');    
+    $vandaag = new myDate();
+    $defaultPlaceholders = array(
+      'datum' => $vandaag->format(),
+      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),     
+      'image_dir' => $email ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
+      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
+    ); 
     
-    $html = BriefTemplatePeer::replacePlaceholders($html, $placeholders);
+    if ($object)
+    {      
+      $defaultPlaceholders = array_merge(
+        $defaultPlaceholders,
+        array('bestemmeling_adres' => nl2br($object->getAdres()))
+      );
+    }
     
-    return self::clearPlaceholders($html);
+    return $defaultPlaceholders;
   }
   
   /**

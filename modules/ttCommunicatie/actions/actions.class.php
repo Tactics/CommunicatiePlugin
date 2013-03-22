@@ -43,10 +43,11 @@ class ttCommunicatieActions extends sfActions
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
     
     if ($this->bestemmelingen_object)
-    {
-      $this->criteria = null;
-      $this->bestemmelingenClass = null;
-      $this->bestemmelingenPeer = '';
+    {      
+      $this->bestemmelingenClass = get_class($this->bestemmelingen_object);
+      $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
+      $this->criteria = new Criteria();
+      $this->criteria->add(eval("return {$this->bestemmelingenPeer}::ID;"), $this->bestemmelingen_object->getId());      
     }
     
     // om classes de in de criteria gebruikt worden te autoloaden
@@ -84,7 +85,7 @@ class ttCommunicatieActions extends sfActions
     {
       $targets[] = $targetInfo['class'];
     }
-    $this->is_target = in_array($this->bestemmelingen_object ? get_class($this->bestemmelingen_object) : $this->bestemmelingenClass, $targets);    
+    $this->is_target = in_array($this->bestemmelingenClass, $targets);   
   }
   
   /**
@@ -604,13 +605,7 @@ class ttCommunicatieActions extends sfActions
     }   
     
     // default placeholders die in layout gebruikt kunnen worden
-    $vandaag = new myDate();
-    $defaultPlaceholders = array(
-      'datum' => $vandaag->format(),
-      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),     
-      'image_dir' => $emailverzenden ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
-      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
-    );
+    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders(null, $emailverzenden);  
     
     if (class_exists('Placeholder'))
     {
@@ -712,20 +707,18 @@ class ttCommunicatieActions extends sfActions
               'bestemmeling_adres' => nl2br($object->getAdres())
           ));
           
-          // nodige placeholders uit template halen
-          $usedPlaceholders = array();
-          if(preg_match_all('/\%([A-Za-z0-9_:]+)\%/', $this->cultureBrieven[$culture]['onderwerp'] . $this->cultureBrieven[$culture]['body'], $matches)) {
-              $usedPlaceholders = $matches[1];
-          }
+          // work with copy of culturebrieven
+          $tmpCultureBrieven = $this->cultureBrieven;
+
+          // parse If statements          
+          $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $object, true);
           
-          // replace the placeholders
-          $placeholders = $this->is_target 
-            ? array_merge($object->fillPlaceholders($usedPlaceholders, $culture), $defaultPlaceholders)
-            : $defaultPlaceholders;
-          $onderwerp = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['onderwerp'], $placeholders);    
-          $placeholders['onderwerp'] = $onderwerp; // nodig om placeholder %onderwerp% in body te vervangen
-          $body = BriefTemplatePeer::replacePlaceholders($this->cultureBrieven[$culture]['body'], $placeholders);
-          $brief = $this->cultureBrieven[$culture]['head'] . $body;          
+          // replace placeholders
+          $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $object, true);
+          $head = $tmpCultureBrieven[$culture]['head'];
+          $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
+          $body = $tmpCultureBrieven[$culture]['body'];
+          $brief = $head . $body;        
 
           $briefAttachments = $brief_template->getAttachments($this->getRequest());
 
@@ -1130,8 +1123,13 @@ class ttCommunicatieActions extends sfActions
     $this->type = $this->getRequestParameter('type');
   }
 
+  /**
+   * 
+   * @return array with attachements
+   */
   private function getRequestAttachments()
   {
+    $attachments = array();
     foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
     {
       // Controleren of bestand correct werd opgehaald.
