@@ -17,15 +17,22 @@
     // een eerste kleine optimalisatie om de stylesheets ($berichtHead) slechts 1x te includen
     $vorigeCss = '';
     
-    while ($rs->next())
+    while (isset($rs) ? $rs->next() : true)
     {
       if ($aantal_brieven > 0)
       {
         echo "\n\n<div STYLE=\"page-break-before: always\"/>\n\n";
       }
 
-      $object = new $bestemmelingenClass();
-      $object->hydrate($rs);
+      if (isset($rs))
+      {
+        $object = new $bestemmelingenClass();
+        $object->hydrate($rs);
+      }
+      else if (isset($bestemmelingen_object))
+      {
+        $object = $bestemmelingen_object;
+      }      
       
       $email = $object->getMailerRecipientMail();
       if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)      
@@ -174,6 +181,11 @@
       }      
       
       $aantal_brieven++;
+      
+      if (isset($bestemmelingen_object))
+      {
+        break;
+      }
     }
 
     if (! $aantal_brieven)

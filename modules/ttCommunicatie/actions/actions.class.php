@@ -43,11 +43,21 @@ class ttCommunicatieActions extends sfActions
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
     
     if ($this->bestemmelingen_object)
-    {      
-      $this->bestemmelingenClass = get_class($this->bestemmelingen_object);
-      $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
-      $this->criteria = new Criteria();
-      $this->criteria->add(eval("return {$this->bestemmelingenPeer}::ID;"), $this->bestemmelingen_object->getId());      
+    { 
+      // voorbeelden hebben nog geen id
+      if (!$this->bestemmelingen_object->getId())
+      {
+        $this->bestemmelingenClass = null;
+        $this->bestemmelingenPeer = null;
+        $this->criteria = null;        
+      }
+      else
+      {
+        $this->bestemmelingenClass = get_class($this->bestemmelingen_object);
+        $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
+        $this->criteria = new Criteria();
+        $this->criteria->add(eval("return {$this->bestemmelingenPeer}::ID;"), $this->bestemmelingen_object->getId()); 
+      }
     }
     
     // om classes de in de criteria gebruikt worden te autoloaden
