@@ -532,7 +532,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function replacePlaceholdersFromCultureBrieven($cultureBrieven, $object, $email = false)
   {
-    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email);    
+    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email, true);
     $culture = self::calculateCulture($object);
     
     $placeholders = array_merge(
@@ -565,9 +565,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       $defaultPlaceholders
     );    
     
-    $html = self::replacePlaceholders($html, $placeholders);
-    
-    return self::clearPlaceholders($html);
+    return self::replacePlaceholders($html, $placeholders);
   }
   
   /**
@@ -599,9 +597,10 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * 
    * @param mixed $object
    * @param bool $email
+   * @param bool $generalPlaceholders met bv handtekeningen placeholders
    * @return array default placeholders
    */
-  public static function getDefaultPlaceholders($object = null, $email = false)
+  public static function getDefaultPlaceholders($object = null, $email = false, $generalPlaceholders = false)
   {
     Misc::use_helper('Url');    
     $vandaag = new myDate();
@@ -618,6 +617,15 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
         $defaultPlaceholders,
         array('bestemmeling_adres' => nl2br($object->getAdres()))
       );
+    }
+    
+    if ($generalPlaceholders)
+    {
+      if (class_exists('Placeholder'))
+      {
+        $placeholder = new Placeholder();
+        $defaultPlaceholders = array_merge($defaultPlaceholders, $placeholder->fillPlaceholders(null, BriefTemplatePeer::getDefaultCulture()));
+      }
     }
     
     return $defaultPlaceholders;

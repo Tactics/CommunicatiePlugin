@@ -615,13 +615,7 @@ class ttCommunicatieActions extends sfActions
     }   
     
     // default placeholders die in layout gebruikt kunnen worden
-    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders(null, $emailverzenden);  
-    
-    if (class_exists('Placeholder'))
-    {
-      $placeholder = new Placeholder();
-      $defaultPlaceholders = array_merge($defaultPlaceholders, $placeholder->fillPlaceholders(null, BriefTemplatePeer::getDefaultCulture()));
-    }
+    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders(null, $emailverzenden, true);
 
     if ($emailverzenden)
     { 
@@ -852,7 +846,7 @@ class ttCommunicatieActions extends sfActions
       $this->emailverzenden = $emailverzenden;
       $this->viaemail = $viaemail;
       $this->emailLayout = $emailLayout;
-      $this->defaultPlaceholders = $defaultPlaceholders;
+      $this->defaultPlaceholders = $defaultPlaceholders;      
       $this->verzenden_via = $verzenden_via;
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
