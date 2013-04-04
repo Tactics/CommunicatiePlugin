@@ -245,7 +245,9 @@ class BriefTemplate extends BaseBriefTemplate
     $html        = $this->getTranslatedHtml($culture);
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
     
-    $brief = BriefTemplatePeer::replacePlaceholders($headAndBody['head'] . $headAndBody['body'], $values);
+    $brief = $headAndBody['head'] . $headAndBody['body'];
+    $brief = BriefTemplatePeer::parseIfStatements($brief, $object, true, $systeemvalues);
+    $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
     
     // Mail versturen
     $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
