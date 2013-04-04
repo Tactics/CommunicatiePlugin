@@ -427,6 +427,12 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     return $language['label'];
   }
   
+  /**
+   * 
+   * @param string $systeemnaam
+   * @param type $con
+   * @return BriefTemplate
+   */
   public static function retrieveBySysteemnaam($systeemnaam, $con = null)
 	{
 		if ($con === null) {
@@ -470,11 +476,12 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * @param string $html 
    * @param mixed $object
    * @param bool $email
+   * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
-  public static function parseIfStatements($html, $object, $email = false)
+  public static function parseIfStatements($html, $object, $email = false, $otherPlaceholders = array())
   {     
-    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email);
+    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
     
     while (preg_match_all('/{% if [^{]*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
     { 
