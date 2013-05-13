@@ -700,7 +700,7 @@ class ttCommunicatieActions extends sfActions
         }        
 
         $verstuurd = false;
-        $email = $object->getMailerRecipientMail();
+        $email = $this->getRequestParameter('email_to', '') ? $this->getRequestParameter('email_to') : $object->getMailerRecipientMail();
         
         if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)
         {

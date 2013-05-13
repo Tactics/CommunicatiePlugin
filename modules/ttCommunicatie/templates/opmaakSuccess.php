@@ -56,6 +56,7 @@ function showPlaceholders($placeholders)
           ?>
         </li>
         <?php endwhile; ?>
+        <?php $rs->seek(0); // reset $rs ?>
       </ul>
     </div>
     <hr />
@@ -75,6 +76,7 @@ function showPlaceholders($placeholders)
   <?php if ($brief_template) : ?>
     <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <?php endif; ?>
+  <?php $aantalBestemmelingen = $rs->getRecordCount(); ?>
   <h2 class="pageblock">Brief opmaken</h2>
   <div class="pageblock">
     <table class="formtable">
@@ -85,18 +87,33 @@ function showPlaceholders($placeholders)
         </tr>      
       <?php endif; ?>
       
-      <tr>
-        <th>Aantal bestemmelingen:</th>
-        <td>
-          <span id="record-count"><?php echo $rs->getRecordCount() ?></span>
-          <?php           
-            if ($show_bestemmelingen)
-            {
-              echo '(' . link_to_function('Toon lijst', 'showDialog("#dialog-bestemmelingen");') . ')';
-            }
-          ?>
-        </td>
-      </tr>
+      <?php if ($aantalBestemmelingen === 1) : ?>
+        <?php        
+        $rs->next();
+        $object = new $bestemmelingenClass();
+        $object->hydrate($rs);
+        $emailTo = $object->getMailerRecipientMail();     
+        $rs->seek(0); // reset $rs
+        ?>
+        <tr>
+          <th>Bestemmeling:</th>
+          <td><?php echo input_tag('email_to', $emailTo, array('size' => 80)); ?></td>
+        </tr>
+      <?php else : ?>       
+        <tr>
+          <th>Aantal bestemmelingen:</th>
+          <td>
+            <span id="record-count"><?php echo $aantalBestemmelingen; ?></span>
+            <?php           
+              if ($show_bestemmelingen)
+              {
+                echo '(' . link_to_function('Toon lijst', 'showDialog("#dialog-bestemmelingen");') . ')';
+              }
+            ?>
+          </td>
+        </tr>
+      <?php endif; ?>
+        
       <tr>
         <th>Verzenden via e-mail:</th>
         <td>
@@ -113,7 +130,7 @@ function showPlaceholders($placeholders)
           <th>Eenmalig verzenden:</th>
           <td id="sjabloon_eenmalig"><?php echo $brief_template->getEenmaligVersturen() ? 'Ja' : 'Nee'; ?></td>
         </tr>
-      <?php endif; ?>      
+      <?php endif; ?>
         
       <?php if ($edit_template) : ?>
         <tr>
