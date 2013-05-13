@@ -129,8 +129,9 @@
       // work with copy of culturebrieven
       $tmpCultureBrieven = $cultureBrieven;
       
-      // parse If statements
-      $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $object);
+      // parse If and foreach statements
+      $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $object);
+      $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $object);      
       
       // replace placeholders
       $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $object);

@@ -714,8 +714,9 @@ class ttCommunicatieActions extends sfActions
           // work with copy of culturebrieven
           $tmpCultureBrieven = $this->cultureBrieven;
 
-          // parse If statements          
-          $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $object, true);
+          // parse If statements
+          $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $object, true);
+          $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $object, true);          
           
           // replace placeholders
           $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $object, true);

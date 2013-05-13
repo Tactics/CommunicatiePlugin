@@ -246,6 +246,7 @@ class BriefTemplate extends BaseBriefTemplate
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
     
     $brief = $headAndBody['head'] . $headAndBody['body'];
+    $brief = BriefTemplatePeer::parseForeachStatements($brief, $object, true, $systeemvalues);
     $brief = BriefTemplatePeer::parseIfStatements($brief, $object, true, $systeemvalues);
     $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
     

@@ -483,20 +483,19 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {     
     $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
     
-    while (preg_match_all('/{% if [^{]*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
+    while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
     { 
       $changeInOffset = 0;
       $ifBlocks = $matches[0];        
 
       foreach ($ifBlocks as $index => $ifBlock)
       {
-        // at the moment, only a == b is supported
         if (preg_match('/^{%\s*if\s+([^{]*)\s+%}/', $ifBlock[0], $condition))
         {
           // nodige placeholders uit template halen
           $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $email);
           
-          // single quotes rond left and right operand zetten en condition evalueren
+          // condition evalueren
           if (eval("return $condition[1];"))
           { 
             // {% endif %} er eerst uitknippen, want dat veranderd de offset van de if niet
@@ -524,6 +523,54 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           }
         }
       }
+    }
+    
+    return $html;
+  }
+  
+  /**
+   * verwerkt de ifstaments van de html
+   * 
+   * @param string $html 
+   * @param mixed $object
+   * @param bool $email
+   * @param array $otherPlaceholders For example systeemplaceholders
+   * @return string The html with parsed if statements
+   */
+  public static function parseForeachStatements($html, $object, $email = false, $otherPlaceholders = array())
+  {     
+    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);    
+    while (preg_match_all('/{%\s*foreach\s+[^{]*({% endforeach %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
+    {       
+      $changeInOffset = 0;
+      $foreachBlocks = $matches[0];      
+      foreach ($foreachBlocks as $index => $foreachBlock)
+      {        
+        $content = $foreachBlock[0];
+        $offset = $foreachBlock[1];
+        if (preg_match('/^{%\s*foreach\s+([^{]*)\s+%}([^{]+){% endforeach %}/', $content, $result))
+        {           
+          //$result[1] is the collection field
+          //$result[2] is the html in the foreach statement              
+          list($formSysName, $veldSysName) = explode('][', trim(substr($result[1], 10), ']%'));          
+          if (!$formSysName || !$veldSysName || !($antwoord = $object->retrieveAntwoordBySysteemnamen($formSysName, $veldSysName)))
+          {
+            // clear the foreach
+            $html = substr_replace($html, '', $offset + $changeInOffset, strlen($content));
+            $changeInOffset += 0 - strlen($content);
+            continue;
+          }
+          
+          $nbrOfCollectionItems = $antwoord->get();          
+          $foreachHtml = '';
+          for ($i=0; $i < $nbrOfCollectionItems; $i++)
+          {
+            $foreachHtml .= self::replacePlaceholdersFromObject(str_replace('[]', "[$i]", $result[2]), $object, $email);
+          }          
+          $html = substr_replace($html, $foreachHtml, $offset + $changeInOffset, strlen($content));
+          $changeInOffset += strlen($foreachHtml) - strlen($content); 
+        }        
+      }      
     }
     
     return $html;
