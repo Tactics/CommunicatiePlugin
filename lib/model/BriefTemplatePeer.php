@@ -492,8 +492,21 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       {
         if (preg_match('/^{%\s*if\s+([^{]*)\s+%}/', $ifBlock[0], $condition))
         {
-          // nodige placeholders uit template halen
-          $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $email);
+          // special case for velden waar meerdere antwoorden mogelijk zijn
+          if (preg_match("/(%[^%]+%)[^\s]+\s+has_selected\s+['\"]([^']+)['\"]$/", $condition[1], $matches2))
+          {
+            $placeholderValues = self::getObjectPlaceholderValues($condition[1], $object);
+            $placeholderValues = explode("\n", array_shift($placeholderValues));
+            
+            echo $matches2[2];
+            
+            $condition[1] = in_array($matches2[2], $placeholderValues);            
+          }
+          else
+          {
+            // nodige placeholders uit template halen
+            $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $email);
+          }
           
           // condition evalueren
           if (eval("return $condition[1];"))
