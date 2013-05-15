@@ -767,7 +767,12 @@ class ttCommunicatieActions extends sfActions
             $bestemmeling = null;
             if (method_exists($object, 'getBestemmeling'))
             {
-              $bestemmeling =  $object->getBestemmeling();
+              $bestemmeling = $object->getBestemmeling();
+              // indien email_to overschreven werd naar een ander email, mag de bestemmeling niet gezet worden
+              if ($bestemmeling && method_exists($bestemmeling, 'getEmail') && ($bestemmeling->getEmail() != $email))              
+              {
+                $bestemmeling = null;
+              }
             }           
             
             // Log de brief
