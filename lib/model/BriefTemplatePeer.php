@@ -483,14 +483,15 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {
     $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
 
-    while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE))
+    $tmpHtml = html_entity_decode($html);    
+    while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $tmpHtml, $matches, PREG_OFFSET_CAPTURE))
     {
       $changeInOffset = 0;
       $ifBlocks = $matches[0];
 
       foreach ($ifBlocks as $index => $ifBlock)
       {
-        if (preg_match('/^{%\s*if\s+([^{]*)\s+%}/', $ifBlock[0], $condition))
+        if (preg_match('/^{%\s*if\s+([^{]*)\s*%}/', $ifBlock[0], $condition))
         {
           // special case for velden waar meerdere antwoorden mogelijk zijn
           if (preg_match("/(%[^%]+%)[^\s]+\s+has_selected\s+['\"]([^']+)['\"]$/", $condition[1], $matches2))
@@ -514,12 +515,12 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
             // {% endif %} er eerst uitknippen, want dat veranderd de offset van de if niet
             $offsetEndif = $matches[1][$index][1] - $changeInOffset;
             $lengthEndif = strlen($matches[1][$index][0]);
-            $html = substr_replace($html, '', $offsetEndif, $lengthEndif);
+            $tmpHtml = substr_replace($tmpHtml, '', $offsetEndif, $lengthEndif);
 
             // {% if ... %} eruit knippen
             $offsetIf = $ifBlock[1] - $changeInOffset;
             $lengthIf = strlen($condition[0]);
-            $html = substr_replace($html, '', $offsetIf, $lengthIf);
+            $tmpHtml = substr_replace($tmpHtml, '', $offsetIf, $lengthIf);
 
             // change in offset bijhouden
             $changeInOffset += $lengthIf + $lengthEndif;
@@ -529,7 +530,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
             // heel de ifblock uit de body knippen
             $offsetIfBlock = $ifBlock[1] - $changeInOffset;
             $lengthIfBlock = strlen($ifBlock[0]);
-            $html = substr_replace($html, '', $offsetIfBlock, $lengthIfBlock);
+            $tmpHtml = substr_replace($tmpHtml, '', $offsetIfBlock, $lengthIfBlock);
 
             // change in offset bijhouden
             $changeInOffset += $lengthIfBlock;
@@ -537,7 +538,9 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
         }
       }
     }
-
+    
+    $html = htmlentities($tmpHtml);
+    
     return $html;
   }
 
