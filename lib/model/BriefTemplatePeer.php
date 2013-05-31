@@ -3,39 +3,39 @@
 /**
  * Subclass for performing query and update operations on the 'brief_template' table.
  *
- * 
+ *
  *
  * @package plugins.ttCommunicatiePlugin.lib.model
- */ 
+ */
 class BriefTemplatePeer extends BaseBriefTemplatePeer
-{  
+{
   const TYPE_FILE = 'file';
   const TYPE_DB = 'db';
 
   const PLACEHOLDER_PREFIX_SEPARATOR = '::';
-  
+
   private static $targets = array();
-  
+
   /**
-   *  Geeft alle templates terug van een bepaald object type 
-   * 
+   *  Geeft alle templates terug van een bepaald object type
+   *
    * @param string $objectType
    * @param boolean $inclusief
-   * 
+   *
    * @return array
    */
-  public static function getObjectTemplates($object_class, $inclusief_archief = false) 
+  public static function getObjectTemplates($object_class, $inclusief_archief = false)
   {
     $c = new Criteria();
     if(!$inclusief_archief)
     {
       $c->add(BriefTemplatePeer::GEARCHIVEERD, 0);
     }
-    
+
     $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $object_class . '|%', Criteria::LIKE);
     return self::getSorted($c);
   }
-  
+
   /**
    * Geeft alle templates terug (alfabetisch geordend)
    *
@@ -47,18 +47,18 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     {
       $c = new Criteria();
     }
-    
+
     // templates met systeemnaam zijn nooit uit de dropdown te kiezen
     $c->add(self::SYSTEEMNAAM, null, Criteria::ISNULL);
-    
+
     // categories enabled?
     if (sfConfig::get('sf_communicatie_enable_categories', false))
     {
       $user = sfContext::getInstance()->getUser();
       $c->add(self::CATEGORIE, $user->getTtCommunicatieCategory(), Criteria::EQUAL);
     }
-    
-    
+
+
     $c->addAscendingOrderByColumn(self::NAAM);
 
     return self::doSelect($c);
@@ -76,13 +76,13 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {
     foreach ($values as $placeholder => $value)
     {
-      $newValues["%$placeholder%"] = $value;      
+      $newValues["%$placeholder%"] = $value;
     }
     // 2x vervangen, eerste keer kunnen placeholders vervangen worden door opnieuw placeholders
-    $html = strtr($html, $newValues);     
+    $html = strtr($html, $newValues);
     return strtr($html, $newValues);
   }
-  
+
   /**
    * vervangt de placeholders in de html met de lege values
    *
@@ -91,7 +91,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * @return string
    */
   public static function clearPlaceholders($html)
-  {    
+  {
     return preg_replace('(%[A-Za-z0-9_:]+%)', '', $html);
   }
 
@@ -135,7 +135,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   /**
    * Helper functie die placeholders selecteert op basis van een prefix.
    * Het prefix wordt ook verwijderd.
-   * 
+   *
    * @return array
    */
   public static function filterByPrefix($prefix, $placeholders)
@@ -152,12 +152,12 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
     return $subset;
   }
-  
+
   /**
    * Include een bestand en geef het resultaat terug als string
    *
    * http://php.net/manual/en/function.include.php
-   * 
+   *
    * @param string $filename
    * @return string
    */
@@ -174,20 +174,20 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
     return false;
   }
-  
+
   /**
    * geeft bericht_html terug
-   * 
-   * @param BriefTemplate $briefTemplate 
+   *
+   * @param BriefTemplate $briefTemplate
    * @param boolean $emailLayout : mail of print layout
    * @param boolean $emailverzenden : mail versturen of display op scherm?
    * @param string $html
    * @param BriefLayout $briefLayout optional, default null
-   * 
+   *
    * @return string $bericht_html
    */
   public static function getBerichtHtml($briefTemplate, $emailLayout, $emailverzenden, $html, $briefLayout = null)
-  {    
+  {
     $layout = $briefLayout ? $briefLayout : $briefTemplate->getBriefLayout();
 
     if ($emailLayout)
@@ -200,7 +200,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       $layout_bestand = $layout->getPrintBestand();
       $layout_stylesheets = $layout->getPrintStylesheets();
     }
-    
+
     $stylesheet_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'stylesheets' . DIRECTORY_SEPARATOR;
     $layout_dir = sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
 
@@ -214,33 +214,33 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       {
         $css .= $stylesheet_css;
       }
-    }    
+    }
 
     // Haal layout op en pas deze toe
     $html_layout = self::get_include_contents($layout_dir . $layout_bestand);
 
     if ($html_layout)
     {
-      Misc::use_helper('Url');      
+      Misc::use_helper('Url');
       $html = strtr($html_layout, array(
         '%stylesheet%' => $css,
         '%body%' => $html,
         '%image_dir%' => $emailverzenden ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/'
       ));
     }
-    
+
     return $html;
   }
-  
+
   /**
    * geeft bericht_body terug
-   * 
+   *
    * @param string $html
-   * 
+   *
    * @return string $bericht_body
    */
   public static function getBerichtBody($html)
-  {    
+  {
     $startOpenBodyTag = stripos($html, '<body');
     $endOpenBodyTag = stripos($html, '>', $startOpenBodyTag);
     $endBodyTag = stripos($html, '</body>', $endOpenBodyTag);
@@ -255,16 +255,16 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     }
 
     $bericht_body = substr($html, $endOpenBodyTag + 1, $endBodyTag - $endOpenBodyTag - 1);
-    
+
     return $bericht_body;
   }
-  
+
   /**
    * geeft bericht_head terug
-   * 
+   *
    * @param string $html
-   * 
-   * @return string $bericht_head 
+   *
+   * @return string $bericht_head
    */
   public static function getBerichtHead($html)
   {
@@ -282,29 +282,29 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     }
 
     $bericht_head = substr($html, $endOpenHeadTag + 1, $endHeadTag - $endOpenHeadTag - 1);
-    
+
     return $bericht_head;
-  }  
-  
+  }
+
   /**
    * @return bool
    */
   public static function isVertaalbaar()
   {
     $i18n = sfConfig::get('sf_communicatie_i18n');
-    
+
     return is_array($i18n['languages']) && (count($i18n['languages']) > 1);
   }
-  
+
   /**
    * Haalt de verschillende talen op.
-   * 
-   * @return array 
+   *
+   * @return array
    */
   public static function getTranslationLanguageArray()
   {
     $i18n = sfConfig::get('sf_communicatie_i18n');
-    
+
     // default nl_BE
     if (! $i18n)
     {
@@ -313,39 +313,39 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           'culture' => 'nl_BE',
           'label' => 'Nederlands',
           'default' => true
-         ) 
-      ));   
+         )
+      ));
     }
-   
-    
+
+
     return $i18n['languages'];
   }
-  
+
   /**
    * Verschillende cultures & labels ophalen uit settings.yml
-   * 
+   *
    * @return array
    */
   public static function getCultureLabelArray()
   {
     $languageArray = self::getTranslationLanguageArray();
     $cultureLabelArray = array();
-    
+
     foreach ($languageArray as $language)
     {
       $cultureLabelArray[$language['culture']] = $language['label'];
     }
-    
+
     return $cultureLabelArray;
   }
-  
+
   /**
    * Default taal ophalen.
-   * 
+   *
    * @return array
    */
   public static function getDefaultTranslationLanguage()
-  {   
+  {
     foreach (self::getTranslationLanguageArray() as $languageArr)
     {
       if (self::isDefaultTranslationLanguage($languageArr))
@@ -353,25 +353,25 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
         return $languageArr;
       }
     }
-    
+
     throw new sfException('Default language not found.');
   }
-  
+
   /**
    * Default culture ophalen
-   * 
+   *
    * @return string culture
    */
   public static function getDefaultCulture()
   {
     $languageArray = self::getDefaultTranslationLanguage();
-    
+
     return $languageArray['culture'];
   }
-  
+
   /**
    * Controleren of taal default is.
-   * 
+   *
    * @param array language array ('culture' => ..., 'label' => ..., 'default' => ...)
    * @return bool
    */
@@ -379,10 +379,10 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {
     return array_key_exists('default', $languageArray) && ($languageArray['default'] == true);
   }
-  
+
   /**
    * Catalogue name voor language array ophalen.
-   * 
+   *
    * @param array $language
    * @return string Catalogue name
    */
@@ -397,7 +397,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
   /**
    * Catalogue name voor language array ophalen.
-   * 
+   *
    * @param array $language
    * @return string Catalogue name
    */
@@ -407,13 +407,13 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     {
       throw new sfException('Unknown language format.');
     }
-    
+
     return $language['culture'];
   }
- 
+
   /**
    * Catalogue name voor language array ophalen.
-   * 
+   *
    * @param array $language
    * @return string Catalogue name
    */
@@ -423,12 +423,12 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     {
       throw new sfException('Unknown language format.');
     }
-    
+
     return $language['label'];
   }
-  
+
   /**
-   * 
+   *
    * @param string $systeemnaam
    * @param type $con
    * @return BriefTemplate
@@ -448,7 +448,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
 		return !empty($v) > 0 ? $v[0] : null;
 	}
-  
+
   /**
    * geeft de culture terug waarin de brief/email verzonden moet worden
    */
@@ -456,37 +456,37 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {
     $culture = $object->getMailerCulture();
     $cultures = self::getCultureLabelArray();
-    
+
     if (! $culture)
     {
       $culture = sfContext::getInstance()->getUser()->getCulture();
     }
-    
+
     if (! array_key_exists($culture, $cultures))
     {
       $culture = self::getDefaultCulture();
     }
-    
+
     return $culture;
   }
-  
+
   /**
    * verwerkt de ifstaments van de html
-   * 
-   * @param string $html 
+   *
+   * @param string $html
    * @param mixed $object
    * @param bool $email
    * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
   public static function parseIfStatements($html, $object, $email = false, $otherPlaceholders = array())
-  {     
+  {
     $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
-    
-    while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
-    { 
+
+    while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE))
+    {
       $changeInOffset = 0;
-      $ifBlocks = $matches[0];        
+      $ifBlocks = $matches[0];
 
       foreach ($ifBlocks as $index => $ifBlock)
       {
@@ -497,24 +497,24 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           {
             $placeholderValues = self::getObjectPlaceholderValues($condition[1], $object);
             $placeholderValues = explode("\n", array_shift($placeholderValues));
-            
+
             echo $matches2[2];
-            
-            $condition[1] = in_array($matches2[2], $placeholderValues);            
+
+            $condition[1] = in_array($matches2[2], $placeholderValues);
           }
           else
           {
             // nodige placeholders uit template halen
             $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $email);
           }
-          
+
           // condition evalueren
           if (eval("return $condition[1];"))
-          { 
+          {
             // {% endif %} er eerst uitknippen, want dat veranderd de offset van de if niet
             $offsetEndif = $matches[1][$index][1] - $changeInOffset;
             $lengthEndif = strlen($matches[1][$index][0]);
-            $html = substr_replace($html, '', $offsetEndif, $lengthEndif);              
+            $html = substr_replace($html, '', $offsetEndif, $lengthEndif);
 
             // {% if ... %} eruit knippen
             $offsetIf = $ifBlock[1] - $changeInOffset;
@@ -532,40 +532,40 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
             $html = substr_replace($html, '', $offsetIfBlock, $lengthIfBlock);
 
             // change in offset bijhouden
-            $changeInOffset += $lengthIfBlock;              
+            $changeInOffset += $lengthIfBlock;
           }
         }
       }
     }
-    
+
     return $html;
   }
-  
+
   /**
    * verwerkt de ifstaments van de html
-   * 
-   * @param string $html 
+   *
+   * @param string $html
    * @param mixed $object
    * @param bool $email
    * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
   public static function parseForeachStatements($html, $object, $email = false, $otherPlaceholders = array())
-  {     
-    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);    
-    while (preg_match_all('/{%\s*foreach\s+[^{]*({% endforeach %})/', $html, $matches, PREG_OFFSET_CAPTURE)) 
-    {       
+  {
+    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
+    while (preg_match_all('/{%\s*foreach\s+[^{]*({% endforeach %})/', $html, $matches, PREG_OFFSET_CAPTURE))
+    {
       $changeInOffset = 0;
-      $foreachBlocks = $matches[0];      
+      $foreachBlocks = $matches[0];
       foreach ($foreachBlocks as $index => $foreachBlock)
-      {        
+      {
         $content = $foreachBlock[0];
         $offset = $foreachBlock[1];
         if (preg_match('/^{%\s*foreach\s+([^{]*)\s+%}([^{]+){% endforeach %}/', $content, $result))
-        {           
+        {
           //$result[1] is the collection field
-          //$result[2] is the html in the foreach statement              
-          list($formSysName, $veldSysName) = explode('][', trim(substr($result[1], 10), ']%'));          
+          //$result[2] is the html in the foreach statement
+          list($formSysName, $veldSysName) = explode('][', trim(substr($result[1], 10), ']%'));
           if (!$formSysName || !$veldSysName || !($antwoord = $object->retrieveAntwoordBySysteemnamen($formSysName, $veldSysName)))
           {
             // clear the foreach
@@ -573,26 +573,26 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
             $changeInOffset += 0 - strlen($content);
             continue;
           }
-          
-          $nbrOfCollectionItems = $antwoord->get();          
+
+          $nbrOfCollectionItems = $antwoord->get();
           $foreachHtml = '';
           for ($i=0; $i < $nbrOfCollectionItems; $i++)
           {
             $foreachHtml .= self::replacePlaceholdersFromObject(str_replace('[]', "[$i]", $result[2]), $object, $email);
-          }          
+          }
           $html = substr_replace($html, $foreachHtml, $offset + $changeInOffset, strlen($content));
-          $changeInOffset += strlen($foreachHtml) - strlen($content); 
-        }        
-      }      
+          $changeInOffset += strlen($foreachHtml) - strlen($content);
+        }
+      }
     }
-    
+
     return $html;
   }
-  
+
   /**
    * replaced de placeholders van de culture brief afh vh gegeven object
-   * 
-   * @param array $cultureBrieven 
+   *
+   * @param array $cultureBrieven
    * @param mixed $object
    * @param bool $email
    * @return array The $cultureBrieven with replaced placeholders for the object culture
@@ -601,23 +601,23 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   {
     $defaultPlaceholders = self::getDefaultPlaceholders($object, $email, true);
     $culture = self::calculateCulture($object);
-    
+
     $placeholders = array_merge(
       $defaultPlaceholders,
       self::getObjectPlaceholderValues($cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $object)
     );
-    
-    // eerst onderwerp placeholders vervangen omdat onderwerp zelf een placeholder is in de body      
+
+    // eerst onderwerp placeholders vervangen omdat onderwerp zelf een placeholder is in de body
     $placeholders['onderwerp'] = self::replacePlaceholders($cultureBrieven[$culture]['onderwerp'], $placeholders);
     $cultureBrieven[$culture]['onderwerp'] = $placeholders['onderwerp'];
     $cultureBrieven[$culture]['body'] = self::replacePlaceholders($cultureBrieven[$culture]['body'], $placeholders);
-    
+
     return $cultureBrieven;
   }
-  
+
   /**
    * vervangt de placeholders in de html met de values
-   * 
+   *
    * @param string $html
    * @param mixed $object
    * @param bool $email
@@ -626,18 +626,18 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   public static function replacePlaceholdersFromObject($html, $object, $email = false)
   {
     $defaultPlaceholders = self::getDefaultPlaceholders($object, $email);
-    
+
     $placeholders = array_merge(
       self::getObjectPlaceholderValues($html, $object),
       $defaultPlaceholders
-    );    
-    
+    );
+
     return self::replacePlaceholders($html, $placeholders);
   }
-  
+
   /**
    * geeft de gebruikte placeholder values terug van gegeven object
-   * 
+   *
    * @param string $html
    * @param mixed $object
    * @return array[placeholder] => placeholder_value
@@ -648,20 +648,20 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     {
       return array();
     }
-    
+
     $usedPlaceholders = array();
     if (preg_match_all('/\%([A-Za-z0-9_:\[\]]+)\%/', $html, $placeholderMatches)) {
         $usedPlaceholders = $placeholderMatches[1];
     }
 
     $culture = self::calculateCulture($object);
-    
+
     return $object->fillPlaceholders($usedPlaceholders, $culture);
   }
-  
+
   /**
    * Geeft de default placeholers terug
-   * 
+   *
    * @param mixed $object
    * @param bool $email
    * @param bool $generalPlaceholders met bv handtekeningen placeholders
@@ -669,38 +669,38 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function getDefaultPlaceholders($object = null, $email = false, $generalPlaceholders = false)
   {
-    Misc::use_helper('Url');    
+    Misc::use_helper('Url');
     $vandaag = new myDate();
     $defaultPlaceholders = array(
       'datum' => $vandaag->format(),
-      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),     
+      'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),
       'image_dir' => $email ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
       'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
-    ); 
-    
+    );
+
     if ($object)
-    {      
+    {
       $defaultPlaceholders = array_merge(
         $defaultPlaceholders,
         array('bestemmeling_adres' => nl2br($object->getAdres()))
       );
     }
-    
+
     if ($generalPlaceholders)
     {
-      if (class_exists('Placeholder'))
+      if (class_exists('Placeholder', false))
       {
         $placeholder = new Placeholder();
         $defaultPlaceholders = array_merge($defaultPlaceholders, $placeholder->fillPlaceholders(null, BriefTemplatePeer::getDefaultCulture()));
       }
     }
-    
+
     return $defaultPlaceholders;
   }
-  
+
   /**
    * geeft terug of object een ttCommunicatie target is
-   * 
+   *
    * @param type $object
    * @return typegeeft ter
    */
@@ -711,10 +711,10 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo)
       {
         self::$targets[] = $targetInfo['class'];
-      }      
+      }
     }
-    
-    return in_array(get_class($object), self::$targets);   
+
+    return in_array(get_class($object), self::$targets);
   }
-  
+
 }
