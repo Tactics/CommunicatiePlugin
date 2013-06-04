@@ -686,7 +686,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
     if ($generalPlaceholders)
     {
-      if (class_exists('Placeholder', false))
+      if (@class_exists('Placeholder'))
       {
         $placeholder = new Placeholder();
         $defaultPlaceholders = array_merge($defaultPlaceholders, $placeholder->fillPlaceholders(null, BriefTemplatePeer::getDefaultCulture()));
