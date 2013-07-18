@@ -22,6 +22,18 @@
     <th>Adres:</th>
     <td><?php echo $briefVerzonden->getAdres(); ?></td>
   </tr>
+  <?php if ($briefVerzonden->getCc()) : ?>
+    <tr>
+      <th>Cc:</th>
+      <td><?php echo $briefVerzonden->getCc(); ?></td>
+    </tr>
+  <?php endif; ?>
+  <?php if ($briefVerzonden->getBcc()) : ?>
+    <tr>
+      <th>Bcc:</th>
+      <td><?php echo $briefVerzonden->getBcc(); ?></td>
+    </tr>
+  <?php endif; ?>
   <tr>
     <th>Body:</th>
     <td><?php echo nl2br($briefVerzonden->getHtml()) ?></td>

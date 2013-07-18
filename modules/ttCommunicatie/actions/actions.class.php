@@ -801,6 +801,8 @@ class ttCommunicatieActions extends sfActions
             $briefVerzonden->setBriefTemplate($brief_template);
             $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
             $briefVerzonden->setAdres($email);
+            $briefVerzonden->setCc(isset($options['cc']) ? implode(';', $options['cc']) : null);
+            $briefVerzonden->setBcc(isset($options['bcc']) ? implode(';', $options['bcc']) : null);
             $briefVerzonden->setOnderwerp($onderwerp);
             $briefVerzonden->setCulture($culture);
             $briefVerzonden->setHtml($body);

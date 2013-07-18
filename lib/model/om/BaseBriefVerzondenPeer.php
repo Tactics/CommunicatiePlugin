@@ -13,7 +13,7 @@ abstract class BaseBriefVerzondenPeer {
 	const CLASS_DEFAULT = 'plugins.ttCommunicatiePlugin.lib.model.BriefVerzonden';
 
 	
-	const NUM_COLUMNS = 17;
+	const NUM_COLUMNS = 19;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -50,6 +50,12 @@ abstract class BaseBriefVerzondenPeer {
 	const ADRES = 'brief_verzonden.ADRES';
 
 	
+	const CC = 'brief_verzonden.CC';
+
+	
+	const BCC = 'brief_verzonden.BCC';
+
+	
 	const CUSTOM = 'brief_verzonden.CUSTOM';
 
 	
@@ -76,18 +82,18 @@ abstract class BaseBriefVerzondenPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'ObjectClass', 'ObjectId', 'ObjectClassBestemmeling', 'ObjectIdBestemmeling', 'BriefTemplateId', 'Onderwerp', 'Html', 'Medium', 'Adres', 'Custom', 'Culture', 'Status', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
-		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID, BriefVerzondenPeer::OBJECT_CLASS, BriefVerzondenPeer::OBJECT_ID, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefVerzondenPeer::ONDERWERP, BriefVerzondenPeer::HTML, BriefVerzondenPeer::MEDIUM, BriefVerzondenPeer::ADRES, BriefVerzondenPeer::CUSTOM, BriefVerzondenPeer::CULTURE, BriefVerzondenPeer::STATUS, BriefVerzondenPeer::CREATED_BY, BriefVerzondenPeer::UPDATED_BY, BriefVerzondenPeer::CREATED_AT, BriefVerzondenPeer::UPDATED_AT, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'object_class', 'object_id', 'object_class_bestemmeling', 'object_id_bestemmeling', 'brief_template_id', 'onderwerp', 'html', 'medium', 'adres', 'custom', 'culture', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'ObjectClass', 'ObjectId', 'ObjectClassBestemmeling', 'ObjectIdBestemmeling', 'BriefTemplateId', 'Onderwerp', 'Html', 'Medium', 'Adres', 'Cc', 'Bcc', 'Custom', 'Culture', 'Status', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
+		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID, BriefVerzondenPeer::OBJECT_CLASS, BriefVerzondenPeer::OBJECT_ID, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefVerzondenPeer::ONDERWERP, BriefVerzondenPeer::HTML, BriefVerzondenPeer::MEDIUM, BriefVerzondenPeer::ADRES, BriefVerzondenPeer::CC, BriefVerzondenPeer::BCC, BriefVerzondenPeer::CUSTOM, BriefVerzondenPeer::CULTURE, BriefVerzondenPeer::STATUS, BriefVerzondenPeer::CREATED_BY, BriefVerzondenPeer::UPDATED_BY, BriefVerzondenPeer::CREATED_AT, BriefVerzondenPeer::UPDATED_AT, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'object_class', 'object_id', 'object_class_bestemmeling', 'object_id_bestemmeling', 'brief_template_id', 'onderwerp', 'html', 'medium', 'adres', 'cc', 'bcc', 'custom', 'culture', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'ObjectClass' => 1, 'ObjectId' => 2, 'ObjectClassBestemmeling' => 3, 'ObjectIdBestemmeling' => 4, 'BriefTemplateId' => 5, 'Onderwerp' => 6, 'Html' => 7, 'Medium' => 8, 'Adres' => 9, 'Custom' => 10, 'Culture' => 11, 'Status' => 12, 'CreatedBy' => 13, 'UpdatedBy' => 14, 'CreatedAt' => 15, 'UpdatedAt' => 16, ),
-		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID => 0, BriefVerzondenPeer::OBJECT_CLASS => 1, BriefVerzondenPeer::OBJECT_ID => 2, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING => 3, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING => 4, BriefVerzondenPeer::BRIEF_TEMPLATE_ID => 5, BriefVerzondenPeer::ONDERWERP => 6, BriefVerzondenPeer::HTML => 7, BriefVerzondenPeer::MEDIUM => 8, BriefVerzondenPeer::ADRES => 9, BriefVerzondenPeer::CUSTOM => 10, BriefVerzondenPeer::CULTURE => 11, BriefVerzondenPeer::STATUS => 12, BriefVerzondenPeer::CREATED_BY => 13, BriefVerzondenPeer::UPDATED_BY => 14, BriefVerzondenPeer::CREATED_AT => 15, BriefVerzondenPeer::UPDATED_AT => 16, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'object_class' => 1, 'object_id' => 2, 'object_class_bestemmeling' => 3, 'object_id_bestemmeling' => 4, 'brief_template_id' => 5, 'onderwerp' => 6, 'html' => 7, 'medium' => 8, 'adres' => 9, 'custom' => 10, 'culture' => 11, 'status' => 12, 'created_by' => 13, 'updated_by' => 14, 'created_at' => 15, 'updated_at' => 16, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'ObjectClass' => 1, 'ObjectId' => 2, 'ObjectClassBestemmeling' => 3, 'ObjectIdBestemmeling' => 4, 'BriefTemplateId' => 5, 'Onderwerp' => 6, 'Html' => 7, 'Medium' => 8, 'Adres' => 9, 'Cc' => 10, 'Bcc' => 11, 'Custom' => 12, 'Culture' => 13, 'Status' => 14, 'CreatedBy' => 15, 'UpdatedBy' => 16, 'CreatedAt' => 17, 'UpdatedAt' => 18, ),
+		BasePeer::TYPE_COLNAME => array (BriefVerzondenPeer::ID => 0, BriefVerzondenPeer::OBJECT_CLASS => 1, BriefVerzondenPeer::OBJECT_ID => 2, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING => 3, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING => 4, BriefVerzondenPeer::BRIEF_TEMPLATE_ID => 5, BriefVerzondenPeer::ONDERWERP => 6, BriefVerzondenPeer::HTML => 7, BriefVerzondenPeer::MEDIUM => 8, BriefVerzondenPeer::ADRES => 9, BriefVerzondenPeer::CC => 10, BriefVerzondenPeer::BCC => 11, BriefVerzondenPeer::CUSTOM => 12, BriefVerzondenPeer::CULTURE => 13, BriefVerzondenPeer::STATUS => 14, BriefVerzondenPeer::CREATED_BY => 15, BriefVerzondenPeer::UPDATED_BY => 16, BriefVerzondenPeer::CREATED_AT => 17, BriefVerzondenPeer::UPDATED_AT => 18, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'object_class' => 1, 'object_id' => 2, 'object_class_bestemmeling' => 3, 'object_id_bestemmeling' => 4, 'brief_template_id' => 5, 'onderwerp' => 6, 'html' => 7, 'medium' => 8, 'adres' => 9, 'cc' => 10, 'bcc' => 11, 'custom' => 12, 'culture' => 13, 'status' => 14, 'created_by' => 15, 'updated_by' => 16, 'created_at' => 17, 'updated_at' => 18, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
 	
@@ -160,6 +166,10 @@ abstract class BaseBriefVerzondenPeer {
 		$criteria->addSelectColumn(BriefVerzondenPeer::MEDIUM);
 
 		$criteria->addSelectColumn(BriefVerzondenPeer::ADRES);
+
+		$criteria->addSelectColumn(BriefVerzondenPeer::CC);
+
+		$criteria->addSelectColumn(BriefVerzondenPeer::BCC);
 
 		$criteria->addSelectColumn(BriefVerzondenPeer::CUSTOM);
 

@@ -37,6 +37,8 @@
     <column name="html" type="LONGVARCHAR"/>
     <column name="medium" type="VARCHAR" size="45"/>
     <column name="adres" type="VARCHAR" size="1000"/>
+    <column name="cc" type="VARCHAR" size="1000"/>
+    <column name="bcc" type="VARCHAR" size="1000"/>
     <column name="custom" type="BOOLEAN" required="true" default="0"/>
     <column name="culture" type="VARCHAR" size="45"/>
     <column name="status" type="VARCHAR" size="45" required="true"/>

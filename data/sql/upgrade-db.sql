@@ -18,3 +18,13 @@ ALTER TABLE `brief_layout` CHANGE `id` `id` INT( 11 ) NOT NULL AUTO_INCREMENT;
 -- -----------------------------------------------------------------------------
 ALTER TABLE brief_verzonden ADD object_class_bestemmeling VARCHAR(45) NULL DEFAULT NULL AFTER object_id;
 ALTER TABLE brief_verzonden ADD object_id_bestemmeling INT NULL DEFAULT NULL AFTER object_class_bestemmeling;
+
+-- -----------------------------------------------------------------------------
+-- 18/07/2013
+-- Joris Hontelé
+--
+-- cc en bcc toevoegen aan brief_verzonden
+-- -----------------------------------------------------------------------------
+ALTER TABLE `brief_verzonden` 
+ADD `cc` VARCHAR( 1000 ) NULL DEFAULT NULL AFTER `adres` ,
+ADD `bcc` VARCHAR( 1000 ) NULL DEFAULT NULL AFTER `cc` ;

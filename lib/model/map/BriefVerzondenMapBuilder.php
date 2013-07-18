@@ -52,6 +52,10 @@ class BriefVerzondenMapBuilder {
 
 		$tMap->addColumn('ADRES', 'Adres', 'string', CreoleTypes::VARCHAR, false, 1000);
 
+		$tMap->addColumn('CC', 'Cc', 'string', CreoleTypes::VARCHAR, false, 1000);
+
+		$tMap->addColumn('BCC', 'Bcc', 'string', CreoleTypes::VARCHAR, false, 1000);
+
 		$tMap->addColumn('CUSTOM', 'Custom', 'boolean', CreoleTypes::BOOLEAN, true, null);
 
 		$tMap->addColumn('CULTURE', 'Culture', 'string', CreoleTypes::VARCHAR, false, 45);
