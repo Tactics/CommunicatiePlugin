@@ -746,22 +746,37 @@ class ttCommunicatieActions extends sfActions
               'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
             );
             
-            // getMailerRecipientCC is optionele methode.
-            if (method_exists($object, 'getMailerRecipientCC') && $object->getMailerRecipientCC())
+            if ($this->hasRequestParameter('email_cc'))
             {
-              $options['cc'] = $object->getMailerRecipientCc();
+              if ($emailCc = trim($this->getRequestParameter('email_cc')))
+              {
+                $options['cc'] = explode(';', str_replace(',', ';', $emailCc));
+              }              
+            }
+            else if (method_exists($object, 'getMailerRecipientCC') && ($emailCc = $object->getMailerRecipientCC()))
+            {
+              $options['cc'] = explode(';', str_replace(',', ';', $emailCc));
             }
             
-            // getMailerRecipientBCC is optionele methode.
-            if (method_exists($object, 'getMailerRecipientBCC') && $object->getMailerRecipientBCC())
+            if ($this->hasRequestParameter('email_bcc'))
             {
-              $options['bcc'] = $object->getMailerRecipientBCC();
+              if ($emailBcc = trim($this->getRequestParameter('email_bcc')))
+              {
+                $options['bcc'] = explode(';', str_replace(',', ';', $emailBcc));
+              }
+            }
+            else if (method_exists($object, 'getMailerRecipientBCC') && ($emailBcc = $object->getMailerRecipientBCC()))
+            {
+              $options['bcc'] = explode(';', str_replace(',', ';', $emailBcc));
             }
             
             BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
 
             $verstuurd = true;
-            echo 'Bericht verzonden naar : ' . $email . '<br/>';
+            echo 'Bericht verzonden naar : ' . $email;
+            echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
+            echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
+            echo '<br/>';
             $counter['verstuurd']++;
             
             $bestemmeling = null;

@@ -92,12 +92,34 @@ function showPlaceholders($placeholders)
         $rs->next();
         $object = new $bestemmelingenClass();
         $object->hydrate($rs);
-        $emailTo = $object->getMailerRecipientMail();     
+        $emailTo = $object->getMailerRecipientMail();
+        $emailCc = '';
+        $emailBcc = '';
+        if (method_exists($object, 'getMailerRecipientCC') && ($emailCc = $object->getMailerRecipientCC()))
+        {
+          $emailCc = !empty($emailCc) ? implode(';', $emailCc) : '';
+        }
+        if (method_exists($object, 'getMailerRecipientBCC') && ($emailBcc = $object->getMailerRecipientBCC()))
+        {
+          $emailBcc = !empty($emailBcc) ? implode(';', $emailBcc) : '';
+        }
+        
         $rs->seek(0); // reset $rs
         ?>
         <tr>
           <th>Bestemmeling:</th>
-          <td><?php echo input_tag('email_to', $emailTo, array('size' => 80)); ?></td>
+          <td>
+            <?php echo input_tag('email_to', $emailTo, array('size' => 80)); ?>
+            &nbsp; <?php echo link_to_function('Cc/Bcc', "jQuery('.cc_bcc').toggle();"); ?>
+          </td>
+        </tr>
+        <tr class="cc_bcc" <?php echo $emailCc ? '' : 'style="display: none"'; ?>>
+          <th>Cc:</th>
+          <td><?php echo input_tag('email_cc', $emailCc, array('size' => 80)); ?></td>
+        </tr>
+        <tr class="cc_bcc" <?php echo $emailBcc ? '' : 'style="display: none"'; ?>>
+          <th>Bcc:</th>
+          <td><?php echo input_tag('email_bcc', $emailBcc, array('size' => 80)); ?></td>
         </tr>
       <?php else : ?>       
         <tr>
