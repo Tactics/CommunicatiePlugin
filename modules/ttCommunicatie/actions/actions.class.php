@@ -38,6 +38,8 @@ class ttCommunicatieActions extends sfActions
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
     $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
     $this->afzender = $this->getUser()->getAttribute('afzender', sfConfig::get("sf_mail_sender"), $this->md5hash);
+    $this->choose_afzender = $this->getUser()->getAttribute('choose_afzender', false, $this->md5hash);
+    $this->mogelijke_afzenders = $this->getMogelijkeAfzenders();
     
     // indien object gegeven, wordt criteria en bestemmelingenClass/Peer enzo niet gebruikt.
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
@@ -741,7 +743,7 @@ class ttCommunicatieActions extends sfActions
             $options = array(
               'onderwerp' => $onderwerp,
               'skip_template' => true,
-              'afzender' => $this->afzender,
+              'afzender' => $this->getRequestParameter('afzender'),
               'attachements' => $attachments,
               'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
             );
@@ -1201,6 +1203,20 @@ class ttCommunicatieActions extends sfActions
     }
 
     return $attachments;
+  }
+
+  private function getMogelijkeAfzenders()
+  {
+    $afzenders = array($this->afzender => $this->afzender);
+
+    $email = $this->getUser()->getPersoon()->getEmail();
+
+    if ($email)
+    {
+      $afzenders[$email] = $email;
+    }
+
+    return $afzenders;
   }
 }
   

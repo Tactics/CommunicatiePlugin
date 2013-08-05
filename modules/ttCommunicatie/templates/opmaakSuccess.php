@@ -80,6 +80,16 @@ function showPlaceholders($placeholders)
   <h2 class="pageblock">Brief opmaken</h2>
   <div class="pageblock">
     <table class="formtable">
+      <?php if ($choose_afzender): ?>
+        <tr>
+          <th>Verstuur als:</th>
+          <td>
+            <?php 
+              echo select_tag('afzender', options_for_select($mogelijke_afzenders))
+            ?>
+          </td>
+        </tr>
+      <?php endif ?>
       <?php if ($choose_template) : ?>
         <tr>
           <th>Sjabloon:</th>
