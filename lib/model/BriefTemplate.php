@@ -3,10 +3,10 @@
 /**
  * Subclass for representing a row from the 'brief_template' table.
  *
- * 
+ *
  *
  * @package plugins.ttCommunicatiePlugin.lib.model
- */ 
+ */
 class BriefTemplate extends BaseBriefTemplate
 {
   /**
@@ -19,10 +19,10 @@ class BriefTemplate extends BaseBriefTemplate
     $returnString .= $this->getNaam() ? ' ' . $this->getNaam() : '';
     return $returnString;
   }
-  
+
   /**
    * Een BriefTemplate is een systeemtemplate wanneer parameter systeemnaam not null is
-   * 
+   *
    * @return bool
    */
   public function isSysteemtemplate()
@@ -97,32 +97,32 @@ class BriefTemplate extends BaseBriefTemplate
   {
     return $this->getId();
   }
-  
+
   /**
    * Html source ophalen
-   * 
+   *
    * @param $language
    * @return string Source
    */
   public function getHtmlSource($culture)
-  {   
-    return 'brieftemplate_' . $this->getId() . '_html_' . $culture;    
+  {
+    return 'brieftemplate_' . $this->getId() . '_html_' . $culture;
   }
-  
+
   /**
    * Onderwerp source ophalen
-   * 
+   *
    * @param $language
    * @return string Source
    */
   public function getOnderwerpSource($culture)
   {
-    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . $culture;    
+    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . $culture;
   }
-  
+
   /**
    * Vertaling ophalen a.d.h.v source en taal
-   * 
+   *
    * @param  string source
    * @return string vertaling
    */
@@ -131,13 +131,13 @@ class BriefTemplate extends BaseBriefTemplate
     $c = new Criteria();
     $c->add(TransUnitPeer::SOURCE, $source);
     $transUnit = TransUnitPeer::doSelectOne($c);
-    
+
     return $transUnit ? $transUnit->getTarget() : '';
   }
-  
+
   /**
    * Onderwerp ophalen a.d.h.v culture.
-   * 
+   *
    * @param string $culture
    */
   public function getTranslatedOnderwerp($culture)
@@ -163,16 +163,16 @@ class BriefTemplate extends BaseBriefTemplate
       {
         throw new sfException('TransUnit not found');
       }
-      
+
       $onderwerp = $transUnit->getTarget();
-    }  
-    
+    }
+
     return $onderwerp;
   }
-  
+
   /**
    * Html ophalen a.d.h.v culture.
-   * 
+   *
    * @param string $culture
    */
   public function getTranslatedHtml($culture)
@@ -198,17 +198,17 @@ class BriefTemplate extends BaseBriefTemplate
       {
         throw new sfException('TransUnit not found');
       }
-      
+
       $html = $transUnit->getTarget();
-    }  
-    
+    }
+
     return $html;
   }
-  
-  
+
+
   /**
    * Mail versturen naar object
-   * 
+   *
    * @param iMailer interface $object
    * @param array $options
    * @return int The number of successful recipients
@@ -217,7 +217,7 @@ class BriefTemplate extends BaseBriefTemplate
   public function sendMailToObject(iMailer $object, $options = array())
   {
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
-    
+
     // Controleren of het mogelijk is deze brief_template te versturen naar $object.
     $b     = $this->getBestemmelingArray();
     $cName = get_class($object);
@@ -225,31 +225,31 @@ class BriefTemplate extends BaseBriefTemplate
     {
       throw new sfException("Unknown object: can't send mail to instance of class \"{$cName}\"");
     }
-    
+
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
     if ($this->getEenmaligVersturen() && $this->reedsVerstuurdNaar($cName, $object->getId()))
     {
       throw new sfException("Mail already sent.");
     }
-    
+
     // default placeholders die in layout gebruikt kunnen worden
     $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($object, true);
-    
+
     $culture    = $object->getMailerCulture();
     $values     = $object->fillPlaceholders(null, $culture);
     $values     = array_merge($defaultPlaceholders, $values, $systeemvalues);
     $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
     $values['onderwerp'] = $onderwerp;
-    
-    $email       = $object->getMailerRecipientMail();    
+
+    $email       = $object->getMailerRecipientMail();
     $html        = $this->getTranslatedHtml($culture);
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
-    
+
     $brief = $headAndBody['head'] . $headAndBody['body'];
     $brief = BriefTemplatePeer::parseForeachStatements($brief, $object, true, $systeemvalues);
     $brief = BriefTemplatePeer::parseIfStatements($brief, $object, true, $systeemvalues);
     $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
-    
+
     // Mail versturen
     $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
       'onderwerp' => $onderwerp,
@@ -259,10 +259,23 @@ class BriefTemplate extends BaseBriefTemplate
       'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
     ));
 
+    $bestemmeling = null;
+    if (method_exists($object, 'getBestemmeling'))
+    {
+      $bestemmeling = $object->getBestemmeling();
+      // indien email_to overschreven werd naar een ander email, mag de bestemmeling niet gezet worden
+      if ($bestemmeling && method_exists($bestemmeling, 'getEmail') && ($bestemmeling->getEmail() != $email))
+      {
+        $bestemmeling = null;
+      }
+    }
+
     // Mail loggen
     $briefVerzonden = new BriefVerzonden();
     $briefVerzonden->setObjectClass($cName);
     $briefVerzonden->setObjectId($object->getId());
+    $briefVerzonden->setObjectClassBestemmeling(isset($bestemmeling) ? get_class($bestemmeling) : null);
+    $briefVerzonden->setObjectIdBestemmeling(isset($bestemmeling) ? $bestemmeling->getId() : null);
     $briefVerzonden->setBriefTemplateId($this->getId());
     $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
     $briefVerzonden->setAdres($email);
@@ -270,81 +283,81 @@ class BriefTemplate extends BaseBriefTemplate
     $briefVerzonden->setCulture($culture);
     $briefVerzonden->setHtml($brief);
     $briefVerzonden->save();
-    
+
     return $mailSent;
   }
-  
+
   /**
    * geeft een array terug van htmls, geindexeerd op culture
-   * 
+   *
    * @return array[culture] = html
    */
   public function getHtmlCultureArr()
   {
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     $defaultCulture = BriefTemplatePeer::getDefaultCulture();
-    
-    $html = array();    
+
+    $html = array();
     foreach ($cultures as $culture => $label)
-    {     
+    {
       if ($culture === $defaultCulture)
       {
-        $html[$culture] = $this->getHtml();        
+        $html[$culture] = $this->getHtml();
       }
       else
       {
-        $html[$culture] = $this->getVertaling($this->getHtmlSource($culture));        
+        $html[$culture] = $this->getVertaling($this->getHtmlSource($culture));
       }
     }
-    
+
     return $html;
   }
-  
+
   /**
    * geeft een array terug van htmls, geindexeerd op culture
-   * 
+   *
    * @return array[culture] = html
    */
   public function getOnderwerpCultureArr()
   {
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     $defaultCulture = BriefTemplatePeer::getDefaultCulture();
-    
-    $onderwerp = array();    
+
+    $onderwerp = array();
     foreach ($cultures as $culture => $label)
-    {     
+    {
       if ($culture === $defaultCulture)
       {
-        $onderwerp[$culture] = $this->getOnderwerp();        
+        $onderwerp[$culture] = $this->getOnderwerp();
       }
       else
       {
-        $onderwerp[$culture] = $this->getVertaling($this->getOnderwerpSource($culture));        
+        $onderwerp[$culture] = $this->getVertaling($this->getOnderwerpSource($culture));
       }
     }
-    
+
     return $onderwerp;
   }
-  
+
   /**
    * Een briefTemplate is verwijderbaar wanneer:
-   * - er geen BriefVerzonden objecten aan gekoppeld zijn. 
+   * - er geen BriefVerzonden objecten aan gekoppeld zijn.
    * - het geen systeemtemplate is
-   * 
+   *
    * @return boolean
    */
   public function isVerwijderbaar()
   {
     return ($this->countBriefVerzondens() === 0) && (! $this->isSysteemtemplate());
   }
-  
+
   /**
    * geeft een array terug met attachments uit
    * a) de template
    * b) on-the-fly toegevoegd
-   * 
+   *
    * @param sfWebRequest $request
-   * 
+   *
    * @return array
    */
   public function getAttachments($request = null)
@@ -360,7 +373,7 @@ class BriefTemplate extends BaseBriefTemplate
         {
           continue;
         }
-        
+
         if (function_exists('sys_get_temp_dir'))
         {
           $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
@@ -369,7 +382,7 @@ class BriefTemplate extends BaseBriefTemplate
         {
           $tmpFile = tempnam('/tmp', 'brief_bijlage');
         }
-        
+
         $node->saveToFile($tmpFile);
 
         $attachments[$node->getName()] = $tmpFile;
