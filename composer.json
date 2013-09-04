@@ -1,0 +1,15 @@
+{
+    "name": "tactics/communicatie-plugin",
+    "description": "ttCommunicatiePlugin",
+    "keywords": ["Tactics", "Communicatie", "Plugin"],
+    "type": "symfony1-plugin",
+    "license": "MIT",
+    "authors": [{
+        "name": "Joris Hontelé",
+        "email": "joris.hontele@tactics.be"
+    }],
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "minimum-stability": "dev"
+}
