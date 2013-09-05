@@ -1,5 +1,5 @@
 {
-    "name": "tactics/communicatie-plugin",
+    "name": "tactics/tt-communicatie-plugin",
     "description": "ttCommunicatiePlugin",
     "keywords": ["Tactics", "Communicatie", "Plugin"],
     "type": "symfony1-plugin",
