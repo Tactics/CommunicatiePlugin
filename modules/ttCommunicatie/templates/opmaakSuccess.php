@@ -42,21 +42,28 @@ function showPlaceholders($placeholders)
     </span>
     <hr />
     <div style="height: 170px; overflow: auto;">
+      <?php
+        $bestemmelingen = array();
+        while ($rs->next()):
+          $bestemmeling = new $bestemmelingenClass();
+          $bestemmeling->hydrate($rs);
+
+          $bestemmelingen[$bestemmeling->getId()] = $bestemmeling->getMailerRecipientName();
+        endwhile;
+        natcasesort($bestemmelingen);
+        $rs->seek(0); // reset $rs 
+      ?>
       <ul style="list-style-type:none;">
-        <?php 
-          while ($rs->next()):
-            $bestemmeling = new $bestemmelingenClass();
-            $bestemmeling->hydrate($rs);
-        ?>
-        <li>
-          <?php 
-            echo checkbox_tag('bestemmeling_id', $bestemmeling->getId(), 1, array('id' => 'bestemmelingen_id_' . $bestemmeling->getId()));
-            echo '&nbsp;';
-            echo label_for('bestemmelingen_id_' . $bestemmeling->getId(), $bestemmeling->getMailerRecipientName());
-          ?>
-        </li>
-        <?php endwhile; ?>
-        <?php $rs->seek(0); // reset $rs ?>
+        <?php foreach ($bestemmelingen as $id => $bestemmelingNaam) : ?>
+          <li>
+            <?php
+              echo checkbox_tag('bestemmeling_id', $id, 1, array('id' => 'bestemmelingen_id_' . $id));
+              echo '&nbsp;';
+              echo label_for('bestemmelingen_id_' . $id, $bestemmelingNaam);
+            ?>
+          </li>
+        <?php endforeach; ?>
+        
       </ul>
     </div>
     <hr />
