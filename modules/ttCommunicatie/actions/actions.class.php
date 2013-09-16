@@ -38,6 +38,7 @@ class ttCommunicatieActions extends sfActions
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
     $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
     $this->afzender = $this->getUser()->getAttribute('afzender', sfConfig::get("sf_mail_sender"), $this->md5hash);
+    $this->forceer_versturen = $this->getUser()->getAttribute('forceer_versturen', false, $this->md5hash);
     
     // indien object gegeven, wordt criteria en bestemmelingenClass/Peer enzo niet gebruikt.
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
@@ -692,7 +693,7 @@ class ttCommunicatieActions extends sfActions
         echo get_class($object) . ' (id ' . $object->getId() . '): ';
         
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-        if ($brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
+        if (!$this->forceer_versturen && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
         {
           echo 'Reeds verstuurd.<br/>';
           $counter['reedsverstuurd']++;
