@@ -620,7 +620,7 @@ class ttCommunicatieActions extends sfActions
 
     if ($emailverzenden)
     { 
-      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0);
+      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0);
       
       $tmpAttachments = $this->getRequestAttachments();
 
@@ -691,6 +691,15 @@ class ttCommunicatieActions extends sfActions
         }
 
         echo get_class($object) . ' (id ' . $object->getId() . '): ';
+
+        // sommige templates mogen niet worden verstuurd naar het object
+        // volgens businessrules afh vd status van het object
+        if (method_exists($object, 'sendingTemplateAllowed') && !$object->sendingTemplateAllowed($brief_template))
+        {
+          echo 'Niet toegestaan.<br/>';
+          $counter['niettoegestaan']++;
+          continue;
+        }
         
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
         if (!$this->forceer_versturen && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
@@ -854,6 +863,7 @@ class ttCommunicatieActions extends sfActions
       echo '<br/><br/>Einde verzendlijst<br/><br/>';
       echo 'Totaal:<br/>';
       echo 'Reeds verstuurd: ' . $counter['reedsverstuurd'] . '<br/>';
+      echo 'Niet toegestaan: ' . $counter['niettoegestaan'] . '<br/>';
       echo 'Verstuurd: ' . $counter['verstuurd'] . '<br />';
       echo 'Error: ' . $counter['error'] . '<br />';
       echo 'Wensen geen mail: ' . $counter['wenstgeenmail'] . '<br />';

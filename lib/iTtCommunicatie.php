@@ -78,6 +78,12 @@ interface iTtCommunicatie extends iMailer
    * geeft het object terug naarwaar deze brief/email verzonden werd
    * gebruikt om object_class/id_bestemmeling van brief_verzonden in te vullen
    */
+
+  /**
+   * optional method sendingTemplateAllowed($brief_template)
+   * geeft terug of de gegeven template naar dit object verzonden mag worden
+   * vb. betalingsherinneringen voor €0 mogen bv nooit verzonden worden bij CSJ
+   */
     
 }
 
