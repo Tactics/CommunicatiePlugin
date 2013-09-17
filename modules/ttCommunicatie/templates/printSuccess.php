@@ -105,7 +105,7 @@
       }
       
       // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-      if (! $voorbeeld && $object_brief_template->getEenmaligVersturen() && $object_brief_template->ReedsVerstuurdNaar($bestemmelingenClass, $object->getId()))
+      if (!$forceer_versturen && !$voorbeeld && $object_brief_template->getEenmaligVersturen() && $object_brief_template->ReedsVerstuurdNaar($bestemmelingenClass, $object->getId()))
       {
         continue;
       }
