@@ -218,13 +218,6 @@ abstract class BaseBriefTemplatePeer {
 	
 	public static function doSelectRS(Criteria $criteria, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefTemplatePeer:addDoSelectRS:addDoSelectRS') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefTemplatePeer', $criteria, $con);
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -430,17 +423,6 @@ abstract class BaseBriefTemplatePeer {
 	
 	public static function doInsert($values, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefTemplatePeer:doInsert:pre') as $callable)
-    {
-      $ret = call_user_func($callable, 'BaseBriefTemplatePeer', $values, $con);
-      if (false !== $ret)
-      {
-        return $ret;
-      }
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -462,29 +444,12 @@ abstract class BaseBriefTemplatePeer {
 			throw $e;
 		}
 
-		
-    foreach (sfMixer::getCallables('BaseBriefTemplatePeer:doInsert:post') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefTemplatePeer', $values, $con, $pk);
-    }
-
-    return $pk;
+		return $pk;
 	}
 
 	
 	public static function doUpdate($values, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefTemplatePeer:doUpdate:pre') as $callable)
-    {
-      $ret = call_user_func($callable, 'BaseBriefTemplatePeer', $values, $con);
-      if (false !== $ret)
-      {
-        return $ret;
-      }
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -500,16 +465,8 @@ abstract class BaseBriefTemplatePeer {
 
 				$criteria->setDbName(self::DATABASE_NAME);
 
-		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	
-
-    foreach (sfMixer::getCallables('BaseBriefTemplatePeer:doUpdate:post') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefTemplatePeer', $values, $con, $ret);
-    }
-
-    return $ret;
-  }
+		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	}
 
 	
 	public static function doDeleteAll($con = null)

@@ -178,13 +178,6 @@ abstract class BaseBriefBijlagePeer {
 	
 	public static function doSelectRS(Criteria $criteria, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:addDoSelectRS:addDoSelectRS') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefBijlagePeer', $criteria, $con);
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -390,17 +383,6 @@ abstract class BaseBriefBijlagePeer {
 	
 	public static function doInsert($values, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doInsert:pre') as $callable)
-    {
-      $ret = call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con);
-      if (false !== $ret)
-      {
-        return $ret;
-      }
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -422,29 +404,12 @@ abstract class BaseBriefBijlagePeer {
 			throw $e;
 		}
 
-		
-    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doInsert:post') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con, $pk);
-    }
-
-    return $pk;
+		return $pk;
 	}
 
 	
 	public static function doUpdate($values, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doUpdate:pre') as $callable)
-    {
-      $ret = call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con);
-      if (false !== $ret)
-      {
-        return $ret;
-      }
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -460,16 +425,8 @@ abstract class BaseBriefBijlagePeer {
 
 				$criteria->setDbName(self::DATABASE_NAME);
 
-		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	
-
-    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doUpdate:post') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con, $ret);
-    }
-
-    return $ret;
-  }
+		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	}
 
 	
 	public static function doDeleteAll($con = null)

@@ -198,13 +198,6 @@ abstract class BaseBriefLayoutPeer {
 	
 	public static function doSelectRS(Criteria $criteria, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefLayoutPeer:addDoSelectRS:addDoSelectRS') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefLayoutPeer', $criteria, $con);
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -249,17 +242,6 @@ abstract class BaseBriefLayoutPeer {
 	
 	public static function doInsert($values, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefLayoutPeer:doInsert:pre') as $callable)
-    {
-      $ret = call_user_func($callable, 'BaseBriefLayoutPeer', $values, $con);
-      if (false !== $ret)
-      {
-        return $ret;
-      }
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -281,29 +263,12 @@ abstract class BaseBriefLayoutPeer {
 			throw $e;
 		}
 
-		
-    foreach (sfMixer::getCallables('BaseBriefLayoutPeer:doInsert:post') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefLayoutPeer', $values, $con, $pk);
-    }
-
-    return $pk;
+		return $pk;
 	}
 
 	
 	public static function doUpdate($values, $con = null)
 	{
-
-    foreach (sfMixer::getCallables('BaseBriefLayoutPeer:doUpdate:pre') as $callable)
-    {
-      $ret = call_user_func($callable, 'BaseBriefLayoutPeer', $values, $con);
-      if (false !== $ret)
-      {
-        return $ret;
-      }
-    }
-
-
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -319,16 +284,8 @@ abstract class BaseBriefLayoutPeer {
 
 				$criteria->setDbName(self::DATABASE_NAME);
 
-		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	
-
-    foreach (sfMixer::getCallables('BaseBriefLayoutPeer:doUpdate:post') as $callable)
-    {
-      call_user_func($callable, 'BaseBriefLayoutPeer', $values, $con, $ret);
-    }
-
-    return $ret;
-  }
+		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	}
 
 	
 	public static function doDeleteAll($con = null)
