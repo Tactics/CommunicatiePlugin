@@ -512,18 +512,11 @@ class ttCommunicatieActions extends sfActions
     if ($this->choose_template)
     {      
       // indien bestemmeling een communicatie target is (zie settings.yml)
-      if ($this->is_target)
-      {
-        $c = new Criteria();
-        $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);      
-        $this->brief_templates = BriefTemplatePeer::getSorted($c); 
-      }
-      else
-      {
-        $c = new Criteria();
-        $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|Algemeen|%', Criteria::LIKE); 
-        $this->brief_templates = BriefTemplatePeer::getSorted($c);
-      } 
+      $c = new Criteria();      
+      $c->add(BriefTemplatePeer::GEARCHIVEERD, false);
+      $bestemmelingenClass = $this->is_target ? $this->bestemmelingenClass : 'Algemeen';
+      $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, "%|$bestemmelingenClass|%", Criteria::LIKE);
+      $this->brief_templates = BriefTemplatePeer::getSorted($c);
     }
   }
 
@@ -744,7 +737,7 @@ class ttCommunicatieActions extends sfActions
           {
             $objectAttachments = $object->getBriefAttachments();
             $attachments = array_merge($attachments, $objectAttachments);            
-          }                   
+          }
           
           $nietVerstuurdReden = '';
           try {
@@ -779,7 +772,7 @@ class ttCommunicatieActions extends sfActions
             {
               $options['bcc'] = explode(';', str_replace(',', ';', $emailBcc));
             }
-            
+
             BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
 
             $verstuurd = true;
