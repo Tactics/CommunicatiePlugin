@@ -683,7 +683,7 @@ class ttCommunicatieActions extends sfActions
           $brief_template = $this->brief_template;
         }
 
-        echo get_class($object) . ' (id ' . $object->getId() . '): ';
+        echo get_class($object) . ' (' . (method_exists($object, '__toString') ? $object->__toString() : 'id: ' . $object->getId()) . '): ';
 
         // sommige templates mogen niet worden verstuurd naar het object
         // volgens businessrules afh vd status van het object
