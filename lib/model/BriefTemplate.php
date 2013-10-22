@@ -7,7 +7,7 @@
  *
  * @package plugins.ttCommunicatiePlugin.lib.model
  */ 
-class BriefTemplate extends BaseBriefTemplate
+class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 {
   /**
    * geeft de string weergave van dit object terug
@@ -376,6 +376,78 @@ class BriefTemplate extends BaseBriefTemplate
     }
 
     return $attachments;
+  }
+
+  /**
+   * Geef het criterion terug voor het object (BriefTemplate)
+   *
+   * @return Criterion
+   */
+  public static function getAutocompleteCriterion(&$criteria, $keyword)
+  {
+    $criteria->add(BriefTemplatePeer::CATEGORIE, sfContext::getInstance()->getUser()->getBedrijfId());
+    $criteria->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|Dossier|%', Criteria::LIKE);
+
+    $cton1 = $criteria->getNewCriterion(BriefTemplatePeer::NAAM, '%' . $keyword . '%', Criteria::LIKE);
+
+    if (is_numeric($keyword))
+    {
+      $cton1->addOr($criteria->getNewCriterion(BriefTemplatePeer::ID, intval($keyword)));
+    }
+
+    $cton1->addOr($criteria->getNewCriterion(BriefTemplatePeer::ONDERWERP, '%' . $keyword . '%', Criteria::LIKE));
+
+    // Indien tonen van archief aan, laten we ook de niet actief personen zien
+    if (! sfContext::getInstance()->getUser()->getAttribute('bekijk_archief', false))
+    {
+      $cton2 = $criteria->getNewCriterion(BriefTemplatePeer::GEARCHIVEERD, 0);
+      $cton1 = $cton1->addAnd($cton2);
+    }
+
+    return $cton1;
+  }
+
+  /**
+   * Geef de details terug voor de autocomplete
+   *
+   * @return string
+   */
+  public function getAutocompleteDetail()
+  {
+    Misc::use_helper('Date','Global', 'Url');
+
+    $detail = 'Nr: ' . link_to($this->getId(), 'ttCommunicatie/edit/?template_id=' . $this->getId());
+    $detail .= $this->getGearchiveerd() ? '' : ' (gearchiveerd)';
+    $detail .= '<br/>';
+
+    $detail .= $this->getNaam() . '<br />';
+    $detail .= $this->getOnderwerp();
+
+    return $detail;
+  }
+
+  /**
+   * Geef de naam terug voor de autocomplete
+   *
+   * @return string
+   */
+  public function getAutocompleteName()
+  {
+    return $this->getNaam();
+  }
+
+  /**
+   * Geeft een array met opties voor de class-specifieke configuratie
+   * van de autocomplete
+   *
+   * @return array
+   */
+  public static function getAutocompleteConfig()
+  {
+    return array(
+      'editUri' => 'ttCommunicatie/edit?return=%return_uri%&id=%id%',
+      'createUri' => 'ttCommunicatie/create?return=%return_uri%',
+    );
   }
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));
