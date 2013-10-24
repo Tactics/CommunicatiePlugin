@@ -49,11 +49,11 @@
         echo ' (Invoegvelden toegestaan) <br /><br />';
       
         // indien 1 bestemmeling, kunnen we de brief reeds parsen
-        if (isset($bestemmelingen_object))
+        if (isset($bestemmeling))
         {
-          $html = BriefTemplatePeer::parseForeachStatements($html, $bestemmelingen_object);
-          $html = BriefTemplatePeer::parseIfStatements($html, $bestemmelingen_object);          
-          $html = BriefTemplatePeer::replacePlaceholdersFromObject($html, $bestemmelingen_object);
+          $html = BriefTemplatePeer::parseForeachStatements($html, $bestemmeling);
+          $html = BriefTemplatePeer::parseIfStatements($html, $bestemmeling);
+          $html = BriefTemplatePeer::replacePlaceholdersFromObject($html, $bestemmeling);
         }        
         echo textarea_tag('html[' . BriefTemplatePeer::getCulture($language) .']', $html);
       ?>

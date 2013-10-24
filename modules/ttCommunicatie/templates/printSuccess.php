@@ -26,167 +26,161 @@
 
       if (isset($rs))
       {
-        $object = new $bestemmelingenClass();
+        $object = new $objectClass();
         $object->hydrate($rs);
       }
-      else if (isset($bestemmelingen_object))
+
+      $objectBestemmelingen = isset($bestemmelingen[$object->getId()]) ? $bestemmelingen[$object->getId()] : array();      
+      if (empty($objectBestemmelingen))
       {
-        $object = $bestemmelingen_object;
-      }      
-      
-      $email = $object->getMailerRecipientMail();
-      if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)      
-      {
-        $aantal_via_email++;
-        if (! $voorbeeld)
-        {
-          continue;
-        }
+        continue;
       }
-      
-      if (! $brief_template)      
+
+      foreach ($objectBestemmelingen as $index => $bestemmeling)
       {
-        // brief_template uit object zelf halen
-        if (method_exists($object, 'getLayoutEnTemplateId'))
-        {
-          // template ophalen
-          $layoutEnTemplateId = $object->getLayoutEnTemplateId();
-          if (isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id'])
+        $bestemmeling->setObject($object);
+        $email = $bestemmeling->getEmailTo();
+        $prefersEmail = $bestemmeling->getPrefersEmail();        
+        if (((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd')) && $email)
+        {          
+          $aantal_via_email++;
+          if (! $voorbeeld)
           {
-            $object_brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);          
-            if (! $object_brief_template)
+            continue;
+          }
+        }        
+
+        if (! $brief_template)
+        {
+          // brief_template uit object zelf halen
+          if (method_exists($object, 'getLayoutEnTemplateId'))
+          {
+            // template ophalen
+            $layoutEnTemplateId = $object->getLayoutEnTemplateId();
+            if (isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id'])
             {
-              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
-              continue;                
-            } 
+              $object_brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
+              if (! $object_brief_template)
+              {
+                echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
+                continue;
+              }
+            }
+            else
+            {
+              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
+              continue;
+            }
+
+            // layout ophalen
+            if (isset($layoutEnTemplateId['brief_layout_id']) && $layoutEnTemplateId['brief_layout_id'])
+            {
+              $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
+              if (! $brief_layout)
+              {
+                echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
+                continue;
+              }
+            }
+            else
+            {
+              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
+              continue;
+            }
           }
           else
           {
-            echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
-            continue;  
+            echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
+            continue;
           }
 
-          // layout ophalen       
-          if (isset($layoutEnTemplateId['brief_layout_id']) && $layoutEnTemplateId['brief_layout_id'])
+          // onderwerp en tekst ophalen
+          $onderwerpen = $object_brief_template->getOnderwerpCultureArr();
+          $htmls = $object_brief_template->getHtmlCultureArr();
+
+          $cultureBrieven = array();
+          foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
           {
-            $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
-            if (! $brief_layout)
-            {
-              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
-              continue;
-            } 
-          }  
-          else
-          {
-            echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
-            continue;  
+            $cultureBrieven[$culture] = $brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
+            $cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
           }
         }
         else
         {
-          echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
-          continue;            
-        }  
+          $object_brief_template = $brief_template;
+        }
 
-        // onderwerp en tekst ophalen
-        $onderwerpen = $object_brief_template->getOnderwerpCultureArr();
-        $htmls = $object_brief_template->getHtmlCultureArr();
-
-        $cultureBrieven = array();
-        foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
+        // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
+        if (!$forceer_versturen && !$voorbeeld && $object_brief_template->getEenmaligVersturen() && $object_brief_template->ReedsVerstuurdNaar($objectClass, $object->getId()))
         {
-          $cultureBrieven[$culture] = $brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
-          $cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
-        } 
-      }
-      else
-      {
-        $object_brief_template = $brief_template;
-      }
-      
-      // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-      if (!$forceer_versturen && !$voorbeeld && $object_brief_template->getEenmaligVersturen() && $object_brief_template->ReedsVerstuurdNaar($bestemmelingenClass, $object->getId()))
-      {
-        continue;
-      }
-      
-      if (! $brief_layout)
-      {
-        echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) niet gevonden.</font><br/>";
-        continue;
-      }
-      
-      
-      
-      // Culture voor object ophalen
-      $culture = BriefTemplatePeer::calculateCulture($object);
-      
-      // Adres ophalen als placeholder
-      $defaultPlaceholders = array_merge($defaultPlaceholders, array(
-          'bestemmeling_adres' => nl2br($object->getAdres())
-      ));
-      
-      // work with copy of culturebrieven
-      $tmpCultureBrieven = $cultureBrieven;
-      
-      // parse If and foreach statements
-      $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $object);
-      $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $object);      
-      
-      // replace placeholders
-      $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $object);
-      $head = $tmpCultureBrieven[$culture]['head'];
-      $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
-      $body = $tmpCultureBrieven[$culture]['body'];
-      $brief = $head . $body;
-      
-      // voorbeeld melding om te vermijden dat dit wordt gebruikt om effectief af te drukken
-      if ($voorbeeld)
-      {
-        $watermerkDiv = '
-          <div style="width: 560px; position: absolute; left: 50px; top: 450px; -moz-transform: rotate(-300deg); font-size:80px; color:red; opacity:0.4">
-            VOORBEELD
-          </div>
-        ';
+          continue;
+        }
 
-        $brief = $watermerkDiv . $brief;
-      }      
-
-      echo "<!-- Brief " . $aantal_brieven . "-->\n";
-      echo BriefTemplatePeer::clearPlaceholders($brief);
-      
-      // Log de brief tijdelijk om later te kunnen bevestigen
-      if (! $voorbeeld)
-      {
-        $bestemmeling = null;
-        if (method_exists($object, 'getBestemmeling'))
+        if (! $brief_layout)
         {
-          $bestemmeling =  $object->getBestemmeling();
-        }                   
-        
-        $briefVerzonden = new BriefVerzonden();
-        $briefVerzonden->setObjectClass(get_class($object));
-        $briefVerzonden->setObjectId($object->getId());
-        $briefVerzonden->setObjectClassBestemmeling(isset($bestemmeling) ? get_class($bestemmeling) : null);
-        $briefVerzonden->setObjectIdBestemmeling(isset($bestemmeling) ? $bestemmeling->getId() : null);
-        $briefVerzonden->setBriefTemplate($object_brief_template);
-        $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
-        $briefVerzonden->setAdres($object->getAdres());
-        $briefVerzonden->setOnderwerp($onderwerp);
-        $briefVerzonden->setCulture($culture);
-        $briefVerzonden->setHtml($brief);
-        $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_NT_VERZONDEN);
-        $briefVerzonden->save();
+          echo "<font color=red>{$objectClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) niet gevonden.</font><br/>";
+          continue;
+        }
 
-        $brief_verzonden_ids[] = $briefVerzonden->getId();
+        // Culture voor object ophalen
+        $culture = BriefTemplatePeer::calculateCulture($bestemmeling);
+
+        // work with copy of culturebrieven
+        $tmpCultureBrieven = $cultureBrieven;        
+
+        // parse If and foreach statements
+        $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling);
+        $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling);
+
+        // replace placeholders
+        $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling);
+        $head = $tmpCultureBrieven[$culture]['head'];        
+        $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
+        $body = $tmpCultureBrieven[$culture]['body'];
+        $brief = $head . $body;        
+
+        // voorbeeld melding om te vermijden dat dit wordt gebruikt om effectief af te drukken
+        if ($voorbeeld)
+        {
+          $watermerkDiv = '
+            <div style="width: 560px; position: absolute; left: 50px; top: 450px; -moz-transform: rotate(-300deg); font-size:80px; color:red; opacity:0.4">
+              VOORBEELD
+            </div>
+          ';
+
+          $brief = $watermerkDiv . $brief;
+        }
+
+        echo "<!-- Brief " . $aantal_brieven . "-->\n";
+        echo BriefTemplatePeer::clearPlaceholders($brief);
+
+        // Log de brief tijdelijk om later te kunnen bevestigen
+        if (! $voorbeeld)
+        {
+          $briefVerzonden = new BriefVerzonden();
+          $briefVerzonden->setObjectClass(get_class($object));
+          $briefVerzonden->setObjectId($object->getId());
+          $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
+          $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());
+          $briefVerzonden->setBriefTemplate($object_brief_template);
+          $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
+          $briefVerzonden->setAdres($bestemmeling->getAdres());
+          $briefVerzonden->setOnderwerp($onderwerp);
+          $briefVerzonden->setCulture($culture);
+          $briefVerzonden->setHtml($brief);
+          $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_NT_VERZONDEN);
+          $briefVerzonden->save();
+
+          $brief_verzonden_ids[] = $briefVerzonden->getId();
+        }
+
+        $aantal_brieven++;
+
+        if (!isset($rs))
+        {
+          break;
+        }
       }      
-      
-      $aantal_brieven++;
-      
-      if (isset($bestemmelingen_object))
-      {
-        break;
-      }
     }
 
     if (! $aantal_brieven)

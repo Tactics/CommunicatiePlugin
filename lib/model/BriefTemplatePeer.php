@@ -452,9 +452,9 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   /**
    * geeft de culture terug waarin de brief/email verzonden moet worden
    */
-  public static function calculateCulture($object)
+  public static function calculateCulture($bestemmeling)
   {
-    $culture = $object->getMailerCulture();
+    $culture = $bestemmeling->getCulture();
     $cultures = self::getCultureLabelArray();
 
     if (! $culture)
@@ -474,14 +474,14 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * verwerkt de ifstaments van de html
    *
    * @param string $html
-   * @param mixed $object
+   * @param ttCommunicatieBestemmeling $bestemmeling
    * @param bool $email
    * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
-  public static function parseIfStatements($html, $object, $email = false, $otherPlaceholders = array())
+  public static function parseIfStatements($html, $bestemmeling, $email = false, $otherPlaceholders = array())
   {
-    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
+    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($bestemmeling, $email), $otherPlaceholders);
 
     while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE))
     {
@@ -495,7 +495,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           // special case for velden waar meerdere antwoorden mogelijk zijn
           if (preg_match("/(%[^%]+%)[^\s]+\s+has_selected\s+['\"]([^']+)['\"]$/", $condition[1], $matches2))
           {
-            $placeholderValues = self::getObjectPlaceholderValues($condition[1], $object);
+            $placeholderValues = self::getObjectPlaceholderValues($condition[1], $bestemmeling);
             $placeholderValues = explode("\n", array_shift($placeholderValues));
 
             $condition[1] = in_array($matches2[2], $placeholderValues);
@@ -503,7 +503,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           else
           {
             // nodige placeholders uit template halen
-            $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $email);
+            $condition[1] = self::replacePlaceholdersFromObject($condition[1], $bestemmeling, $email);
           }
 
           // condition evalueren
@@ -543,14 +543,15 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * verwerkt de ifstaments van de html
    *
    * @param string $html
-   * @param mixed $object
+   * @param ttCommunicatieBestemmeling $bestemmeling
    * @param bool $email
    * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
-  public static function parseForeachStatements($html, $object, $email = false, $otherPlaceholders = array())
+  public static function parseForeachStatements($html, $bestemmeling, $email = false, $otherPlaceholders = array())
   {
-    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
+    $object = $bestemmeling->getObject();
+    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($bestemmeling, $email), $otherPlaceholders);
     while (preg_match_all('/{%\s*foreach\s+[^{]*({% endforeach %})/', $html, $matches, PREG_OFFSET_CAPTURE))
     {
       $changeInOffset = 0;
@@ -576,7 +577,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           $foreachHtml = '';
           for ($i=0; $i < $nbrOfCollectionItems; $i++)
           {
-            $foreachHtml .= self::replacePlaceholdersFromObject(str_replace('[]', "[$i]", $result[2]), $object, $email);
+            $foreachHtml .= self::replacePlaceholdersFromObject(str_replace('[]', "[$i]", $result[2]), $bestemmeling, $email);
           }
           $html = substr_replace($html, $foreachHtml, $offset + $changeInOffset, strlen($content));
           $changeInOffset += strlen($foreachHtml) - strlen($content);
@@ -591,18 +592,18 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * replaced de placeholders van de culture brief afh vh gegeven object
    *
    * @param array $cultureBrieven
-   * @param mixed $object
+   * @param ttCommunicatieBestemmeling $bestemmeling
    * @param bool $email
    * @return array The $cultureBrieven with replaced placeholders for the object culture
    */
-  public static function replacePlaceholdersFromCultureBrieven($cultureBrieven, $object, $email = false)
+  public static function replacePlaceholdersFromCultureBrieven($cultureBrieven, $bestemmeling, $email = false)
   {
-    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email, true);
-    $culture = self::calculateCulture($object);
+    $defaultPlaceholders = self::getDefaultPlaceholders($bestemmeling, $email, true);
+    $culture = self::calculateCulture($bestemmeling);
 
     $placeholders = array_merge(
       $defaultPlaceholders,
-      self::getObjectPlaceholderValues($cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $object)
+      self::getObjectPlaceholderValues($cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $bestemmeling)
     );
 
     // eerst onderwerp placeholders vervangen omdat onderwerp zelf een placeholder is in de body
@@ -617,16 +618,16 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * vervangt de placeholders in de html met de values
    *
    * @param string $html
-   * @param mixed $object
+   * @param ttCommunicatieBestemmeling $bestemmeling
    * @param bool $email
    * @return string The html with replaced placeholders
    */
-  public static function replacePlaceholdersFromObject($html, $object, $email = false)
+  public static function replacePlaceholdersFromObject($html, $bestemmeling, $email = false)
   {
-    $defaultPlaceholders = self::getDefaultPlaceholders($object, $email);
+    $defaultPlaceholders = self::getDefaultPlaceholders($bestemmeling, $email);
 
     $placeholders = array_merge(
-      self::getObjectPlaceholderValues($html, $object),
+      self::getObjectPlaceholderValues($html, $bestemmeling),
       $defaultPlaceholders
     );
 
@@ -637,11 +638,12 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * geeft de gebruikte placeholder values terug van gegeven object
    *
    * @param string $html
-   * @param mixed $object
+   * @param ttCommunicatieBestemmeling $bestemmeling
    * @return array[placeholder] => placeholder_value
    */
-  private static function getObjectPlaceholderValues($html, $object)
+  private static function getObjectPlaceholderValues($html, $bestemmeling)
   {
+    $object = $bestemmeling->getObject();
     if (! self::isTarget($object))
     {
       return array();
@@ -652,7 +654,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
         $usedPlaceholders = $placeholderMatches[1];
     }
 
-    $culture = self::calculateCulture($object);
+    $culture = self::calculateCulture($bestemmeling);
 
     return $object->fillPlaceholders($usedPlaceholders, $culture);
   }
@@ -660,12 +662,12 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   /**
    * Geeft de default placeholers terug
    *
-   * @param mixed $object
-   * @param bool $email
+   * @param ttCommunicatieBestemmeling $bestemmeling
+   * @param ttCommunicatiebestemmeling $bestemmeling
    * @param bool $generalPlaceholders met bv handtekeningen placeholders
    * @return array default placeholders
    */
-  public static function getDefaultPlaceholders($object = null, $email = false, $generalPlaceholders = false)
+  public static function getDefaultPlaceholders($bestemmeling = null, $email = false, $generalPlaceholders = false)
   {
     Misc::use_helper('Url');
     $vandaag = new myDate();
@@ -676,11 +678,11 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
     );
 
-    if ($object)
+    if ($bestemmeling)
     {
       $defaultPlaceholders = array_merge(
         $defaultPlaceholders,
-        array('bestemmeling_adres' => nl2br($object->getAdres()))
+        array('bestemmeling_adres' => nl2br($bestemmeling->getAdres()))
       );
     }
 

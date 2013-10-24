@@ -22,61 +22,11 @@ function showPlaceholders($placeholders)
 
 <?php include_partial('breadcrumb'); ?>
 
-<?php if ($show_bestemmelingen): ?>
-<div id="dialog-bestemmelingen" style="display:none;"> 
-  <?php echo form_tag('', array('name' => 'select_bestemmelingen')) ?>
-    <h2>Bestemmelingen</h2>
-    <span>
-      <?php 
-        echo label_for('search', 'Zoeken');
-        echo '&nbsp;';
-        echo input_tag('search'); 
-      ?>
-    </span><br /><br />
-    <span>
-      <?php 
-        echo checkbox_tag('select_all', 1, 1); 
-        echo '&nbsp;';
-        echo label_for('select_all', 'Selecteer / deselecteer alle');
-      ?>
-    </span>
-    <hr />
-    <div style="height: 170px; overflow: auto;">
-      <?php
-        $bestemmelingen = array();
-        while ($rs->next()):
-          $bestemmeling = new $bestemmelingenClass();
-          $bestemmeling->hydrate($rs);
-
-          $bestemmelingen[$bestemmeling->getId()] = $bestemmeling->getMailerRecipientName();
-        endwhile;
-        natcasesort($bestemmelingen);
-        $rs->seek(0); // reset $rs 
-      ?>
-      <ul style="list-style-type:none;">
-        <?php foreach ($bestemmelingen as $id => $bestemmelingNaam) : ?>
-          <li>
-            <?php
-              echo checkbox_tag('bestemmeling_id', $id, 1, array('id' => 'bestemmelingen_id_' . $id));
-              echo '&nbsp;';
-              echo label_for('bestemmelingen_id_' . $id, $bestemmelingNaam);
-            ?>
-          </li>
-        <?php endforeach; ?>
-        
-      </ul>
-    </div>
-    <hr />
-    <?php echo button_to_function('Opslaan', 'jQuery("#dialog-bestemmelingen").tt_window().close(); countBestemmelingen();');?>
-  </form>
-</div>
-<?php endif; ?>
-
 <?php
 $waarschuwingsAantal = 250;
-if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
+if ($bestemmelingen_aantal > $waarschuwingsAantal)
 {
-  $sf_request->setAttribute('error_message', "Opgelet! Bent u zeker dat u <strong>$aantalBestemmelingen brieven/e-mails</strong> wil verzenden?");
+  $sf_request->setAttribute('error_message', "Opgelet! Bent u zeker dat u <strong>$bestemmelingen_aantal brieven/e-mails</strong> wil verzenden?");
   include_partial('global/errormessage');
 }
 ?>
@@ -92,7 +42,45 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
   <?php if ($brief_template) : ?>
     <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <?php endif; ?>
-  <?php $aantalBestemmelingen = $rs->getRecordCount(); ?>
+
+  <?php if ($show_bestemmelingen): ?>
+    <div id="dialog-bestemmelingen" style="display:none;">
+      <h2>Bestemmelingen</h2>
+      <span>
+        <?php
+          echo label_for('search', 'Zoeken');
+          echo '&nbsp;';
+          echo input_tag('search');
+        ?>
+      </span><br /><br />
+      <span>
+        <?php
+          echo checkbox_tag('select_all', 1, 1);
+          echo '&nbsp;';
+          echo label_for('select_all', 'Selecteer / deselecteer alle');
+        ?>
+      </span>
+      <hr />
+      <div style="height: 170px; overflow: auto;">
+        <ul style="list-style-type:none;">
+          <?php foreach ($bestemmelingen as $objectId => $objectBestemmelingen) : ?>
+            <?php foreach ($objectBestemmelingen as $index => $objectBestemmeling) : ?>
+              <li>
+                <label>
+                  <?php
+                  echo checkbox_tag("bestemmelingen[$objectId][$index]", $index, true, array('class' => 'bestemmeling', 'name' => "bestemmelingen[$objectId][]"));
+                  echo '&nbsp;' . $objectBestemmeling->getNaam();
+                  ?>
+                </label>
+              </li>
+            <?php endforeach; ?>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+      <hr />
+      <?php echo button_to_function('Opslaan', 'jQuery("#dialog-bestemmelingen").tt_window().close(); countBestemmelingen();');?>    
+    </div>
+<?php endif; ?>
 
   <table class="formtable">
     <?php if ($choose_template) : ?>
@@ -102,24 +90,10 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
       </tr>      
     <?php endif; ?>
 
-    <?php if ($aantalBestemmelingen === 1) : ?>
-      <?php        
-      $rs->next();
-      $object = new $bestemmelingenClass();
-      $object->hydrate($rs);
-      $emailTo = $object->getMailerRecipientMail();
-      $emailCc = '';
-      $emailBcc = '';
-      if (method_exists($object, 'getMailerRecipientCC') && ($emailCc = $object->getMailerRecipientCC()))
-      {
-        $emailCc = !empty($emailCc) ? implode(';', $emailCc) : '';
-      }
-      if (method_exists($object, 'getMailerRecipientBCC') && ($emailBcc = $object->getMailerRecipientBCC()))
-      {
-        $emailBcc = !empty($emailBcc) ? implode(';', $emailBcc) : '';
-      }
-
-      $rs->seek(0); // reset $rs
+    <?php if ($bestemmelingen_aantal === 1) :      
+      $emailTo = $bestemmeling->getEmailTo();
+      $emailCc = $bestemmeling->getEmailCc(true);
+      $emailBcc = $bestemmeling->getEmailBcc(true);
       ?>
       <tr>
         <th>Bestemmeling:</th>
@@ -140,7 +114,7 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
       <tr>
         <th>Aantal bestemmelingen:</th>
         <td>
-          <span id="record-count"><?php echo $aantalBestemmelingen; ?></span>
+          <span id="record-count"><?php echo $bestemmelingen_aantal; ?></span>
           <?php           
             if ($show_bestemmelingen)
             {
@@ -182,7 +156,7 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
             'brief_template'      => $brief_template,                                 
             'systeemplaceholders' => $systeemplaceholders,
             'choose_template'     => $choose_template,
-            'bestemmelingen_object' => $bestemmelingen_object
+            'bestemmeling' => isset($bestemmeling) ? $bestemmeling : null
           ));
           ?>
         </td>
@@ -191,7 +165,7 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
             <h2 class="pageblock" style="margin-left: 20px; width: 300px;">Invoegvelden</h2>
             <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">            
             <?php
-              $placeholders = eval("return $bestemmelingenClass::getPlaceholders();");   
+              $placeholders = eval("return $objectClass::getPlaceholders();");
               // Algemene placeholders indien gedefinieerd
               if (class_exists('Placeholder'))
               {
@@ -245,7 +219,7 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
     
   function countBestemmelingen()
   {
-    var aantal = jQuery('input[name="bestemmeling_id"]:checked').length;
+    var aantal = jQuery('input.bestemmeling:checked').length;
     jQuery('#record-count').html(aantal);
 
     return aantal;
@@ -276,30 +250,8 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
         return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
       };
 
-
       $('#select_all').change(function(){
-        $('input[name="bestemmeling_id"]').attr('checked', $(this).is(':checked')).change();
-      }).change();
-
-      $('input[name="bestemmeling_id"]').change(function(){
-        var checked = $(this).is(':checked');
-        if (checked)
-        {
-          $('input#niet_verzenden_naar_' + $(this).val()).remove();
-
-          $('input[name="bestemmeling_id"]').each(function()
-          {
-            checked = (checked && $(this).is(':checked'));
-            return checked;
-          });
-        }
-        else
-        {
-          var input = '<input id="niet_verzenden_naar_' + $(this).val() + '" type="hidden" value="' + $(this).val() + '" name="niet_verzenden_naar[]">';
-          $('form[name="print"]').prepend(input);
-        }
-
-        $('#select_all').attr('checked', checked);
+        $('input.bestemmeling').attr('checked', $(this).is(':checked')).change();
       }).change();
 
       $('#search').keyup(function(){
@@ -319,7 +271,7 @@ if (($aantalBestemmelingen = $rs->getRecordCount()) > $waarschuwingsAantal)
       var type = $(submitBtn).data('type');
       if (type) // voorbeelden hebben geen data-type attrib en worden sowieso gesubmit
       {
-        var aantal = <?php echo $show_bestemmelingen ? 'countBestemmelingen()' : $rs->getRecordCount(); ?>;
+        var aantal = <?php echo $show_bestemmelingen ? 'countBestemmelingen()' : $bestemmelingen_aantal; ?>;
         if ((aantal >= <?php echo $waarschuwingsAantal; ?>) && !confirm('Bent u zeker dat u ' + aantal + ' ' + type + ' wil ' + (type == 'brieven' ? 'afdrukken' : 'verzenden') + '?'))
         {
           return false;
