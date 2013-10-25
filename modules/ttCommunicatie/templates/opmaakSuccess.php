@@ -284,7 +284,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     $('#template_id').change(function(){
       if ($(this).val())
       {
-        $.getJSON('<?php echo url_for('ttCommunicatie/templateHtml?template_id=999');?>'.replace('999', $(this).val()), function(data) {
+        $.getJSON('<?php echo url_for('ttCommunicatie/templateHtml?template_id=xxx999&hash=' . $md5hash);?>'.replace('xxx999', $(this).val()), function(data) {
           var cultures  = data.cultures;
           var html      = data.html;
           var onderwerp = data.onderwerp;
