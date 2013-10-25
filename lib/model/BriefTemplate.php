@@ -208,23 +208,16 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   
   /**
    * Mail versturen naar object
-   * 
-   * @param iMailer interface $object
+   *
+   * @param mixed $object
+   * @param ttCommunicatieBestemmeling $bestemmeling
    * @param array $options
    * @return int The number of successful recipients
    * @throws Swift_ConnectionException If sending fails for any reason.
    */
-  public function sendMailToObject(iMailer $object, $options = array())
+  public function sendMailToObject($object, ttCommunicatieBestemmeling $bestemmeling, $options = array())
   {
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
-    
-    // Controleren of het mogelijk is deze brief_template te versturen naar $object.
-    $b     = $this->getBestemmelingArray();
-    $cName = get_class($object);
-    if (! in_array($cName, $b))
-    {
-      throw new sfException("Unknown object: can't send mail to instance of class \"{$cName}\"");
-    }
     
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
     if ($this->getEenmaligVersturen() && $this->reedsVerstuurdNaar($cName, $object->getId()))
@@ -233,35 +226,37 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     }
     
     // default placeholders die in layout gebruikt kunnen worden
-    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($object, true);
+    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true);
     
-    $culture    = $object->getMailerCulture();
+    $culture    = $bestemmeling->getCulture();
     $values     = $object->fillPlaceholders(null, $culture);
     $values     = array_merge($defaultPlaceholders, $values, $systeemvalues);
     $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
     $values['onderwerp'] = $onderwerp;
     
-    $email       = $object->getMailerRecipientMail();    
+    $email       = $bestemmeling->getEmailTo();
     $html        = $this->getTranslatedHtml($culture);
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
     
     $brief = $headAndBody['head'] . $headAndBody['body'];
-    $brief = BriefTemplatePeer::parseForeachStatements($brief, $object, true, $systeemvalues);
-    $brief = BriefTemplatePeer::parseIfStatements($brief, $object, true, $systeemvalues);
+    $brief = BriefTemplatePeer::parseForeachStatements($brief, $bestemmeling, true, $systeemvalues);
+    $brief = BriefTemplatePeer::parseIfStatements($brief, $bestemmeling, true, $systeemvalues);
     $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
     
     // Mail versturen
     $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
       'onderwerp' => $onderwerp,
       'skip_template' => true,
-      'cc' => (method_exists($object, 'getMailerRecipientCC') ? $object->getMailerRecipientCC() : array()),
-      'bcc' => (method_exists($object, 'getMailerRecipientBCC') ? $object->getMailerRecipientBCC() : array())
+      'cc' => $bestemmeling->getEmailCc(),
+      'bcc' => $bestemmeling->getEmailBcc()
     ));
 
     // Mail loggen
     $briefVerzonden = new BriefVerzonden();
-    $briefVerzonden->setObjectClass($cName);
+    $briefVerzonden->setObjectClass(get_class($object));
     $briefVerzonden->setObjectId($object->getId());
+    $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
+    $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());    
     $briefVerzonden->setBriefTemplateId($this->getId());
     $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
     $briefVerzonden->setAdres($email);

@@ -451,6 +451,8 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
   /**
    * geeft de culture terug waarin de brief/email verzonden moet worden
+   *
+   * @param ttCommunicatieBestemmeling $bestemmeling
    */
   public static function calculateCulture($bestemmeling)
   {
