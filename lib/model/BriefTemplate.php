@@ -44,6 +44,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $c->add(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
     $c->add(BriefVerzondenPeer::OBJECT_ID, $object_id);
     $c->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, $this->getId());
+    $c->add(BriefVerzondenPeer::STATUS, BriefVerzondenPeer::STATUS_VERZONDEN);
 
     return BriefVerzondenPeer::doCount($c) > 0;
   }

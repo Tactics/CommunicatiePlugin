@@ -34,11 +34,14 @@ class ttCommunicatieActions extends sfActions
     $this->objectClass = $this->getUser()->getAttribute('object_class', null, $this->md5hash);
     $this->objectPeer = $this->objectClass . 'Peer';
     $this->criteria = clone $this->getUser()->getAttribute('object_criteria', new Criteria(), $this->md5hash);
+    // om classes de in de criteria gebruikt worden te autoloaden
+    $this->autoloadClasses = $this->getUser()->getAttribute('autoload_classes', array(), $this->md5hash);
+    $this->rs = $this->getRs();
     
     $this->choose_template = $this->getUser()->getAttribute('choose_template', true, $this->md5hash);
     $this->edit_template = $this->getUser()->getAttribute('edit_template', true, $this->md5hash);
         
-    $this->bestemmelingen = $this->getUser()->getAttribute('bestemmelingen', null, $this->md5hash);    
+    $this->bestemmelingen = $this->getUser()->getAttribute('bestemmelingen', null, $this->md5hash);
     if (isset($this->bestemmelingen))
     {
       $aantal = 0;
@@ -65,7 +68,34 @@ class ttCommunicatieActions extends sfActions
         }
       }
     }
+    else // bestemmelingen opbouwen adhv crit
+    {
+      $this->bestemmelingen = array();
+      $this->bestemmelingen_aantal = $this->rs->getRecordCount();      
+      while ($this->rs->next())
+      {
+        $object = new $this->objectClass();
+        $object->hydrate($this->rs);
+
+        if (!isset($this->bestemmelingen[$object->getId()]))
+        {
+          $this->bestemmelingen[$object->getId()] = array();
+        }
+        
+        $bestemmeling = $object->getTtCommunicatieBestemmeling();
+        if (1 == $this->bestemmelingen_aantal)
+        {
+          $bestemmeling->setObject($object);
+          $this->bestemmeling = $bestemmeling;          
+        }
+
+        $this->bestemmelingen[$object->getId()][] = $bestemmeling;
+      }
+      $this->getUser()->setAttribute('bestemmelingen', $this->bestemmelingen, $this->md5hash);
+    }
+
     $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
+ 
     if (1 == $this->bestemmelingen_aantal)
     {
       $this->show_bestemmelingen = false;
@@ -100,9 +130,6 @@ class ttCommunicatieActions extends sfActions
       }
     }
     
-    // om classes de in de criteria gebruikt worden te autoloaden
-    $this->autoloadClasses = $this->getUser()->getAttribute('autoload_classes', array(), $this->md5hash);    
-    
     // init van default waarden
     $this->brief_template = null;    
     $this->systeemplaceholders = array();
@@ -135,7 +162,7 @@ class ttCommunicatieActions extends sfActions
     {
       $targets[] = $targetInfo['class'];
     }
-    $this->is_target = in_array($this->objectClass, $targets);
+    $this->is_target = in_array($this->objectClass, $targets);    
   }
   
   /**
