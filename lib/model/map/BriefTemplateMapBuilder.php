@@ -50,6 +50,8 @@ class BriefTemplateMapBuilder {
 
 		$tMap->addColumn('EENMALIG_VERSTUREN', 'EenmaligVersturen', 'boolean', CreoleTypes::BOOLEAN, true, null);
 
+		$tMap->addColumn('IS_PUBLICITEIT', 'IsPubliciteit', 'boolean', CreoleTypes::BOOLEAN, true, null);
+
 		$tMap->addColumn('SYSTEEMNAAM', 'Systeemnaam', 'string', CreoleTypes::VARCHAR, false, 45);
 
 		$tMap->addColumn('SYSTEEMPLACEHOLDERS', 'Systeemplaceholders', 'string', CreoleTypes::VARCHAR, false, 1000);

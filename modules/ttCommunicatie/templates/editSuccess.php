@@ -281,6 +281,11 @@ function showPlaceholders($placeholders)
         <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getEenmaligVersturen())); ?>
       </td>
     </tr>
+    <th>Is publiciteit:</th>
+    <td>
+      <?php echo select_tag('is_publiciteit', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getIsPubliciteit())); ?>
+    </td>
+    </tr>
   </table>
   <hr>
   <?php 

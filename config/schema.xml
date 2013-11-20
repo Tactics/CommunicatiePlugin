@@ -11,6 +11,7 @@
     <column name="bestemmeling_classes" type="VARCHAR" size="1000"/>
     <column name="html" type="LONGVARCHAR"/>
     <column name="eenmalig_versturen" type="BOOLEAN" required="true"/>
+    <column name="is_publiciteit" type="BOOLEAN" required="true" default="0"/>
     <column name="systeemnaam" type="VARCHAR" size="45"/>
     <column name="systeemplaceholders" type="VARCHAR" size="1000"/>
     <column name="gearchiveerd" type="INTEGER" required="true" default="0"/>

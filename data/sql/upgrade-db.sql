@@ -28,3 +28,11 @@ ALTER TABLE brief_verzonden ADD object_id_bestemmeling INT NULL DEFAULT NULL AFT
 ALTER TABLE `brief_verzonden` 
 ADD `cc` VARCHAR( 1000 ) NULL DEFAULT NULL AFTER `adres` ,
 ADD `bcc` VARCHAR( 1000 ) NULL DEFAULT NULL AFTER `cc` ;
+
+-- -----------------------------------------------------------------------------
+-- 19/11/2013
+-- Glenn Van Loock
+--
+-- is_publiciteit toevoegen aan template
+-- -----------------------------------------------------------------------------
+ALTER TABLE `brief_template` ADD `is_publiciteit` INT NOT NULL DEFAULT '0' AFTER `eenmalig_versturen`;
