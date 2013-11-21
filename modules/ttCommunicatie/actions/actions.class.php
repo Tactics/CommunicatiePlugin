@@ -666,10 +666,7 @@ class ttCommunicatieActions extends sfActions
         $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
         $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
       } 
-    }   
-    
-    // default placeholders die in layout gebruikt kunnen worden
-    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders(null, $emailverzenden, true);
+    }
 
     if ($emailverzenden)
     { 
@@ -821,15 +818,9 @@ class ttCommunicatieActions extends sfActions
           
           $email = $bestemmeling->getEmailTo();
           $prefersEmail = $bestemmeling->getPrefersEmail();
-          $adres = $bestemmeling->getAdres();
           if (((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd')) && $email)
           {
             $culture = BriefTemplatePeer::calculateCulture($bestemmeling);
-
-            // Adres ophalen als placeholder
-            $defaultPlaceholders = array_merge($defaultPlaceholders, array(
-                'bestemmeling_adres' => nl2br($adres)
-            ));
 
             // work with copy of culturebrieven
             $tmpCultureBrieven = $this->cultureBrieven;
@@ -839,7 +830,12 @@ class ttCommunicatieActions extends sfActions
             $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
 
             // replace placeholders
-            $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, true);
+            $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, $email, true);
+            if (!$brief_template->getIsPubliciteit() && isset($defaultPlaceholders['uitschrijven']))
+            {
+              unset($defaultPlaceholders['uitschrijven']);
+            }
+            $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, $defaultPlaceholders);
             $head = $tmpCultureBrieven[$culture]['head'];
             $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
             $body = $tmpCultureBrieven[$culture]['body'];
@@ -968,7 +964,6 @@ class ttCommunicatieActions extends sfActions
       $this->emailverzenden = $emailverzenden;
       $this->viaemail = $viaemail;
       $this->emailLayout = $emailLayout;
-      $this->defaultPlaceholders = $defaultPlaceholders;      
       $this->verzenden_via = $verzenden_via;
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');

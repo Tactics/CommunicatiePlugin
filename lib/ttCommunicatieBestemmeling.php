@@ -10,6 +10,7 @@ class ttCommunicatieBestemmeling
   protected $object_id = null; // object_id van de bestemmeling
   protected $object_class = null; // object_class van de bestemmeling
   protected $prefers_email = true;
+  protected $wants_publicity = true;
   protected $culture = '';
   protected $object = null; //  te verzenden object
 
@@ -100,6 +101,29 @@ class ttCommunicatieBestemmeling
   }
 
   /**
+   * Geeft terug of de bestemmeling publiciteit wil ontvangen
+   */
+  public function getWantsPublicity()
+  {
+    return $this->wants_publicity;
+  }
+
+  /**
+   * Geeft de bestemmeling terug
+   * 
+   * @return mixed Het object dat de communicatie gaat ontvangen
+   */
+  public function getBestemmeling()
+  {
+    if (!($this->object_class && $this->object_id) || !method_exists($this->object_class . 'Peer', 'retrieveByPK'))
+    {
+      return null;
+    }
+
+    return call_user_func($this->object_class . 'Peer::retrieveByPK', $this->object_id);
+  }
+
+  /**
    * Zet naam van de bestemmeling
    *
    * @param string $naam
@@ -177,6 +201,16 @@ class ttCommunicatieBestemmeling
   public function setPrefersEmail($prefers_email)
   {
     $this->prefers_email = $prefers_email;
+  }
+
+  /**
+   * zet de voorkeur ivm ontvangen van publiciteit
+   *
+   * @param boolean $wants_publicity
+   */
+  public function setWantsPublicity($wants_publicity)
+  {
+    $this->wants_publicity = $wants_publicity;
   }
 
   /**

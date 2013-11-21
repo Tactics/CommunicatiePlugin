@@ -591,20 +591,19 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   }
 
   /**
-   * replaced de placeholders van de culture brief afh vh gegeven object
+   * replaced de placeholders van de culture brief
    *
    * @param array $cultureBrieven
    * @param ttCommunicatieBestemmeling $bestemmeling
-   * @param bool $email
+   * @param array $defaultPlaceholders
    * @return array The $cultureBrieven with replaced placeholders for the object culture
    */
-  public static function replacePlaceholdersFromCultureBrieven($cultureBrieven, $bestemmeling, $email = false)
+  public static function replacePlaceholdersFromCultureBrieven($cultureBrieven, $bestemmeling, $default_placeholders = array())
   {
-    $defaultPlaceholders = self::getDefaultPlaceholders($bestemmeling, $email, true);
     $culture = self::calculateCulture($bestemmeling);
 
     $placeholders = array_merge(
-      $defaultPlaceholders,
+      $default_placeholders,
       self::getObjectPlaceholderValues($cultureBrieven[$culture]['onderwerp'] . $cultureBrieven[$culture]['body'], $bestemmeling)
     );
 
@@ -671,13 +670,26 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function getDefaultPlaceholders($bestemmeling = null, $email = false, $generalPlaceholders = false)
   {
+    if (($email && $bestemmeling && ($bestemmeling->getObjectClass() == 'Persoon') && $bestemmeling->getWantsPublicity())
+        && ($uitschrijvenInfo = sfConfig::get('sf_communicatie_uitschrijven', null))
+       )
+    {
+      $persoon = $bestemmeling->getBestemmeling();      
+      $url = str_replace(array('%uuid%', '%email%'), array($persoon->getUuid(), urlencode($persoon->getEmail())), $uitschrijvenInfo['url']);
+      if (false !== preg_match('/(?P<begin>.*)(?P<placeholder>%.+%)(?P<einde>.*)/', $uitschrijvenInfo['tekst'], $result))
+      {
+        $uitschrijfLink = $result['begin'] . "<a href=\"$url\">" . trim($result['placeholder'], '%') . "</a>" . $result['einde'];
+      }      
+    }
+
     Misc::use_helper('Url');
     $vandaag = new myDate();
     $defaultPlaceholders = array(
       'datum' => $vandaag->format(),
       'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),
       'image_dir' => $email ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
-      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
+      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>',
+      'uitschrijven' => isset($uitschrijfLink) ? $uitschrijfLink : ''
     );
 
     if ($bestemmeling)
