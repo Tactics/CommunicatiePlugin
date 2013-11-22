@@ -1,0 +1,15 @@
+{
+    "name": "tactics/tt-communicatie-plugin",
+    "description": "Easy mailing!",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aaron Muylaert",
+            "email": "aaron@tactics.be"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    }
+}
