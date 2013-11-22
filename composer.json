@@ -1,0 +1,16 @@
+{
+    "name": "tactics/tt-communicatie-plugin",
+    "type": "symfony1-plugin",
+    "description": "Easy mailing!",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aaron Muylaert",
+            "email": "aaron@tactics.be"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
