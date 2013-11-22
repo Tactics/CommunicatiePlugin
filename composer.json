@@ -1,5 +1,6 @@
 {
     "name": "tactics/tt-communicatie-plugin",
+    "type": "symfony1-plugin",
     "description": "Easy mailing!",
     "license": "MIT",
     "authors": [
@@ -10,6 +11,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-
+        "composer/installers": "~1.0"
     }
 }
