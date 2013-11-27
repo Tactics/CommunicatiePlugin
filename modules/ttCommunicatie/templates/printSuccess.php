@@ -133,7 +133,7 @@
         $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling);
 
         // replace placeholders
-        $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, $viaemail, true);
+        $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, false, $viaemail, true);
         if (!$object_brief_template->getIsPubliciteit() && isset($defaultPlaceholders['uitschrijven']))
         {
           unset($defaultPlaceholders['uitschrijven']);

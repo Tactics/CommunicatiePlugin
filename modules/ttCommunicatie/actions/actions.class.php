@@ -633,7 +633,6 @@ class ttCommunicatieActions extends sfActions
     else
     {      
       $viaemail = (($verzenden_via == 'liefst') || ($verzenden_via == 'altijd'));
-
     }    
     
     if ($voorbeeld && $this->criteria)
@@ -664,8 +663,8 @@ class ttCommunicatieActions extends sfActions
       foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
       {
         $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
-        $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
-      } 
+        $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
+      }
     }
 
     if ($emailverzenden)
@@ -830,7 +829,7 @@ class ttCommunicatieActions extends sfActions
             $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
 
             // replace placeholders
-            $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, $email, true);
+            $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true, true, true);
             if (!$brief_template->getIsPubliciteit() && isset($defaultPlaceholders['uitschrijven']))
             {
               unset($defaultPlaceholders['uitschrijven']);

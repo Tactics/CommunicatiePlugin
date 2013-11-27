@@ -668,9 +668,9 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * @param bool $generalPlaceholders met bv handtekeningen placeholders
    * @return array default placeholders
    */
-  public static function getDefaultPlaceholders($bestemmeling = null, $email = false, $generalPlaceholders = false)
+  public static function getDefaultPlaceholders($bestemmeling = null, $email_verzenden = false, $via_email = false, $generalPlaceholders = false)
   {
-    if (($email && $bestemmeling && ($bestemmeling->getObjectClass() == 'Persoon') && $bestemmeling->getWantsPublicity())
+    if (($via_email && $bestemmeling && ($bestemmeling->getObjectClass() == 'Persoon') && $bestemmeling->getWantsPublicity())
         && ($uitschrijvenInfo = sfConfig::get('sf_communicatie_uitschrijven', null))
        )
     {
@@ -687,7 +687,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     $defaultPlaceholders = array(
       'datum' => $vandaag->format(),
       'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),
-      'image_dir' => $email ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
+      'image_dir' => $email_verzenden ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
       'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>',
       'uitschrijven' => isset($uitschrijfLink) ? $uitschrijfLink : ''
     );
