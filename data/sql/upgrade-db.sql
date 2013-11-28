@@ -36,3 +36,25 @@ ADD `bcc` VARCHAR( 1000 ) NULL DEFAULT NULL AFTER `cc` ;
 -- is_publiciteit toevoegen aan template
 -- -----------------------------------------------------------------------------
 ALTER TABLE `brief_template` ADD `is_publiciteit` INT NOT NULL DEFAULT '0' AFTER `eenmalig_versturen`;
+
+-- -----------------------------------------------------------------------------
+-- 28/11/2013
+-- Glenn Van Loock
+--
+-- batch_taak tabel toevoegen + id van batchtaak aan brief_verzonden
+-- -----------------------------------------------------------------------------
+
+ALTER TABLE  `brief_verzonden` ADD  `batchtaak_id` INT NULL AFTER  `culture`;
+
+CREATE TABLE `batch_taak`
+(
+	`id` INTEGER  NOT NULL AUTO_INCREMENT,
+	`aantal` INTEGER,
+	`status` VARCHAR(100),
+	`verzenden_vanaf` DATETIME,
+	`created_at` DATETIME,
+	`updated_at` DATETIME,
+	`created_by` INTEGER,
+	`updated_by` INTEGER,
+	PRIMARY KEY (`id`),
+)Type=MyISAM;
