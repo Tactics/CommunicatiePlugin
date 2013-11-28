@@ -43,6 +43,7 @@
     <column name="custom" type="BOOLEAN" required="true" default="0"/>
     <column name="culture" type="VARCHAR" size="45"/>
     <column name="status" type="VARCHAR" size="45" required="true"/>
+    <column name="batchtaak_id" type="INTEGER"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>
@@ -85,5 +86,16 @@
     <index>
       <index-column name="brief_template_id"/>
     </index>
+  </table>
+
+  <table name="batch_taak">
+    <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="aantal" type="INTEGER"/>
+    <column name="status" type="VARCHAR" size="100"/>
+    <column name="verzenden_vanaf" type="TIMESTAMP"/>
+    <column name="created_by" type="INTEGER"/>
+    <column name="updated_by" type="INTEGER"/>
+    <column name="created_at" type="TIMESTAMP"/>
+    <column name="updated_at" type="TIMESTAMP"/>
   </table>
 </database>
