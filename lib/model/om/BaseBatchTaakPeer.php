@@ -13,7 +13,7 @@ abstract class BaseBatchTaakPeer {
 	const CLASS_DEFAULT = 'plugins.ttCommunicatiePlugin.lib.model.BatchTaak';
 
 	
-	const NUM_COLUMNS = 8;
+	const NUM_COLUMNS = 9;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -21,6 +21,9 @@ abstract class BaseBatchTaakPeer {
 
 	
 	const ID = 'batch_taak.ID';
+
+	
+	const BRIEF_TEMPLATE_ID = 'batch_taak.BRIEF_TEMPLATE_ID';
 
 	
 	const AANTAL = 'batch_taak.AANTAL';
@@ -49,18 +52,18 @@ abstract class BaseBatchTaakPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'Aantal', 'Status', 'VerzendenVanaf', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
-		BasePeer::TYPE_COLNAME => array (BatchTaakPeer::ID, BatchTaakPeer::AANTAL, BatchTaakPeer::STATUS, BatchTaakPeer::VERZENDEN_VANAF, BatchTaakPeer::CREATED_BY, BatchTaakPeer::UPDATED_BY, BatchTaakPeer::CREATED_AT, BatchTaakPeer::UPDATED_AT, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'aantal', 'status', 'verzenden_vanaf', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'BriefTemplateId', 'Aantal', 'Status', 'VerzendenVanaf', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
+		BasePeer::TYPE_COLNAME => array (BatchTaakPeer::ID, BatchTaakPeer::BRIEF_TEMPLATE_ID, BatchTaakPeer::AANTAL, BatchTaakPeer::STATUS, BatchTaakPeer::VERZENDEN_VANAF, BatchTaakPeer::CREATED_BY, BatchTaakPeer::UPDATED_BY, BatchTaakPeer::CREATED_AT, BatchTaakPeer::UPDATED_AT, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'brief_template_id', 'aantal', 'status', 'verzenden_vanaf', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Aantal' => 1, 'Status' => 2, 'VerzendenVanaf' => 3, 'CreatedBy' => 4, 'UpdatedBy' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-		BasePeer::TYPE_COLNAME => array (BatchTaakPeer::ID => 0, BatchTaakPeer::AANTAL => 1, BatchTaakPeer::STATUS => 2, BatchTaakPeer::VERZENDEN_VANAF => 3, BatchTaakPeer::CREATED_BY => 4, BatchTaakPeer::UPDATED_BY => 5, BatchTaakPeer::CREATED_AT => 6, BatchTaakPeer::UPDATED_AT => 7, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'aantal' => 1, 'status' => 2, 'verzenden_vanaf' => 3, 'created_by' => 4, 'updated_by' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'BriefTemplateId' => 1, 'Aantal' => 2, 'Status' => 3, 'VerzendenVanaf' => 4, 'CreatedBy' => 5, 'UpdatedBy' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
+		BasePeer::TYPE_COLNAME => array (BatchTaakPeer::ID => 0, BatchTaakPeer::BRIEF_TEMPLATE_ID => 1, BatchTaakPeer::AANTAL => 2, BatchTaakPeer::STATUS => 3, BatchTaakPeer::VERZENDEN_VANAF => 4, BatchTaakPeer::CREATED_BY => 5, BatchTaakPeer::UPDATED_BY => 6, BatchTaakPeer::CREATED_AT => 7, BatchTaakPeer::UPDATED_AT => 8, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'brief_template_id' => 1, 'aantal' => 2, 'status' => 3, 'verzenden_vanaf' => 4, 'created_by' => 5, 'updated_by' => 6, 'created_at' => 7, 'updated_at' => 8, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
 	);
 
 	
@@ -115,6 +118,8 @@ abstract class BaseBatchTaakPeer {
 	{
 
 		$criteria->addSelectColumn(BatchTaakPeer::ID);
+
+		$criteria->addSelectColumn(BatchTaakPeer::BRIEF_TEMPLATE_ID);
 
 		$criteria->addSelectColumn(BatchTaakPeer::AANTAL);
 
@@ -214,6 +219,167 @@ abstract class BaseBatchTaakPeer {
 		}
 		return $results;
 	}
+
+	
+	public static function doCountJoinBriefTemplate(Criteria $criteria, $distinct = false, $con = null)
+	{
+				$criteria = clone $criteria;
+
+				$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(BatchTaakPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(BatchTaakPeer::COUNT);
+		}
+
+				foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
+		}
+
+		$criteria->addJoin(BatchTaakPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+
+		$rs = BatchTaakPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+						return 0;
+		}
+	}
+
+
+	
+	public static function doSelectJoinBriefTemplate(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+				if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		BatchTaakPeer::addSelectColumns($c);
+		$startcol = (BatchTaakPeer::NUM_COLUMNS - BatchTaakPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		BriefTemplatePeer::addSelectColumns($c);
+
+		$c->addJoin(BatchTaakPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = BatchTaakPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+			$omClass = BriefTemplatePeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj2 = new $cls();
+			$obj2->hydrate($rs, $startcol);
+
+			$newObject = true;
+			foreach($results as $temp_obj1) {
+				$temp_obj2 = $temp_obj1->getBriefTemplate(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+										$temp_obj2->addBatchTaak($obj1); 					break;
+				}
+			}
+			if ($newObject) {
+				$obj2->initBatchTaaks();
+				$obj2->addBatchTaak($obj1); 			}
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
+
+	
+	public static function doCountJoinAll(Criteria $criteria, $distinct = false, $con = null)
+	{
+		$criteria = clone $criteria;
+
+				$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(BatchTaakPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(BatchTaakPeer::COUNT);
+		}
+
+				foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
+		}
+
+		$criteria->addJoin(BatchTaakPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+
+		$rs = BatchTaakPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+						return 0;
+		}
+	}
+
+
+	
+	public static function doSelectJoinAll(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+				if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		BatchTaakPeer::addSelectColumns($c);
+		$startcol2 = (BatchTaakPeer::NUM_COLUMNS - BatchTaakPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
+		BriefTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + BriefTemplatePeer::NUM_COLUMNS;
+
+		$c->addJoin(BatchTaakPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = BatchTaakPeer::getOMClass();
+
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+
+					
+			$omClass = BriefTemplatePeer::getOMClass();
+
+
+			$cls = Propel::import($omClass);
+			$obj2 = new $cls();
+			$obj2->hydrate($rs, $startcol2);
+
+			$newObject = true;
+			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+				$temp_obj1 = $results[$j];
+				$temp_obj2 = $temp_obj1->getBriefTemplate(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+					$temp_obj2->addBatchTaak($obj1); 					break;
+				}
+			}
+
+			if ($newObject) {
+				$obj2->initBatchTaaks();
+				$obj2->addBatchTaak($obj1);
+			}
+
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
 	
 	public static function getTableMap()
 	{
