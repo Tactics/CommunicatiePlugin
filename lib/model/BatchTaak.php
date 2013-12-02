@@ -14,3 +14,5 @@ class BatchTaak extends BaseBatchTaak
     return '('.$this->getId().') '.$this->getAantal().'x '.$this->getObjectClass();
   }
 }
+
+sfPropelBehavior::add('BatchTaak', array('updater_loggable'));
