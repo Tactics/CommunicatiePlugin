@@ -82,7 +82,7 @@
   $table = new myTable(
             array(
               array('name' => BatchTaakPeer::ID, 'text' => 'Nr', 'align' => 'right', 'sortable' => true, 'width' => 60),
-              array('name' => BatchTaakPeer::BRIEF_TEMPLATE_ID, 'text' => 'Brieftemplate', 'align' => 'left', 'sortable' => true),
+              array('name' => BatchTaakPeer::OBJECT_CLASS, 'text' => 'Object', 'align' => 'left', 'sortable' => true),
               array('name' => BatchTaakPeer::AANTAL, 'text' => 'Aantal', 'align' => 'right', 'sortable' => true, 'width' => 80),
               array('name' => BatchTaakPeer::STATUS, 'text' => 'Status', 'align' => 'left', 'sortable' => true),
               array('name' => BatchTaakPeer::VERZENDEN_VANAF, 'text' => 'Verzenden vanaf', 'align' => 'left', 'sortable' => true),
@@ -101,7 +101,7 @@
     $actielink = $batchtaak->getStatus() == BatchTaakPeer::STATUS_PAUZE ? link_to(image_tag("icons/play.16.png"), 'ttCommunicatieBatch/play?id='.$batchtaak->getId(), array('title'=>'Start', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt starten?')) : link_to(image_tag("icons/play.16.png"), 'ttCommunicatieBatch/pause?id='.$batchtaak->getId(), array('title'=>'Pauze', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt pauzeren?'));
     $table->addRow(array(
       array('content' => link_to($batchtaak->getId(), 'ttCommunicatieBatch/show?id=' . $batchtaak->getId())),
-      array('content' => $batchtaak->getBriefTemplate()->getNaam()),
+      array('content' => $batchtaak->getAantal() . 'x ' .$batchtaak->getObjectClass()),
       array('content' => $batchtaak->getAantal()),
       array('content' => $batchtaak->getStatus()),
       array("content" => $batchtaak->getVerzendenVanaf('d/m/Y H:i')),

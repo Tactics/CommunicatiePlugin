@@ -941,14 +941,15 @@ class ttCommunicatieActions extends sfActions
   */
   private function sendEmails($briefVerzondenRs)
   {
-    $briefAttachments = $brief_template->getAttachments($this->getRequest());
-
-    $attachments = array_merge($tmpAttachments, $briefAttachments);
-
     while($briefVerzondenRs->next())
     {
       $briefVerzonden = new BriefVerzonden();
       $briefVerzonden->hydrate($briefVerzondenRs);
+
+      $brief_template = $briefVerzonden->getBriefTemplate();
+
+      $briefAttachments = $brief_template->getAttachments($this->getRequest());
+      $attachments = array_merge($tmpAttachments, $briefAttachments);
 
       // object-eigen attachements
       if (method_exists($briefVerzonden->getObject(), 'getBriefAttachments'))
@@ -1018,7 +1019,7 @@ class ttCommunicatieActions extends sfActions
       $briefVerzonden->hydrate($briefVerzondenRs);
       if($first)
       {
-        $batchtaak->setBriefTemplateId($briefVerzonden->getBriefTemplateId());
+        $batchtaak->setObjectClass($briefVerzonden->getObjectClass());
         $batchtaak->save();
         $first = false;
       }

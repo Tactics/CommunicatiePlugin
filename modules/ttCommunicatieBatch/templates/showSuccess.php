@@ -8,8 +8,8 @@
       <td width='50%'>
         <table>
           <tr>
-            <th>Brieftemplate:</th>
-            <td><?php echo link_to($batchtaak->getBriefTemplate()->getNaam(), 'ttCommunicatie/edit?template_id='.$batchtaak->getBriefTemplateId()); ?></td>
+            <th>Object:</th>
+            <td><?php echo $batchtaak->getObjectClass(); ?></td>
           </tr>
           <tr>
             <th>Verzenden vanaf:</th>
@@ -70,7 +70,7 @@
       array('content' => $briefTeVerzenden->getAdres()),
       array('content' => $briefTeVerzenden->getCc()),
       array("content" => $briefTeVerzenden->getBcc()),
-      array("content" => link_to(image_tag('icons/email.voorbeeld.png', array('width' => 16, 'height' => 16)), 'ttCommunicatieBatch/preview?brief_id='.$briefTeVerzenden->getId(), array('target' => '_blank', 'title' => 'Preview mail')))
+      array("content" => tt_link_to_remote(image_tag('icons/email.voorbeeld.png', array('width' => 16, 'height' => 16)), array('url' => 'ttCommunicatieBatch/preview?brief_id='.$briefTeVerzenden->getId(), 'title' => 'Preview mail', 'update' => 'details')))
     ));
 
   }
@@ -82,4 +82,5 @@
 </div> <!-- /#zoekresultaten -->
 </div> <!-- /pageblock -->
 
+<div id="details"></div>
 <?php endif ?>

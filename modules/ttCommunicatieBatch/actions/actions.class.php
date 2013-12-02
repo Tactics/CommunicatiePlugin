@@ -87,19 +87,6 @@ class ttCommunicatieBatchActions extends sfActions
     $this->pager->getCriteria()->add(BriefVerzondenPeer::BATCHTAAK_ID, $this->getRequestParameter('id'));
 
     $this->pager->init();
-
-    $this->hash = md5(rand(100000, 999999).time());
-    $this->getUser()->setAttribute('object_class', 'Dossier', $this->hash);
-    $this->getUser()->setAttribute('edit_template', true, $this->hash);
-    $this->getUser()->setAttribute('object_criteria', $this->pager->getCriteria(), $this->hash);
-    if ($this->batchtaak->getBriefTemplateId())
-    {
-      $this->getUser()->setAttribute('template_id', $this->batchtaak->getBriefTemplateId(), $this->hash);
-    }
-    if (isset($bestemmelingen))
-    {
-      $this->getUser()->setAttribute('bestemmelingen', $bestemmelingen, $this->hash);
-    }
   }
 
   /**
@@ -130,8 +117,5 @@ class ttCommunicatieBatchActions extends sfActions
   public function executePreview()
   {
     $this->briefVerzonden = BriefVerzondenPeer::retrieveByPK($this->getRequestParameter('brief_id'));
-    $this->forward404Unless($this->briefVerzonden);
-
-    $this->setLayout(false);
   }
 }
