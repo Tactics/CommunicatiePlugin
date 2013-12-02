@@ -12,12 +12,21 @@ class BriefVerzonden extends BaseBriefVerzonden
   /**
    * Geeft de instantie weer van het object gekoppeld aan de verzonden brief
    *
-   * @return object
+   * @return mixed
    */
   public function getObject()
   {
-    $object = eval("return {$this->getObjectClass()}Peer::retrieveByPk({$this->getObjectId()});");
-    return $object;
+    return Misc::getObject($this->getObjectClass(), $this->getObjectId());
+  }
+
+  /**
+   * Geeft de instantie weer van de bestemmeling gekoppeld aan de verzonden brief
+   *
+   * @return mixed
+   */
+  public function getBestemmeling()
+  {
+    return Misc::getObject($this->getObjectClassBestemmeling(), $this->getObjectIdBestemmeling());
   }
 
   /**

@@ -9,4 +9,8 @@
  */ 
 class BatchTaak extends BaseBatchTaak
 {
+  public function __toString()
+  {
+    return '('.$this->getId().') '.$this->getBriefTemplate()->getNaam();
+  }
 }

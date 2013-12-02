@@ -49,6 +49,7 @@ ALTER TABLE  `brief_verzonden` ADD  `batchtaak_id` INT NULL AFTER  `culture`;
 CREATE TABLE `batch_taak`
 (
 	`id` INTEGER  NOT NULL AUTO_INCREMENT,
+	`brief_template_id` INTEGER,
 	`aantal` INTEGER,
 	`status` VARCHAR(100),
 	`verzenden_vanaf` DATETIME,

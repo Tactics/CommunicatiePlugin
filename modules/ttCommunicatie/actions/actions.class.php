@@ -840,78 +840,30 @@ class ttCommunicatieActions extends sfActions
             $body = $tmpCultureBrieven[$culture]['body'];
             $brief = $head . $body;
 
-            $briefAttachments = $brief_template->getAttachments($this->getRequest());
+            $briefVerzonden = new BriefVerzonden();
+            // object dat verzonden wordt bv factuur
+            $briefVerzonden->setObjectClass($this->objectClass);
+            $briefVerzonden->setObjectId($object->getId());
+            // eindbestemmeling naar waar effectief verzonden wordt bv debituer
+            $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
+            $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());
+            $briefVerzonden->setBriefTemplate($brief_template);
+            $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
+            $briefVerzonden->setAdres($email);
+            $briefVerzonden->setCc(isset($options['cc']) ? implode(';', $options['cc']) : null);
+            $briefVerzonden->setBcc(isset($options['bcc']) ? implode(';', $options['bcc']) : null);
+            $briefVerzonden->setOnderwerp($onderwerp);
+            $briefVerzonden->setCulture($culture);
+            $briefVerzonden->setHtml(BriefTemplatePeer::clearPlaceholders($brief));
+            $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_NT_VERZONDEN);
+            $briefVerzonden->save();
 
-            $attachments = array_merge($tmpAttachments, $briefAttachments);
+            $briefverzondenIds[] = $briefVerzonden->getId();
 
-            // object-eigen attachements
-            if (method_exists($object, 'getBriefAttachments'))
+            // notify object dat er een brief naar het object verzonden is
+            if (method_exists($object, 'notifyBriefVerzonden'))
             {
-              $objectAttachments = $object->getBriefAttachments();
-              $attachments = array_merge($attachments, $objectAttachments);
-            }
-
-            $nietVerstuurdReden = '';
-            try {
-              $options = array(
-                'onderwerp' => $onderwerp,
-                'skip_template' => true,
-                'afzender' => $this->afzender,
-                'attachements' => $attachments,
-                'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
-              );
-
-              $cc = $bestemmeling->getEmailCc();
-              if (!empty($cc))
-              {
-                $options['cc'] = $cc;
-              }
-
-              $bcc = $bestemmeling->getEmailBcc();
-              if (!empty($bcc))
-              {
-                $options['bcc'] = $bcc;
-              }
-
-              BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
-
-              $verstuurd = true;
-              echo 'Bericht verzonden naar : ' . $email;
-              echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
-              echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
-              echo '<br/>';
-              $counter['verstuurd']++;
-
-              // Log de brief
-              $briefVerzonden = new BriefVerzonden();
-              // object dat verzonden wordt bv factuur
-              $briefVerzonden->setObjectClass($this->objectClass);
-              $briefVerzonden->setObjectId($object->getId());
-              // eindbestemmeling naar waar effectief verzonden wordt bv debituer
-              $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
-              $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());
-              $briefVerzonden->setBriefTemplate($brief_template);
-              $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
-              $briefVerzonden->setAdres($email);
-              $briefVerzonden->setCc(isset($options['cc']) ? implode(';', $options['cc']) : null);
-              $briefVerzonden->setBcc(isset($options['bcc']) ? implode(';', $options['bcc']) : null);
-              $briefVerzonden->setOnderwerp($onderwerp);
-              $briefVerzonden->setCulture($culture);
-              $briefVerzonden->setHtml($body);
-              $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
-              $briefVerzonden->save();
-
-              // notify object dat er een brief naar het object verzonden is
-              if (method_exists($object, 'notifyBriefVerzonden'))
-              {
-                $object->notifyBriefVerzonden($briefVerzonden);
-              }
-            }
-            catch(Exception $e)
-            {
-              $nietVerstuurdReden = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
-              echo $nietVerstuurdReden;
-              $counter['error']++;
+              $object->notifyBriefVerzonden($briefVerzonden);
             }
           }
           else
@@ -937,6 +889,21 @@ class ttCommunicatieActions extends sfActions
           }
         } // endforeach objectbestemmeling
       }
+
+      $batchVanaf = sfConfig::get('sf_communicatie_batchmailing_vanaf', false);
+
+      $c = new Criteria();
+      $c->add(BriefVerzondenPeer::ID, $briefverzondenIds, Criteria::IN);
+      $briefVerzondenRs = BriefVerzondenPeer::doSelectRS($c);
+
+      if(($batchVanaf === false) || (count($briefverzondenIds) <= $batchVanaf))
+      {
+        $this->sendEmails($briefVerzondenRs);
+      }
+      else
+      {
+        $this->createBatchmailing($briefVerzondenRs);
+      }
       
       foreach($tmpAttachments as $tmpFile)
       {
@@ -947,7 +914,7 @@ class ttCommunicatieActions extends sfActions
       echo 'Totaal:<br/>';
       echo 'Reeds verstuurd: ' . $counter['reedsverstuurd'] . '<br/>';
       echo 'Niet toegestaan: ' . $counter['niettoegestaan'] . '<br/>';
-      echo 'Verstuurd: ' . $counter['verstuurd'] . '<br />';
+      echo 'Verstuurd: ' . ($counter['verstuurd'] == 0 ? 'Batchtaak aangemaakt' : $counter['verstuurd']) . '<br />';
       echo 'Error: ' . $counter['error'] . '<br />';
       echo 'Wensen geen mail: ' . $counter['wenstgeenmail'] . '<br />';
       echo '<a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
@@ -966,7 +933,103 @@ class ttCommunicatieActions extends sfActions
       $this->verzenden_via = $verzenden_via;
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
-    }    
+    }
+  }
+
+  /**
+  * Verzend mails
+  */
+  private function sendEmails($briefVerzondenRs)
+  {
+    $briefAttachments = $brief_template->getAttachments($this->getRequest());
+
+    $attachments = array_merge($tmpAttachments, $briefAttachments);
+
+    while($briefVerzondenRs->next())
+    {
+      $briefVerzonden = new BriefVerzonden();
+      $briefVerzonden->hydrate($briefVerzondenRs);
+
+      // object-eigen attachements
+      if (method_exists($briefVerzonden->getObject(), 'getBriefAttachments'))
+      {
+        $objectAttachments = $object->getBriefAttachments();
+        $attachments = array_merge($attachments, $objectAttachments);
+      }
+
+      $nietVerstuurdReden = '';
+      try {
+        $options = array(
+          'onderwerp' => $briefVerzonden->getOnderwerp(),
+          'skip_template' => true,
+          'afzender' => $this->afzender,
+          'attachements' => $attachments,
+          'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
+        );
+
+        $cc = $briefVerzonden->getCc();
+        if (!empty($cc))
+        {
+          $options['cc'] = $cc;
+        }
+
+        $bcc = $briefVerzonden->getBcc();
+        if (!empty($bcc))
+        {
+          $options['bcc'] = $bcc;
+        }
+
+        BerichtPeer::verstuurEmail($email, $briefVerzonden->getHtml(), $options);
+
+        $verstuurd = true;
+        echo 'Bericht verzonden naar : ' . $briefVerzonden->getAdres();
+        echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
+        echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
+        echo '<br/>';
+        $counter['verstuurd']++;
+
+        $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
+        $briefVerzonden->save();
+      }
+      catch(Exception $e)
+      {
+        $nietVerstuurdReden = '<font color=red>E-mail kon niet verzonden worden naar ' . $briefVerzonden->getAdres() . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
+        echo $nietVerstuurdReden;
+        $counter['error']++;
+      }
+    }
+  }
+
+  /**
+  * Batchtaak aanmaken en event triggeren
+  */
+  private function createBatchmailing($briefVerzondenRs)
+  {
+    $batchtaak = new BatchTaak();
+    $batchtaak->setAantal($briefVerzondenRs->getRecordCount());
+    $batchtaak->setStatus(BatchTaakPeer::STATUS_PAUZE);
+    $batchtaak->setVerzendenVanaf(time());
+    $batchtaak->save();
+
+    $first = true;
+    while($briefVerzondenRs->next())
+    {
+      $briefVerzonden = new BriefVerzonden();
+      $briefVerzonden->hydrate($briefVerzondenRs);
+      if($first)
+      {
+        $batchtaak->setBriefTemplateId($briefVerzonden->getBriefTemplateId());
+        $batchtaak->save();
+        $first = false;
+      }
+
+      $briefVerzonden->setBatchtaakId($batchtaak->getId());
+      $briefVerzonden->save();
+    }
+
+    $dispatcher = $this->getContainer()->get('event_dispatcher');
+    $event = new TtCommunicatieBatchTaakEvent($batchtaak);
+    $dispatcher->dispatch(TtCommunicatieEvents::TT_COMMUNICATIE_BATCH_TAAK_CREATED, $event);
   }
 
   /**
