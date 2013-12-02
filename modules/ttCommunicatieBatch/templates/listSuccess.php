@@ -1,3 +1,4 @@
+<meta http-equiv="refresh" content="5" >
 <?php if (!$sf_request->isXmlHttpRequest()) : ?>
 
   <?php include_partial('breadcrumb', array('identifier' => 'Batchtaken')) ?>
@@ -98,7 +99,9 @@
 
   foreach($pager->getResults() as $batchtaak)
   {
-    $actielink = $batchtaak->getStatus() == BatchTaakPeer::STATUS_PAUZE ? link_to(image_tag("icons/play.16.png"), 'ttCommunicatieBatch/play?id='.$batchtaak->getId(), array('title'=>'Start', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt starten?')) : link_to(image_tag("icons/play.16.png"), 'ttCommunicatieBatch/pause?id='.$batchtaak->getId(), array('title'=>'Pauze', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt pauzeren?'));
+    $cssClass = $batchtaak->getStatus() == BatchTaakPeer::STATUS_VERZENDING ? 'verzending' : '';
+
+    $actielink = $batchtaak->getStatus() != BatchTaakPeer::STATUS_VERZONDEN ? ($batchtaak->getStatus() == BatchTaakPeer::STATUS_PAUZE ? link_to(image_tag("icons/play.16.png"), 'ttCommunicatieBatch/play?id='.$batchtaak->getId(), array('title'=>'Start', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt starten?')) : link_to(image_tag("icons/pause.16.png"), 'ttCommunicatieBatch/pause?id='.$batchtaak->getId(), array('title'=>'Pauze', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt pauzeren?'))) : '';
     $table->addRow(array(
       array('content' => link_to($batchtaak->getId(), 'ttCommunicatieBatch/show?id=' . $batchtaak->getId())),
       array('content' => $batchtaak->getAantal() . 'x ' .$batchtaak->getObjectClass()),
@@ -106,7 +109,7 @@
       array('content' => $batchtaak->getStatus()),
       array("content" => $batchtaak->getVerzendenVanaf('d/m/Y H:i')),
       array("content" => link_to(image_tag("icons/document_zoom_16.gif"), "ttCommunicatieBatch/show?id=" . $batchtaak->getId(), 'title=Bekijk').'&nbsp;'.$actielink)
-    ));
+    ), array('rowClass' => $cssClass));
   }
 
   echo $table;

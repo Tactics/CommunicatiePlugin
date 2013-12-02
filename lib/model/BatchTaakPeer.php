@@ -13,6 +13,7 @@ class BatchTaakPeer extends BaseBatchTaakPeer
   const STATUS_PAUZE = 'gepauzeerd';
   const STATUS_VERZENDING = 'wordt verzonden';
   const STATUS_GEANNULEERD = 'geannuleerd';
+  const STATUS_VERZONDEN = 'verzonden';
 
   public static function getOptionsForSelect()
   {
@@ -21,6 +22,7 @@ class BatchTaakPeer extends BaseBatchTaakPeer
       self::STATUS_PAUZE => self::STATUS_PAUZE,
       self::STATUS_VERZENDING => self::STATUS_VERZENDING,
       self::STATUS_GEANNULEERD => self::STATUS_GEANNULEERD,
+      self::STATUS_VERZONDEN => self::STATUS_VERZONDEN
     );
   }
 }

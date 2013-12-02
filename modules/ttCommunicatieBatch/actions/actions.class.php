@@ -34,6 +34,10 @@ class ttCommunicatieBatchActions extends sfActions
   {
     $pager = new myFilteredPager('BatchTaak', 'ttCommunicatieBatch/list');
 
+    if(!$pager->addAndget(BatchTaakPeer::STATUS, array('addToCriteria' => false)))
+    {
+      $pager->getCriteria()->add(BatchTaakPeer::STATUS, BatchTaakPeer::STATUS_VERZONDEN, Criteria::NOT_EQUAL);
+    }
     // filter: van/tot aantal
     $aantalVan = $pager->addAndGet('van_aantal', array('addToCriteria' => false));
     $aantalTot = $pager->addAndGet('tot_aantal', array('addToCriteria' => false));
@@ -94,8 +98,11 @@ class ttCommunicatieBatchActions extends sfActions
    */
   public function executePlay()
   {
-    $this->batchtaak = BatchTaakPeer::retrieveByPK($this->getRequestParameter('id'));
-    $this->forward404Unless($this->batchtaak);
+    $batchtaak = BatchTaakPeer::retrieveByPK($this->getRequestParameter('id'));
+    $this->forward404Unless($batchtaak);
+
+    $batchtaak->setStatus(BatchTaakPeer::STATUS_WACHTRIJ);
+    $batchtaak->save();
 
     $this->redirect('ttCommunicatieBatch/list');
   }
@@ -105,8 +112,11 @@ class ttCommunicatieBatchActions extends sfActions
    */
   public function executePause()
   {
-    $this->batchtaak = BatchTaakPeer::retrieveByPK($this->getRequestParameter('id'));
-    $this->forward404Unless($this->batchtaak);
+    $batchtaak = BatchTaakPeer::retrieveByPK($this->getRequestParameter('id'));
+    $this->forward404Unless($batchtaak);
+
+    $batchtaak->setStatus(BatchTaakPeer::STATUS_PAUZE);
+    $batchtaak->save();
 
     $this->redirect('ttCommunicatieBatch/list');
   }

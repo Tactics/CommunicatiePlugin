@@ -946,58 +946,7 @@ class ttCommunicatieActions extends sfActions
       $briefVerzonden = new BriefVerzonden();
       $briefVerzonden->hydrate($briefVerzondenRs);
 
-      $brief_template = $briefVerzonden->getBriefTemplate();
-
-      $briefAttachments = $brief_template->getAttachments($this->getRequest());
-      $attachments = array_merge($tmpAttachments, $briefAttachments);
-
-      // object-eigen attachements
-      if (method_exists($briefVerzonden->getObject(), 'getBriefAttachments'))
-      {
-        $objectAttachments = $object->getBriefAttachments();
-        $attachments = array_merge($attachments, $objectAttachments);
-      }
-
-      $nietVerstuurdReden = '';
-      try {
-        $options = array(
-          'onderwerp' => $briefVerzonden->getOnderwerp(),
-          'skip_template' => true,
-          'afzender' => $this->afzender,
-          'attachements' => $attachments,
-          'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
-        );
-
-        $cc = $briefVerzonden->getCc();
-        if (!empty($cc))
-        {
-          $options['cc'] = $cc;
-        }
-
-        $bcc = $briefVerzonden->getBcc();
-        if (!empty($bcc))
-        {
-          $options['bcc'] = $bcc;
-        }
-
-        BerichtPeer::verstuurEmail($email, $briefVerzonden->getHtml(), $options);
-
-        $verstuurd = true;
-        echo 'Bericht verzonden naar : ' . $briefVerzonden->getAdres();
-        echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
-        echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
-        echo '<br/>';
-        $counter['verstuurd']++;
-
-        $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
-        $briefVerzonden->save();
-      }
-      catch(Exception $e)
-      {
-        $nietVerstuurdReden = '<font color=red>E-mail kon niet verzonden worden naar ' . $briefVerzonden->getAdres() . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
-        echo $nietVerstuurdReden;
-        $counter['error']++;
-      }
+      $briefVerzonden->verzendMail();
     }
   }
 
