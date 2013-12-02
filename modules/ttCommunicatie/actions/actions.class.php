@@ -858,7 +858,16 @@ class ttCommunicatieActions extends sfActions
                 'skip_template' => true,
                 'afzender' => $this->afzender,
                 'attachements' => $attachments,
-                'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
+                'img_path' => array(
+                  array(
+                    'prefix' => 'cid:',
+                    'dir' => sfConfig::get('sf_data_dir') . '/brieven/layouts/images/'
+                  ),
+                  array(
+                    'prefix' => '/images/brief_templates/',
+                    'dir' => sfConfig::get('sf_web_dir') . '/images/brief_templates/'
+                  )
+                )
               );
 
               $cc = $bestemmeling->getEmailCc();

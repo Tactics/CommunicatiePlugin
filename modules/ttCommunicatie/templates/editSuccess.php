@@ -45,19 +45,18 @@
   {
     // language tabs initialiseren
     $('#tabs').tt_tabs();
-    
-    tinyMCE.init({        
-      mode : "textareas",
-      theme : "advanced", 
-      theme_advanced_toolbar_location : "top",
-      width : "600", 
-      height : "454",       
-      language : "nl",      
-      plugins: "paste, pagebreak, table",
+
+    tinyMCE.init({
+      selector: "textarea",
+      width : "600",
+      height : "454",
+      language : "nl",
+      plugins: [
+        "paste, link, pagebreak, table, jbimages"
+      ],
       pagebreak_separator : "%pagebreak%",
-      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
-      theme_advanced_buttons2 : "tablecontrols",
-      theme_advanced_buttons3 : ""      
+      toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
+      relative_urls: false
     });
     
     $('#bestemmelingen :checkbox').change(function()
