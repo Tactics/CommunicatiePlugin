@@ -91,12 +91,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	protected $lastBriefBijlageCriteria = null;
 
 	
-	protected $collBatchTaaks;
-
-	
-	protected $lastBatchTaakCriteria = null;
-
-	
 	protected $alreadyInSave = false;
 
 	
@@ -670,14 +664,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				}
 			}
 
-			if ($this->collBatchTaaks !== null) {
-				foreach($this->collBatchTaaks as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -737,14 +723,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 				if ($this->collBriefBijlages !== null) {
 					foreach($this->collBriefBijlages as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
-				if ($this->collBatchTaaks !== null) {
-					foreach($this->collBatchTaaks as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1035,10 +1013,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$copyObj->addBriefBijlage($relObj->copy($deepCopy));
 			}
 
-			foreach($this->getBatchTaaks() as $relObj) {
-				$copyObj->addBatchTaak($relObj->copy($deepCopy));
-			}
-
 		} 
 
 		$copyObj->setNew(true);
@@ -1230,76 +1204,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function addBriefBijlage(BriefBijlage $l)
 	{
 		$this->collBriefBijlages[] = $l;
-		$l->setBriefTemplate($this);
-	}
-
-	
-	public function initBatchTaaks()
-	{
-		if ($this->collBatchTaaks === null) {
-			$this->collBatchTaaks = array();
-		}
-	}
-
-	
-	public function getBatchTaaks($criteria = null, $con = null)
-	{
-				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBatchTaakPeer.php';
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collBatchTaaks === null) {
-			if ($this->isNew()) {
-			   $this->collBatchTaaks = array();
-			} else {
-
-				$criteria->add(BatchTaakPeer::BRIEF_TEMPLATE_ID, $this->getId());
-
-				BatchTaakPeer::addSelectColumns($criteria);
-				$this->collBatchTaaks = BatchTaakPeer::doSelect($criteria, $con);
-			}
-		} else {
-						if (!$this->isNew()) {
-												
-
-				$criteria->add(BatchTaakPeer::BRIEF_TEMPLATE_ID, $this->getId());
-
-				BatchTaakPeer::addSelectColumns($criteria);
-				if (!isset($this->lastBatchTaakCriteria) || !$this->lastBatchTaakCriteria->equals($criteria)) {
-					$this->collBatchTaaks = BatchTaakPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastBatchTaakCriteria = $criteria;
-		return $this->collBatchTaaks;
-	}
-
-	
-	public function countBatchTaaks($criteria = null, $distinct = false, $con = null)
-	{
-				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBatchTaakPeer.php';
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		$criteria->add(BatchTaakPeer::BRIEF_TEMPLATE_ID, $this->getId());
-
-		return BatchTaakPeer::doCount($criteria, $distinct, $con);
-	}
-
-	
-	public function addBatchTaak(BatchTaak $l)
-	{
-		$this->collBatchTaaks[] = $l;
 		$l->setBriefTemplate($this);
 	}
 

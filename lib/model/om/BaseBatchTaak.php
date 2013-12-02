@@ -13,7 +13,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 
 
 	
-	protected $brief_template_id;
+	protected $object_class;
 
 
 	
@@ -44,9 +44,6 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 	protected $updated_at;
 
 	
-	protected $aBriefTemplate;
-
-	
 	protected $alreadyInSave = false;
 
 	
@@ -60,10 +57,10 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 	}
 
 	
-	public function getBriefTemplateId()
+	public function getObjectClass()
 	{
 
-		return $this->brief_template_id;
+		return $this->object_class;
 	}
 
 	
@@ -175,20 +172,16 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 
 	} 
 	
-	public function setBriefTemplateId($v)
+	public function setObjectClass($v)
 	{
 
-						if ($v !== null && !is_int($v) && is_numeric($v)) {
-			$v = (int) $v;
+						if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
 		}
 
-		if ($this->brief_template_id !== $v) {
-			$this->brief_template_id = $v;
-			$this->modifiedColumns[] = BatchTaakPeer::BRIEF_TEMPLATE_ID;
-		}
-
-		if ($this->aBriefTemplate !== null && $this->aBriefTemplate->getId() !== $v) {
-			$this->aBriefTemplate = null;
+		if ($this->object_class !== $v) {
+			$this->object_class = $v;
+			$this->modifiedColumns[] = BatchTaakPeer::OBJECT_CLASS;
 		}
 
 	} 
@@ -306,7 +299,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 
 			$this->id = $rs->getInt($startcol + 0);
 
-			$this->brief_template_id = $rs->getInt($startcol + 1);
+			$this->object_class = $rs->getString($startcol + 1);
 
 			$this->aantal = $rs->getInt($startcol + 2);
 
@@ -426,15 +419,6 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 			$this->alreadyInSave = true;
 
 
-												
-			if ($this->aBriefTemplate !== null) {
-				if ($this->aBriefTemplate->isModified()) {
-					$affectedRows += $this->aBriefTemplate->save($con);
-				}
-				$this->setBriefTemplate($this->aBriefTemplate);
-			}
-
-
 						if ($this->isModified()) {
 				if ($this->isNew()) {
 					$pk = BatchTaakPeer::doInsert($this, $con);
@@ -482,14 +466,6 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 			$failureMap = array();
 
 
-												
-			if ($this->aBriefTemplate !== null) {
-				if (!$this->aBriefTemplate->validate($columns)) {
-					$failureMap = array_merge($failureMap, $this->aBriefTemplate->getValidationFailures());
-				}
-			}
-
-
 			if (($retval = BatchTaakPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
@@ -517,7 +493,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 				return $this->getId();
 				break;
 			case 1:
-				return $this->getBriefTemplateId();
+				return $this->getObjectClass();
 				break;
 			case 2:
 				return $this->getAantal();
@@ -551,7 +527,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 		$keys = BatchTaakPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
-			$keys[1] => $this->getBriefTemplateId(),
+			$keys[1] => $this->getObjectClass(),
 			$keys[2] => $this->getAantal(),
 			$keys[3] => $this->getStatus(),
 			$keys[4] => $this->getVerzendenVanaf(),
@@ -578,7 +554,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 				$this->setId($value);
 				break;
 			case 1:
-				$this->setBriefTemplateId($value);
+				$this->setObjectClass($value);
 				break;
 			case 2:
 				$this->setAantal($value);
@@ -609,7 +585,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 		$keys = BatchTaakPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setBriefTemplateId($arr[$keys[1]]);
+		if (array_key_exists($keys[1], $arr)) $this->setObjectClass($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setAantal($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setStatus($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setVerzendenVanaf($arr[$keys[4]]);
@@ -625,7 +601,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 		$criteria = new Criteria(BatchTaakPeer::DATABASE_NAME);
 
 		if ($this->isColumnModified(BatchTaakPeer::ID)) $criteria->add(BatchTaakPeer::ID, $this->id);
-		if ($this->isColumnModified(BatchTaakPeer::BRIEF_TEMPLATE_ID)) $criteria->add(BatchTaakPeer::BRIEF_TEMPLATE_ID, $this->brief_template_id);
+		if ($this->isColumnModified(BatchTaakPeer::OBJECT_CLASS)) $criteria->add(BatchTaakPeer::OBJECT_CLASS, $this->object_class);
 		if ($this->isColumnModified(BatchTaakPeer::AANTAL)) $criteria->add(BatchTaakPeer::AANTAL, $this->aantal);
 		if ($this->isColumnModified(BatchTaakPeer::STATUS)) $criteria->add(BatchTaakPeer::STATUS, $this->status);
 		if ($this->isColumnModified(BatchTaakPeer::VERZENDEN_VANAF)) $criteria->add(BatchTaakPeer::VERZENDEN_VANAF, $this->verzenden_vanaf);
@@ -663,7 +639,7 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
-		$copyObj->setBriefTemplateId($this->brief_template_id);
+		$copyObj->setObjectClass($this->object_class);
 
 		$copyObj->setAantal($this->aantal);
 
@@ -701,35 +677,6 @@ abstract class BaseBatchTaak extends BaseObject  implements Persistent {
 			self::$peer = new BatchTaakPeer();
 		}
 		return self::$peer;
-	}
-
-	
-	public function setBriefTemplate($v)
-	{
-
-
-		if ($v === null) {
-			$this->setBriefTemplateId(NULL);
-		} else {
-			$this->setBriefTemplateId($v->getId());
-		}
-
-
-		$this->aBriefTemplate = $v;
-	}
-
-
-	
-	public function getBriefTemplate($con = null)
-	{
-		if ($this->aBriefTemplate === null && ($this->brief_template_id !== null)) {
-						include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefTemplatePeer.php';
-
-			$this->aBriefTemplate = BriefTemplatePeer::retrieveByPK($this->brief_template_id, $con);
-
-			
-		}
-		return $this->aBriefTemplate;
 	}
 
 

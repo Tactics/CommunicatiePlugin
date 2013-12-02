@@ -34,7 +34,7 @@ class BatchTaakMapBuilder {
 
 		$tMap->addPrimaryKey('ID', 'Id', 'int', CreoleTypes::INTEGER, true, null);
 
-		$tMap->addForeignKey('BRIEF_TEMPLATE_ID', 'BriefTemplateId', 'int', CreoleTypes::INTEGER, 'brief_template', 'ID', true, null);
+		$tMap->addColumn('OBJECT_CLASS', 'ObjectClass', 'string', CreoleTypes::VARCHAR, true, 45);
 
 		$tMap->addColumn('AANTAL', 'Aantal', 'int', CreoleTypes::INTEGER, false, null);
 

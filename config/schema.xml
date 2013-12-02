@@ -90,7 +90,7 @@
 
   <table name="batch_taak">
     <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
-    <column name="brief_template_id" type="INTEGER" required="true"/>
+    <column name="object_class" type="VARCHAR" size="45" required="true"/>
     <column name="aantal" type="INTEGER"/>
     <column name="status" type="VARCHAR" size="100"/>
     <column name="verzenden_vanaf" type="TIMESTAMP"/>
@@ -98,11 +98,5 @@
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>
     <column name="updated_at" type="TIMESTAMP"/>
-    <foreign-key name="fk_batch_taak_brief_template1" foreignTable="brief_template">
-      <reference local="brief_template_id" foreign="id"/>
-    </foreign-key>
-    <index>
-      <index-column name="brief_template_id"/>
-    </index>
   </table>
 </database>
