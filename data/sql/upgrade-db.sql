@@ -43,9 +43,6 @@ ALTER TABLE `brief_template` ADD `is_publiciteit` INT NOT NULL DEFAULT '0' AFTER
 --
 -- batch_taak tabel toevoegen + id van batchtaak aan brief_verzonden
 -- -----------------------------------------------------------------------------
-
-ALTER TABLE  `brief_verzonden` ADD  `batchtaak_id` INT NULL AFTER  `culture`;
-
 CREATE TABLE `batch_taak`
 (
 	`id` INTEGER  NOT NULL AUTO_INCREMENT,
@@ -57,5 +54,7 @@ CREATE TABLE `batch_taak`
 	`updated_at` DATETIME,
 	`created_by` INTEGER,
 	`updated_by` INTEGER,
-	PRIMARY KEY (`id`),
-)Type=MyISAM;
+	PRIMARY KEY (`id`)
+)Engine=MyISAM;
+
+ALTER TABLE  `brief_verzonden` ADD  `batchtaak_id` INT NULL AFTER  `culture`;
