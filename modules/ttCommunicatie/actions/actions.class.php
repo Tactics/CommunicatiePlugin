@@ -670,7 +670,6 @@ class ttCommunicatieActions extends sfActions
     if ($emailverzenden)
     { 
       $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'batch' => 0);
-      $tmpAttachments = $this->getRequestAttachments();
       
       if ($this->show_bestemmelingen)
       {
@@ -733,12 +732,12 @@ class ttCommunicatieActions extends sfActions
         
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
         // @todo: fix this, voor elke bestemmeling checken? of oke zo?
-//        if (!$this->forceer_versturen && $briefTemplate->getEenmaligVersturen() && $briefTemplate->ReedsVerstuurdNaar($this->objectClass, $object->getId()))
-//        {
-//          echo 'Reeds verstuurd.<br/>';
-//          $counter['reedsverstuurd']++;
-//          continue;
-//        } 
+        if (!$this->forceer_versturen && $briefTemplate->getEenmaligVersturen() && $briefTemplate->ReedsVerstuurdNaar($this->objectClass, $object->getId()))
+        {
+          echo 'Reeds verstuurd.<br/>';
+          $counter['reedsverstuurd']++;
+          continue;
+        } 
 
         $verstuurd = false;                     
 
@@ -859,7 +858,7 @@ class ttCommunicatieActions extends sfActions
 
         if(($batchVanaf === false) || (count($briefVerzondenIds) <= $batchVanaf))
         {          
-          $this->sendEmails($briefVerzondenRs, $tmpAttachments);
+          $this->sendEmails($briefVerzondenRs);
         }
         else
         {
@@ -906,10 +905,10 @@ class ttCommunicatieActions extends sfActions
       $briefVerzonden->verzendMail($tmpAttachments);
     }
 
-//    foreach($tmpAttachments as $tmpFile)
-//    {
-//      unlink($tmpFile);
-//    }
+    foreach($tmpAttachments as $tmpFile)
+    {
+      unlink($tmpFile);
+    }
   }
 
   /**
@@ -1230,9 +1229,10 @@ class ttCommunicatieActions extends sfActions
       // Controleren of bestand correct werd opgehaald.
       if ($this->getRequest()->getFileError($fileId) == UPLOAD_ERR_NO_FILE)
       {
-        // doe niets
+        continue;
       }
-      else if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
+
+      if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
       {
         switch ($this->getRequest()->getFileError($fileId))
         {
