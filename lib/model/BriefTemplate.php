@@ -9,6 +9,8 @@
  */ 
 class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 {
+  protected $culture_brieven = array();
+
   /**
    * geeft de string weergave van dit object terug
    */
@@ -445,6 +447,25 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       'createUri' => 'ttCommunicatie/create?return=%return_uri%',
     );
   }
+
+  /**
+   * zet culture_brieven property
+   * @param array $culture_brieven
+   */
+  public function setCultureBrieven($culture_brieven = array())
+  {
+    $this->culture_brieven = $culture_brieven;
+  }
+
+  /**
+   * get culture_brieven property
+   * @return array
+   */
+  public function getCultureBrieven()
+  {
+    return $this->culture_brieven;
+  }
+
 }
 sfPropelBehavior::add('BriefTemplate', array('storage'));
 sfPropelBehavior::add('BriefTemplate', array('updater_loggable'));

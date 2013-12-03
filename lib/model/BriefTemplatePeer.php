@@ -713,6 +713,51 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   }
 
   /**
+   * geeft de brieftemplate met de correcte brief layout terug
+   * afhv het gegeven object
+   *
+   * @param iTtCommunicatie $object
+   * @return BriefTemplate with the correct BriefLayout
+   * @throws ttCommunicatieException
+   */
+  public static function retrieveFromObject(iTtCommunicatie $object)
+  {
+    $objectClass = get_class($object);
+
+    // template ophalen
+    $layoutEnTemplateId = $object->getLayoutEnTemplateId();
+    if (!(isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id']))
+    {
+      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.';
+      throw new ttCommunicatieException($error);
+    }
+
+    $briefTemplate = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
+    if (!$briefTemplate)
+    {
+      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.';
+      throw new ttCommunicatieException($error);
+    }
+
+    // layout ophalen
+    if (!(isset($layoutEnTemplateId['brief_layout_id']) && $layoutEnTemplateId['brief_layout_id']))
+    {
+      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.';
+      throw new ttCommunicatieException($error);
+    }
+
+    $briefLayout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
+    if (!$briefLayout)
+    {
+      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.';
+      throw new ttCommunicatieException($error);
+    }
+    $briefTemplate->setBriefLayout($briefLayout);
+
+    return $briefTemplate;
+  }
+
+  /**
    * geeft terug of object een ttCommunicatie target is
    *
    * @param type $object

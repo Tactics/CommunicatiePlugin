@@ -214,6 +214,17 @@ class ttCommunicatieBestemmeling
   }
 
   /**
+   * zet de bestemmeling
+   *
+   * @param boolean $wants_publicity
+   */
+  public function setBestemmeling($bestemmeling)
+  {
+    $this->setObjectClass(get_class($bestemmeling));
+    $this->setObjectId($bestemmeling->getId());
+  }
+
+  /**
    * zet de culture van de bestemmeling
    *
    * @param string $culture

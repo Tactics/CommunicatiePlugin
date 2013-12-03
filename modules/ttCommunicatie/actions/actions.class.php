@@ -133,12 +133,13 @@ class ttCommunicatieActions extends sfActions
     // init van default waarden
     $this->brief_template = null;    
     $this->systeemplaceholders = array();
-    if ($this->getUser()->getAttribute('template_id', null, $this->md5hash))
+    $sessionTemplateId = $this->getUser()->getAttribute('template_id', null, $this->md5hash);
+    if ($templateId = $this->getRequestParameter('template_id', $sessionTemplateId))
     {
-      $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getUser()->getAttribute('template_id', null, $this->md5hash));
-      if (! $this->brief_template)
+      $this->brief_template = BriefTemplatePeer::retrieveByPK($templateId);
+      if (!$this->brief_template)
       {
-        throw new sfException('Brieftemplate (id: ' . $this->getRequestParameter('template_id') . ') niet gevonden.');
+        throw new ttCommunicatieException('Brieftemplate (id: ' . $templateId . ') niet gevonden.');
       } 
       
       $this->choose_template = false; 
@@ -150,7 +151,7 @@ class ttCommunicatieActions extends sfActions
     }
     
     // indien geem template_id opgegeven en je er geen kan kiezen, dan kan edit niet
-    if (! $this->brief_template && ! $this->choose_template)
+    if (!$this->brief_template && !$this->choose_template)
     {
       $this->edit_template = false;
     }
@@ -624,47 +625,20 @@ class ttCommunicatieActions extends sfActions
     $verzenden_via = $this->getRequestParameter('verzenden_via', false);
     // ophalen van de brieftemplate met de correcte layout (email of brief)
     $emailLayout = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
-
-    // Voorbeeld is altijd op papier?not
-    if ($voorbeeld)
-    {
-      $viaemail = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
-    }
-    else
-    {      
-      $viaemail = (($verzenden_via == 'liefst') || ($verzenden_via == 'altijd'));
-    }    
+    // ?
+    $viaemail = $voorbeeld
+      ? stripos($this->getRequestParameter('commit'), 'e-mail') !== false
+      : ($verzenden_via == 'liefst') || ($verzenden_via == 'altijd');    
     
     if ($voorbeeld && $this->criteria)
     {
       $this->criteria->setLimit(1);
-    }    
-         
-    // template_id ?
-    if ($this->getRequestParameter('template_id'))
-    {
-      $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id')); 
-      if (! $this->brief_template)
-      {
-        throw new sfException('Brieftemplate (id: ' . $this->getRequestParameter('template_id') . ') niet gevonden.');
-      }      
     }
 
     if ($this->brief_template)
     {
-      // brief layout ophalen
-      $briefLayout = $this->brief_template->getBriefLayout();
-
-      // onderwerp en tekst ophalen
-      $onderwerpen = $this->edit_template ? $this->getRequestParameter('onderwerp') : ($this->brief_template ? $this->brief_template->getOnderwerpCultureArr() : null);
-      $htmls = $this->edit_template ? $this->getRequestParameter('html') : ($this->brief_template ? $this->brief_template->getHtmlCultureArr() : null);
-
-      $this->cultureBrieven = array();
-      foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
-      {
-        $this->cultureBrieven[$culture] = $briefLayout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
-        $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
-      }
+      $cultureBrieven = $this->getCultureBrieven($this->brief_template, $emailLayout, false);
+      $this->briefTemplate->setCultureBrieven($cultureBrieven);
     }
 
     if ($emailverzenden)
@@ -687,147 +661,58 @@ class ttCommunicatieActions extends sfActions
         if (empty($bestemmelingen))
         {
           continue;
-        }
+        }       
         
         // geen brief_template => controleren of er aan het object zelf een template_id gekoppeld is
-        if (!$this->brief_template)
+        $briefTemplate = $this->brief_template;
+        if (!$briefTemplate)
         {
           try {
-            $templateAndLayout = $this->getBriefTemplateAndLayout($object);
-            $briefTemplate = $templateAndLayout['template'];
-            $briefLayout = $templateAndLayout['layout'];
+            $briefTemplate = BriefTemplatePeer::retrieveFromObject($object);
           }
           catch (ttCommunicatieException $e) {
             echo '<font color="red">' . $e->getMessage() . '</font><br />';
+            $counter['error']++;
             continue;
           }
-          
-          // onderwerp en tekst ophalen
-          $onderwerpen = $briefTemplate->getOnderwerpCultureArr();
-          $htmls = $briefTemplate->getHtmlCultureArr();
 
-          $this->cultureBrieven = array();
-          foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
-          {
-            $this->cultureBrieven[$culture] = $briefLayout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
-            $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];      
-          } 
-        } 
-        else
-        {
-          $briefTemplate = $this->brief_template;
+          $cultureBrieven = $this->getCultureBrieven($briefTemplate, true, true);
+          $briefTemplate->setCultureBrieven($cultureBrieven);
         }        
 
         echo $this->objectClass . ' (' . (method_exists($object, '__toString') ? $object->__toString() : 'id: ' . $object->getId()) . '): ';
 
-
-        // sommige templates mogen niet worden verstuurd naar het object
-        // volgens businessrules afh vd status van het object
-        if (method_exists($object, 'sendingTemplateAllowed') && !$object->sendingTemplateAllowed($briefTemplate))
+        // check some business logic/rules
+        if (!$this->sendingAllowed($object, $briefTemplate, $counter))
         {
-          echo 'Niet toegestaan.<br/>';
-          $counter['niettoegestaan']++;
           continue;
-        }
-        
-        // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-        // @todo: fix this, voor elke bestemmeling checken? of oke zo?
-        if (!$this->forceer_versturen && $briefTemplate->getEenmaligVersturen() && $briefTemplate->ReedsVerstuurdNaar($this->objectClass, $object->getId()))
-        {
-          echo 'Reeds verstuurd.<br/>';
-          $counter['reedsverstuurd']++;
-          continue;
-        } 
+        }        
 
-        $verstuurd = false;                     
-
+        $verstuurd = false;
         foreach ($bestemmelingen as $index => $bestemmeling)
         {
+          // controle of bestemmeling afgevinkt is in lijst
+          if (
+            isset($selectedBestemmelingen)
+            && (!isset($selectedBestemmelingen[$object->getId()]) || !in_array($index, $selectedBestemmelingen[$object->getId()]))
+          ) {
+            continue;          
+          }         
+          
           $bestemmeling->setObject($object);
           
           // indien $this->bestemmelingen_aantal = 1,
-          // kan email_to/cc/bcc overschreven worden
-          // controleren of email_to overschreven is
+          // kan email_to/cc/bcc overschreven worden          
           if ($this->bestemmelingen_aantal == 1)
-          {
-            $oldEmail = $bestemmeling->getEmailTo();
-            
-            $emailTo = str_replace(array(' ', ','), array('', ';'), trim($this->getRequestParameter('email_to', '')));
-            $emailCc = ($cc = trim($this->getRequestParameter('email_cc', ''))) 
-                ? explode(';', str_replace(array(' ', ','), array('', ';'), $cc))
-                : array();
-            $emailBcc = ($bcc = trim($this->getRequestParameter('email_bcc', ''))) 
-                ? explode(';', str_replace(array(' ', ','), array('', ';'), $bcc))
-                : array();
-            
-            $bestemmeling->setEmailTo($emailTo); 
-            $bestemmeling->setEmailCc($emailCc);
-            $bestemmeling->setEmailBcc($emailBcc);
-            $bestemmeling->setPrefersEmail(true);            
-            if (false === strpos($emailTo, $oldEmail))
-            {              
-              // emailto is overschreven, dus bestemmelingen class wijzigen naar object zelf
-              // zodat de email daar wordt gelogd + naam en adres wissen
-              $bestemmeling->setObjectClass($this->objectClass);
-              $bestemmeling->setObjectId($object->getId());
-              $bestemmeling->setNaam('');
-              $bestemmeling->setAdres('');
-            }            
-          }          
-        
-          // controle of bestemmeling afgevinkt is in lijst
-          if (isset($selectedBestemmelingen))
           {            
-            if (!isset($selectedBestemmelingen[$object->getId()]) || !in_array($index, $selectedBestemmelingen[$object->getId()]))
-            {
-              continue;
-            }
-          }
+            $this->updateBestemmeling($bestemmeling);            
+          }          
           
           $email = $bestemmeling->getEmailTo();
           $prefersEmail = $bestemmeling->getPrefersEmail();
           if (((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd')) && $email)
-          { 
-            $culture = BriefTemplatePeer::calculateCulture($bestemmeling);
-            
-            // work with copy of culturebrieven
-            $tmpCultureBrieven = $this->cultureBrieven;
-
-            // parse If statements
-            $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
-            $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
-
-            // replace placeholders
-            $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true, true, true);
-            if (!$briefTemplate->getIsPubliciteit() && isset($defaultPlaceholders['uitschrijven']))
-            {
-              unset($defaultPlaceholders['uitschrijven']);
-            }
-            
-            $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, $defaultPlaceholders);
-            $head = $tmpCultureBrieven[$culture]['head'];
-            $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
-            $body = $tmpCultureBrieven[$culture]['body'];
-            $brief = $head . $body;
-
-            $briefVerzonden = new BriefVerzonden();
-            // object dat verzonden wordt bv factuur
-            $briefVerzonden->setObjectClass($this->objectClass);
-            $briefVerzonden->setObjectId($object->getId());
-            // eindbestemmeling naar waar effectief verzonden wordt bv debiteurr
-            $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
-            $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());
-            $briefVerzonden->setBriefTemplateId($briefTemplate->getId());
-            $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
-            $briefVerzonden->setAdres($email);
-            $briefVerzonden->setCc(isset($options['cc']) ? implode(';', $options['cc']) : null);
-            $briefVerzonden->setBcc(isset($options['bcc']) ? implode(';', $options['bcc']) : null);
-            $briefVerzonden->setOnderwerp($onderwerp);
-            $briefVerzonden->setCulture($culture);
-            $briefVerzonden->setHtml(BriefTemplatePeer::clearPlaceholders($brief));
-            $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_NT_VERZONDEN);
-            $briefVerzonden->save();
-
+          {
+            $briefVerzonden = BriefVerzondenPeer::create($briefTemplate, $bestemmeling);
             $briefVerzondenIds[] = $briefVerzonden->getId();
           }
           else
@@ -877,7 +762,7 @@ class ttCommunicatieActions extends sfActions
       exit();
     }
     else
-    { 
+    {      
       if ($this->criteria)
       {
         $this->rs = $this->getRs();
@@ -1274,48 +1159,98 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-   * geeft de template en layout terug afhv het gegeven object
-   * @param iTtCommunicatie $object
-   * @return array
-   * @throws ttCommunicatieException
+   * overschrijven van to, cc, bcc adhv request params
+   * 
+   * @param iTtCommunicatieBestemmeling $bestemmeling
+   * @return \iTtCommunicatieBestemmeling
    */
-  private function getBriefTemplateAndLayout(iTtCommunicatie $object)
-  {
-    $objectClass = get_class($object);
+  private function updateBestemmeling(ttCommunicatieBestemmeling $bestemmeling)
+  {    
+    $oldEmail = $bestemmeling->getEmailTo();
+
+    $emailTo = str_replace(array(' ', ','), array('', ';'), trim($this->getRequestParameter('email_to', '')));
+    $emailCc = ($cc = trim($this->getRequestParameter('email_cc', '')))
+        ? explode(';', str_replace(array(' ', ','), array('', ';'), $cc))
+        : array();
+    $emailBcc = ($bcc = trim($this->getRequestParameter('email_bcc', '')))
+        ? explode(';', str_replace(array(' ', ','), array('', ';'), $bcc))
+        : array();
+
     
-    // template ophalen
-    $layoutEnTemplateId = $object->getLayoutEnTemplateId();
-    if (!(isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id']))
+    $bestemmeling->setEmailTo($emailTo);
+    $bestemmeling->setEmailCc($emailCc);
+    $bestemmeling->setEmailBcc($emailBcc);
+    $bestemmeling->setPrefersEmail(true);
+
+    // indien emailto overschreven
+    if (false === strpos($emailTo, $oldEmail))
+    {      
+      // bestemmelingen class wijzigen naar object zelf
+      // zodat de email daar wordt gelogd + naam en adres wissen
+      $bestemmeling->setBestemmeling($bestemmeling->getObject());
+      $bestemmeling->setNaam('');
+      $bestemmeling->setAdres('');
+    }
+  }
+
+  /**
+   * geeft voor elke culture de brieven terug opgesplitst in
+   * head, body en onderwerp
+   * 
+   * @param BriefTemplate $brief_template
+   * @param boolean $email_layout
+   * @param boolean $email_verzenden
+   * @return array
+   */
+  private function getCultureBrieven(BriefTemplate $brief_template, $email_layout, $email_verzenden)
+  {
+    $onderwerpen = $this->edit_template
+      ? $this->getRequestParameter('onderwerp')
+      : $brief_template->getOnderwerpCultureArr();
+    
+    $htmls = $this->edit_template
+      ? $this->getRequestParameter('html')
+      : $brief_template->getHtmlCultureArr();
+
+    $briefLayout = $brief_template->getBriefLayout();
+    $cultureBrieven = array();
+    foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
     {
-      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.';
-      throw new ttCommunicatieException($error);
+      $cultureBrieven[$culture] = $briefLayout->getHeadAndBody($email_layout ? 'mail' : 'brief', $culture, $htmls[$culture], $email_verzenden);
+      $cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
     }
 
-    $briefTemplate = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
-    if (!$briefTemplate)
+    return $cultureBrieven;
+  }
+
+  /**
+   * checks is sending of the object is allowed
+   * according to some business logic
+   * 
+   * @param mixed $object
+   * @param BriefTemplate $brief_template
+   * @param array $counter
+   * @return boolean
+   */
+  private function sendingAllowed($object, BriefTemplate $brief_template, &$counter)
+  {
+    if (method_exists($object, 'sendingTemplateAllowed') && !$object->sendingTemplateAllowed($brief_template))
     {
-      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.';
-      throw new ttCommunicatieException($error);
+      echo 'Niet toegestaan.<br/>';
+      $counter['niettoegestaan']++;
+      return false;
     }
 
-    // layout ophalen
-    if (!(isset($layoutEnTemplateId['brief_layout_id']) && $layoutEnTemplateId['brief_layout_id']))
-    {
-      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.';
-      throw new ttCommunicatieException($error);
-    }
+    // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
+    // @todo: fix this, voor elke bestemmeling checken? of oke zo?
+//    if (!$this->forceer_versturen && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar(get_class($object), $object->getId()))
+//    {
+//      echo 'Reeds verstuurd.<br/>';
+//      $counter['reedsverstuurd']++;
+//      return false;
+//    }
 
-    $briefLayout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
-    if (!$briefLayout)
-    {
-      $error = $objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.';
-      throw new ttCommunicatieException($error);
-    }
-
-    return array(
-      'template' => $briefTemplate,
-      'layout'   => $briefLayout
-    );
+    return true;
   }
 }
   
