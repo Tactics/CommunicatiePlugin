@@ -36,3 +36,11 @@ ADD `bcc` VARCHAR( 1000 ) NULL DEFAULT NULL AFTER `cc` ;
 -- is_publiciteit toevoegen aan template
 -- -----------------------------------------------------------------------------
 ALTER TABLE `brief_template` ADD `is_publiciteit` INT NOT NULL DEFAULT '0' AFTER `eenmalig_versturen`;
+
+-- -----------------------------------------------------------------------------
+-- 02/12/2013
+-- Joris Hontelé
+--
+-- lokale images toevoegen aan briefsjablonen
+-- -----------------------------------------------------------------------------
+!!!!folder aanmaken: brief_templates in de web/images dir!!!
