@@ -1,4 +1,3 @@
-<meta http-equiv="refresh" content="5" >
 <?php if (!$sf_request->isXmlHttpRequest()) : ?>
 
   <?php include_partial('breadcrumb', array('identifier' => 'Batchtaken')) ?>
@@ -114,9 +113,26 @@
 
   echo $table;
 ?>
-<?php echo pager_navigation($pager, "organisatie/list", 'zoekresultaten') ?>
+<?php echo pager_navigation($pager, "ttCommunicatieBatch/list", 'zoekresultaten') ?>
 <?php if (!$sf_request->isXmlHttpRequest()): ?>
   </div> <!-- /#zoekresultaten -->
 </div> <!-- /pageblock -->
+
+
+<script type="text/javascript">
+  function refreshList()
+  {
+    jQuery.get(
+      '<?php echo url_for('ttCommunicatieBatch/list'); ?>',      
+      function(html){
+        jQuery('#zoekresultaten').html(html);
+      }
+    );
+  }
+
+  jQuery(function($){
+    setInterval(refreshList, 5000);
+  });
+</script>
 
 <?php endif ?>
