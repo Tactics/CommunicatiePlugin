@@ -26,7 +26,9 @@ class ttCommunicatieComponents extends sfComponents
     {
       $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
       $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID, $object_id);
-    }    
+    }
+
+    $pager->getCriteria()->add(BriefVerzondenPeer::STATUS, BriefVerzondenPeer::STATUS_VERZONDEN);
     
     /*
      TODO: BasePeer::createSelectSql(Criteria $criteria, &$params)
