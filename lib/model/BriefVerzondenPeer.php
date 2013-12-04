@@ -39,7 +39,7 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
    * @param ttCommunicatieBestemmeling $bestemmeling
    * @return \BriefVerzonden
    */
-  public static function create(BriefTemplate $brief_template, ttCommunicatieBestemmeling $bestemmeling)
+  public static function createEmail(BriefTemplate $brief_template, ttCommunicatieBestemmeling $bestemmeling)
   {
     $cultureBrieven = $brief_template->getCultureBrieven();
     $culture = BriefTemplatePeer::calculateCulture($bestemmeling);

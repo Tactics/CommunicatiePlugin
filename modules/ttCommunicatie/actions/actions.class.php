@@ -19,6 +19,15 @@
  */
 class ttCommunicatieActions extends sfActions
 {
+  private $counter = array(
+    'reedsverstuurd' => 0,
+    'verstuurd' => 0,
+    'error' => 0,
+    'wenstgeenmail' => 0,
+    'niettoegestaan' => 0,
+    'batch' => 0
+  );
+
   /**
    * geeft de resultset van objecten weer afh van de gegeven class en object_ids
    *
@@ -642,9 +651,7 @@ class ttCommunicatieActions extends sfActions
     }
 
     if ($emailverzenden)
-    { 
-      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'batch' => 0);
-      
+    {
       if ($this->show_bestemmelingen)
       {
         $selectedBestemmelingen = $this->getRequestParameter("bestemmelingen", array());
@@ -662,6 +669,9 @@ class ttCommunicatieActions extends sfActions
         {
           continue;
         }       
+
+        // start logging
+        $this->startObjectLog($object);
         
         // geen brief_template => controleren of er aan het object zelf een template_id gekoppeld is
         $briefTemplate = $this->brief_template;
@@ -671,24 +681,21 @@ class ttCommunicatieActions extends sfActions
             $briefTemplate = BriefTemplatePeer::retrieveFromObject($object);
           }
           catch (ttCommunicatieException $e) {
-            echo '<font color="red">' . $e->getMessage() . '</font><br />';
-            $counter['error']++;
+            $this->log($e->getMessage());
+            $this->counter['error']++;
             continue;
           }
 
           $cultureBrieven = $this->getCultureBrieven($briefTemplate, true, true);
           $briefTemplate->setCultureBrieven($cultureBrieven);
-        }        
-
-        echo $this->objectClass . ' (' . (method_exists($object, '__toString') ? $object->__toString() : 'id: ' . $object->getId()) . '): ';
+        }
 
         // check some business logic/rules
-        if (!$this->sendingAllowed($object, $briefTemplate, $counter))
+        if (!$this->sendingAllowed($object, $briefTemplate))
         {
           continue;
-        }        
-
-        $verstuurd = false;
+        }
+        
         foreach ($bestemmelingen as $index => $bestemmeling)
         {
           // controle of bestemmeling afgevinkt is in lijst
@@ -712,8 +719,9 @@ class ttCommunicatieActions extends sfActions
           $prefersEmail = $bestemmeling->getPrefersEmail();
           if (((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd')) && $email)
           {
-            $briefVerzonden = BriefVerzondenPeer::create($briefTemplate, $bestemmeling);
+            $briefVerzonden = BriefVerzondenPeer::createEmail($briefTemplate, $bestemmeling);
             $briefVerzondenIds[] = $briefVerzonden->getId();
+            $this->log('E-mail klaar voor verzending.', false);
           }
           else
           {
@@ -721,8 +729,8 @@ class ttCommunicatieActions extends sfActions
               ? 'Communicatie via e-mail niet gewenst.'
               : 'Geen e-mail adres.';
             
-            echo '<font color=red>' . $nietVerstuurdReden . '</font><br />';
-            $counter['wenstgeenmail']++;
+            $this->log($nietVerstuurdReden);
+            $this->counter['wenstgeenmail']++;
             if (method_exists($object, 'addLog'))
             {
               $log = "Brief {$briefTemplate->getNaam()} werd <b>niet</b> verzonden via e-mail.";
@@ -736,28 +744,25 @@ class ttCommunicatieActions extends sfActions
       if (!empty($briefVerzondenIds))
       {        
         $batchVanaf = sfConfig::get('sf_communicatie_batchmailing_vanaf', false);
-
-        $c = new Criteria();
-        $c->add(BriefVerzondenPeer::ID, $briefVerzondenIds, Criteria::IN);
-        $briefVerzondenRs = BriefVerzondenPeer::doSelectRS($c);
-
-        if(($batchVanaf === false) || (count($briefVerzondenIds) <= $batchVanaf))
+        $briefVerzondenRs = $this->getBriefVerzondenRs($briefVerzondenIds);
+        if(($batchVanaf === false) || (count($briefVerzondenIds) < $batchVanaf))
         {          
-          $this->sendEmails($briefVerzondenRs);
+          $this->counter['verstuurd'] = $this->sendEmails($briefVerzondenRs);
         }
         else
         {
-          $this->createBatchmailing($briefVerzondenRs);
+          $this->counter['batch'] = $this->createBatchmailing($briefVerzondenRs);
         }
       } 
 
       echo '<br/><br/>Einde verzendlijst<br/><br/>';
       echo 'Totaal:<br/>';
-      echo 'Reeds verstuurd: ' . $counter['reedsverstuurd'] . '<br/>';
-      echo 'Niet toegestaan: ' . $counter['niettoegestaan'] . '<br/>';
-      echo 'Verstuurd: ' . ($counter['verstuurd'] == 0 ? 'Batchtaak aangemaakt' : $counter['verstuurd']) . '<br />';
-      echo 'Error: ' . $counter['error'] . '<br />';
-      echo 'Wensen geen mail: ' . $counter['wenstgeenmail'] . '<br />';
+      echo 'Reeds verstuurd: ' . $this->counter['reedsverstuurd'] . '<br/>';
+      echo 'Niet toegestaan: ' . $this->counter['niettoegestaan'] . '<br/>';
+      echo 'Wensen geen mail: ' . $this->counter['wenstgeenmail'] . '<br />';
+      echo 'Verstuurd: ' . $this->counter['verstuurd'] . '<br />';
+      echo 'Batch: ' . $this->counter['batch'] . '<br />';
+      echo 'Error: ' . $this->counter['error'] . '<br />';
       echo '<a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
       exit();
     }
@@ -778,22 +783,60 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-  * Verzend mails
-  */
+   * Verzend mails
+   */
   private function sendEmails($briefVerzondenRs)
   {
     $tmpAttachments = $this->getRequestAttachments();
+    $aantalVerstuurd = 0;
     while($briefVerzondenRs->next())
     {
       $briefVerzonden = new BriefVerzonden();
       $briefVerzonden->hydrate($briefVerzondenRs);
-      $briefVerzonden->verzendMail($tmpAttachments);
+      $briefTemplate = new BriefTemplate();
+      $briefTemplate->hydrate($briefVerzondenRs, BriefVerzondenPeer::NUM_COLUMNS + 1);
+      $object = new $this->objectClass();
+      $object->hydrate($briefVerzondenRs, BriefVerzondenPeer::NUM_COLUMNS + BriefTemplatePeer::NUM_COLUMNS + 1);
+
+      $this->startObjectLog($object);
+
+      $emailTo = $briefVerzonden->getAdres();
+
+      try {
+        $briefVerzonden->verzendMail($tmpAttachments);
+      }
+      catch (Exception $e){
+        $this->counter['error']++;
+
+        $log = 'E-mail <b>niet</b> verzonden naar ' . $emailTo . '<br />Reden: ' . nl2br($e->getMessage());
+        $this->log($log);
+        $this->addObjectLog($object, $log);
+        continue;
+      }
+
+      $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
+      $briefVerzonden->save();
+      $aantalVerstuurd++;
+
+      $log = 'E-mail "' . $briefTemplate->getNaam() . '" verzonden naar : ' . $emailTo;
+      $log .= $briefVerzonden->getCc() ? ', cc: ' . $briefVerzonden->getCc() : '';
+      $log .= $briefVerzonden->getBcc() ? ', bcc: ' . $briefVerzonden->getBcc() : '';
+      $this->log($log, false);
+      $this->addObjectLog($object, $log, $briefVerzonden->getHtml());
+
+      // notify object dat er een brief naar het object verzonden is
+      if (method_exists($object, 'notifyBriefVerzonden'))
+      {
+        $object->notifyBriefVerzonden($briefVerzonden);
+      }
     }
 
     foreach($tmpAttachments as $tmpFile)
     {
       unlink($tmpFile);
     }
+
+    return $aantalVerstuurd;
   }
 
   /**
@@ -826,6 +869,8 @@ class ttCommunicatieActions extends sfActions
     $dispatcher = $this->getContainer()->get('event_dispatcher');
     $event = new TtCommunicatieBatchTaakEvent($batchtaak);
     $dispatcher->dispatch(TtCommunicatieEvents::TT_COMMUNICATIE_BATCH_TAAK_CREATED, $event);
+
+    return $briefVerzondenRs->getRecordCount();
   }
 
   /**
@@ -1183,7 +1228,7 @@ class ttCommunicatieActions extends sfActions
     $bestemmeling->setPrefersEmail(true);
 
     // indien emailto overschreven
-    if (false === strpos($emailTo, $oldEmail))
+    if ($oldEmail && (false === strpos($emailTo, $oldEmail)))
     {      
       // bestemmelingen class wijzigen naar object zelf
       // zodat de email daar wordt gelogd + naam en adres wissen
@@ -1229,28 +1274,93 @@ class ttCommunicatieActions extends sfActions
    * 
    * @param mixed $object
    * @param BriefTemplate $brief_template
-   * @param array $counter
    * @return boolean
    */
-  private function sendingAllowed($object, BriefTemplate $brief_template, &$counter)
+  private function sendingAllowed($object, BriefTemplate $brief_template)
   {
     if (method_exists($object, 'sendingTemplateAllowed') && !$object->sendingTemplateAllowed($brief_template))
     {
       echo 'Niet toegestaan.<br/>';
-      $counter['niettoegestaan']++;
+      $this->counter['niettoegestaan']++;
       return false;
     }
 
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
     // @todo: fix this, voor elke bestemmeling checken? of oke zo?
-//    if (!$this->forceer_versturen && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar(get_class($object), $object->getId()))
-//    {
-//      echo 'Reeds verstuurd.<br/>';
-//      $counter['reedsverstuurd']++;
-//      return false;
-//    }
+    if (!$this->forceer_versturen && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar(get_class($object), $object->getId()))
+    {
+      echo 'Reeds verstuurd.<br/>';
+      $this->counter['reedsverstuurd']++;
+      return false;
+    }
 
     return true;
+  }  
+
+  /**
+   * geeft de resultset terug van de te verzenden brieven
+   * bevat ook de velden van het te verzenden object
+   * 
+   * @param array $brief_verzonden_ids
+   * @return resource Resultset
+   */
+  private function getBriefVerzondenRs($brief_verzonden_ids)
+  {
+    $objectId = call_user_func($this->objectClass . 'Peer::translateFieldName', 'Id', BasePeer::TYPE_PHPNAME, BasePeer::TYPE_COLNAME);
+
+    $c = new Criteria();    
+    $c->addJoin(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID, Criteria::JOIN);
+    $c->addJoin(BriefVerzondenPeer::OBJECT_ID, $objectId, Criteria::JOIN);
+    $c->add(BriefVerzondenPeer::ID, $brief_verzonden_ids, Criteria::IN);
+    $c->clearSelectColumns();
+    BriefVerzondenPeer::addSelectColumns($c);
+    BriefTemplatePeer::addSelectColumns($c);
+    call_user_func($this->objectClass . 'Peer::addSelectColumns', $c);
+
+    return BriefVerzondenPeer::doSelectRS($c);
+  }
+
+  /**
+   * start logging van object
+   *
+   * @param mixed $object
+   * @return string
+   */
+  private function startObjectLog($object)
+  {
+    $log = $this->objectClass . ' (' . (method_exists($object, '__toString')
+      ? $object->__toString()
+      : 'id: ' . $object->getId()) . '): ';
+
+    echo $log;
+  }
+
+  /**
+   * outputs the log
+   * 
+   * @param string $log
+   * @param boolean $error color = red when true
+   */
+  private function log($log, $error = true)
+  {
+    echo $error ? '<font color="red">' . $log . '</font>' : $log;
+    echo '<br/>';
+  }
+
+  /**
+   * add log to object if addLog method exists
+   *
+   * @param string $log
+   * @param mixed $object
+   */
+  private function addObjectLog($object, $log, $log_detail = null)
+  {
+    if (!method_exists($object, 'addLog'))
+    {
+      return;
+    }
+
+    $object->addLog($log, $log_detail);
   }
 }
   

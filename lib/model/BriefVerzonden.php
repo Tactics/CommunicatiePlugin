@@ -31,6 +31,8 @@ class BriefVerzonden extends BaseBriefVerzonden
 
   /**
    * Verzend e-mails
+   * 
+   * @return int The number of successful recipients
    */
   public function verzendMail($attachments = array())
   {
@@ -46,6 +48,8 @@ class BriefVerzonden extends BaseBriefVerzonden
     
     $nietVerstuurdReden = '';
     $options = array(
+      'cc' => $this->getCc() ? explode(';', $this->getCc()) : array(),
+      'bcc' => $this->getBcc() ? explode(';', $this->getBcc()) : array(),
       'onderwerp' => $this->getOnderwerp(),
       'skip_template' => true,
       //'afzender' => $this->afzender, ????????????
@@ -61,54 +65,8 @@ class BriefVerzonden extends BaseBriefVerzonden
         )
       )
     );
-
-    $cc = $this->getCc();
-    if (!empty($cc))
-    {
-      $options['cc'] = $cc;
-    }
-
-    $bcc = $this->getBcc();
-    if (!empty($bcc))
-    {
-      $options['bcc'] = $bcc;
-    }
-
-    $verstuurd = false;
-    $email = $this->getAdres();
-    try {
-      BerichtPeer::verstuurEmail($email, $this->getHtml(), $options);
-
-      $verstuurd = true;
-      echo 'Bericht verzonden naar : ' . $email;
-      echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
-      echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
-      echo '<br/>';
-      //$counter['verstuurd']++;
-
-      $this->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
-      $this->save();
-
-      // notify object dat er een brief naar het object verzonden is
-      if (method_exists($object, 'notifyBriefVerzonden'))
-      {
-        $object->notifyBriefVerzonden($this);
-      }      
-    }
-    catch(Exception $e)
-    {
-      $nietVerstuurdReden = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
-      echo $nietVerstuurdReden;
-      //$counter['error']++;
-    }
-
-    // add log
-    if (method_exists($object, 'addLog'))
-    {
-      $log = "Brief '" . $briefTemplate->getNaam() . "' werd " . ($verstuurd ? "" : "<b>niet</b> ") . "verstuurd via mail naar " . $email . '.';
-      $log .= $verstuurd ? '' : '  Reden: ' . $nietVerstuurdReden;
-      $object->addLog($log, $verstuurd ? $this->getHtml() : null);
-    }
+    
+    return BerichtPeer::verstuurEmail($this->getAdres(), $this->getHtml(), $options);
   }
 
 

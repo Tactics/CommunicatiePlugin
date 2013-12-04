@@ -478,13 +478,10 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * @param string $html
    * @param ttCommunicatieBestemmeling $bestemmeling
    * @param bool $email
-   * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
-  public static function parseIfStatements($html, $bestemmeling, $email = false, $otherPlaceholders = array())
+  public static function parseIfStatements($html, $bestemmeling, $email = false)
   {
-    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($bestemmeling, $email), $otherPlaceholders);
-
     while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE))
     {
       $changeInOffset = 0;
@@ -547,13 +544,11 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * @param string $html
    * @param ttCommunicatieBestemmeling $bestemmeling
    * @param bool $email
-   * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
-  public static function parseForeachStatements($html, $bestemmeling, $email = false, $otherPlaceholders = array())
+  public static function parseForeachStatements($html, $bestemmeling, $email = false)
   {
     $object = $bestemmeling->getObject();
-    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($bestemmeling, $email), $otherPlaceholders);
     while (preg_match_all('/{%\s*foreach\s+[^{]*({% endforeach %})/', $html, $matches, PREG_OFFSET_CAPTURE))
     {
       $changeInOffset = 0;
@@ -664,8 +659,9 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * Geeft de default placeholers terug
    *
    * @param ttCommunicatieBestemmeling $bestemmeling
-   * @param ttCommunicatiebestemmeling $bestemmeling
-   * @param bool $generalPlaceholders met bv handtekeningen placeholders
+   * @param boolean $email_verzenden Effectief verzenden van emails?
+   * @param boolean $via_email 
+   * @param boolean $generalPlaceholders met bv handtekeningen placeholders
    * @return array default placeholders
    */
   public static function getDefaultPlaceholders($bestemmeling = null, $email_verzenden = false, $via_email = false, $generalPlaceholders = false)

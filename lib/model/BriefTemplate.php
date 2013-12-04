@@ -242,8 +242,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
     
     $brief = $headAndBody['head'] . $headAndBody['body'];
-    $brief = BriefTemplatePeer::parseForeachStatements($brief, $bestemmeling, true, $systeemvalues);
-    $brief = BriefTemplatePeer::parseIfStatements($brief, $bestemmeling, true, $systeemvalues);
+    $brief = BriefTemplatePeer::parseForeachStatements($brief, $bestemmeling, true);
+    $brief = BriefTemplatePeer::parseIfStatements($brief, $bestemmeling, true);
     $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
     
     // Mail versturen
