@@ -93,33 +93,16 @@ class ttCommunicatieBatchActions extends sfActions
     $this->pager->init();
   }
 
-  /**
-   * Activeert een batchtaak
-   */
-  public function executePlay()
+  public function executeChangeStatus()
   {
-    $batchtaak = BatchTaakPeer::retrieveByPK($this->getRequestParameter('id'));
-    $this->forward404Unless($batchtaak);
+    $batchTaak = BatchTaakPeer::retrieveByPK($this->getRequestParameter('id'));
+    $this->forward404Unless($batchTaak);
 
-    $batchtaak->setStatus(BatchTaakPeer::STATUS_WACHTRIJ);
-    $batchtaak->save();
+    $batchTaak->setStatus($this->getRequestParameter('status'));
+    $batchTaak->save();
 
     $this->redirect('ttCommunicatieBatch/list');
-  }
-
-  /**
-   * Pauseert een batchtaak
-   */
-  public function executePause()
-  {
-    $batchtaak = BatchTaakPeer::retrieveByPK($this->getRequestParameter('id'));
-    $this->forward404Unless($batchtaak);
-
-    $batchtaak->setStatus(BatchTaakPeer::STATUS_PAUZE);
-    $batchtaak->save();
-
-    $this->redirect('ttCommunicatieBatch/list');
-  }
+  }  
 
   /**
    * Echo html van de mail als preview

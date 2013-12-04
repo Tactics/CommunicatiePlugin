@@ -1,0 +1,3 @@
+changeStatus:
+  url:   /ttCommunicatieBatch/changeStatus/:id/:status
+  param: { module: ttCommunicatieBatch, action: changeStatus }

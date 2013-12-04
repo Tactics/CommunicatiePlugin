@@ -100,15 +100,42 @@
   {
     $cssClass = $batchtaak->getStatus() == BatchTaakPeer::STATUS_VERZENDING ? 'verzending' : '';
 
-    $actielink = $batchtaak->getStatus() != BatchTaakPeer::STATUS_VERZONDEN ? ($batchtaak->getStatus() == BatchTaakPeer::STATUS_PAUZE ? link_to(image_tag("icons/play.16.png"), 'ttCommunicatieBatch/play?id='.$batchtaak->getId(), array('title'=>'Start', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt starten?')) : link_to(image_tag("icons/pause.16.png"), 'ttCommunicatieBatch/pause?id='.$batchtaak->getId(), array('title'=>'Pauze', 'confirm'=>'Bent u zeker dat u deze batchtaak wilt pauzeren?'))) : '';
-    $table->addRow(array(
-      array('content' => link_to($batchtaak->getId(), 'ttCommunicatieBatch/show?id=' . $batchtaak->getId())),
-      array('content' => $batchtaak->getAantal() . 'x ' .$batchtaak->getObjectClass()),
-      array('content' => $batchtaak->getAantal()),
-      array('content' => $batchtaak->getStatus()),
-      array("content" => $batchtaak->getVerzendenVanaf('d/m/Y H:i')),
-      array("content" => link_to(image_tag("icons/document_zoom_16.gif"), "ttCommunicatieBatch/show?id=" . $batchtaak->getId(), 'title=Bekijk').'&nbsp;'.$actielink)
-    ), array('rowClass' => $cssClass));
+    $actieLinks = '';
+    if ($batchtaak->getStatus() == BatchTaakPeer::STATUS_PAUZE)
+    {
+      $actieLinks .= link_to(image_tag("icons/play.16.png"), '@changeStatus?id=' . $batchtaak->getId() . '&status=' . BatchTaakPeer::STATUS_WACHTRIJ, array(
+        'title'=>'Start',
+        'confirm'=>'Bent u zeker dat u deze batchtaak wilt starten?')
+      );
+    }
+    if ($batchtaak->getStatus() == BatchTaakPeer::STATUS_WACHTRIJ)
+    {
+      $actieLinks .= link_to(image_tag("icons/pause.16.png"), '@changeStatus?id=' . $batchtaak->getId() . '&status=' . BatchTaakPeer::STATUS_PAUZE, array(
+        'title'=>'Pauze',
+        'confirm'=>'Bent u zeker dat u deze batchtaak wilt pauzeren?')
+      );
+    }
+    if (!in_array($batchtaak->getStatus(), array(BatchTaakPeer::STATUS_GEANNULEERD, BatchTaakPeer::STATUS_VERZONDEN)))
+    {
+      $actieLinks .= link_to(image_tag("icons/cancel_16.gif"), '@changeStatus?id=' . $batchtaak->getId() . '&status=' . BatchTaakPeer::STATUS_GEANNULEERD, array(
+        'title'=>'Annuleren',
+        'confirm'=>'Bent u zeker dat u deze batchtaak wilt annuleren?')
+      );
+    }
+    
+    $table->addRow(
+      array(
+        link_to($batchtaak->getId(), 'ttCommunicatieBatch/show?id=' . $batchtaak->getId()),
+        $batchtaak->getObjectClass(),
+        $batchtaak->getAantal(),
+        $batchtaak->getStatus(),
+        $batchtaak->getVerzendenVanaf('d/m/Y H:i'),
+        link_to(image_tag("icons/document_zoom_16.gif"), "ttCommunicatieBatch/show?id=" . $batchtaak->getId(), 'title=Bekijk') . '&nbsp;' . $actieLinks
+      ),
+      array(
+        'rowClass' => $cssClass
+      )
+    );
   }
 
   echo $table;
