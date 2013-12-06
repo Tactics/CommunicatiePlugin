@@ -34,26 +34,15 @@ class BriefVerzonden extends BaseBriefVerzonden
    * 
    * @return int The number of successful recipients
    */
-  public function verzendMail($attachments = array())
+  public function verzendMail()
   {
-    $briefTemplate = $this->getBriefTemplate();
-    $attachments = array_merge($attachments, $briefTemplate->getAttachments());
-
-    $object = $this->getObject();
-    // object-eigen attachements
-    if (method_exists($object, 'getBriefAttachments'))
-    {      
-      $attachments = array_merge($attachments, $object->getBriefAttachments());
-    }
-    
-    $nietVerstuurdReden = '';
     $options = array(
       'cc' => $this->getCc() ? explode(';', $this->getCc()) : array(),
       'bcc' => $this->getBcc() ? explode(';', $this->getBcc()) : array(),
       'onderwerp' => $this->getOnderwerp(),
       'skip_template' => true,
-      //'afzender' => $this->afzender, ????????????
-      'attachements' => $attachments,
+      'afzender' => sfConfig::get("sf_mail_sender"), //@todo: afzender bijhouden in briefverzonden
+      'attachements' => $this->getAttachments(),
       'img_path' => array(
         array(
           'prefix' => 'cid:',
@@ -69,31 +58,104 @@ class BriefVerzonden extends BaseBriefVerzonden
     return BerichtPeer::verstuurEmail($this->getAdres(), $this->getHtml(), $options);
   }
 
-
   /**
    * Opnieuw verzenden van een e-mail.
+   * @return string
    */
   public function herzendEmail()
   {
     try {
-      BerichtPeer::verstuurEmail($this->getAdres(), $this->getHtml(), array(
-        'onderwerp' => $this->getOnderwerp(),
-        'skip_template' => true,         
-        'afzender' => sfConfig::get("sf_mail_sender"),
-        'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
-      ));
-
-      // log een kopie, maar met aangepaste created_at
-      $briefVerzonden = $this->copy();
-      $briefVerzonden->setCreatedAt(time());
-      $briefVerzonden->save();
-
-      return "Mail verzonden.";
+      $this->verzendMail();      
     }
-    catch(sfException $e)
-    {
+    catch (sfException $e) {
       return "Mail kon niet worden verzonden.";
     }
+
+    // log een kopie, maar met aangepaste created_at
+    $briefVerzonden = $this->copy();
+    $briefVerzonden->setCreatedAt(time());
+    $briefVerzonden->save();
+
+    // optioneel ook voor dms link naar attachments
+    if ($nodeRef = DmsObjectNodeRefPeer::retrieveByObject($this))
+    {
+      $nodeRef2 = $nodeRef->copy();
+      $nodeRef2->setObjectId($briefVerzonden->getId());
+      $nodeRef2->setCreatedAt(time());
+      $nodeRef2->save();
+    }
+
+    return "Mail verzonden.";
+  }
+
+  /**
+   * geeft alle attachments terug
+   * (on-the-fly-, template- en objectattachments)
+   * 
+   * @return array
+   */
+  private function getAttachments()
+  {
+    // on-the-fly attachments, stored in dms
+    $dmsAttachments = $this->getDmsAttachments();
+
+    // brief attachments
+    $briefTemplate = $this->getBriefTemplate();
+    $templateAttachments = $briefTemplate->getAttachments();
+    
+    // object-eigen attachements
+    $object = $this->getObject();
+    $objectAttachments = array();
+    if (method_exists($object, 'getBriefAttachments'))
+    {
+      $objectAttachments = $object->getBriefAttachments();
+    }
+
+    $attachments = array_merge(
+      $dmsAttachments,
+      $templateAttachments,
+      $objectAttachments
+    );
+    
+    return $attachments;
+  }
+
+  /**
+   * returns on-the-fly attachments, stored in dms
+   * @return array
+   */
+  private function getDmsAttachments()
+  {
+    if (!sfConfig::get('sf_communicatie_dms_store', ''))
+    {
+      return array();
+    }
+
+    $nodeRef = DmsObjectNodeRefPeer::retrieveByObject($this);
+
+    $c = new Criteria();
+    $c->add(DmsNodePeer::PARENT_ID, $nodeRef->getNodeId());
+    $bijlageNodes = DmsNodePeer::doSelect($c);
+
+    // on-the-fly attachments, stored in dms
+    $attachments = array();
+    foreach ($bijlageNodes as $bijlageNode)
+    {
+      if (function_exists('sys_get_temp_dir'))
+      {
+        $tmpFile = tempnam(sys_get_temp_dir(), 'email_bijlage');
+      }
+      else
+      {
+        $tmpFile = tempnam('/tmp', 'email_bijlage');
+      }
+
+      $bijlageNode->saveToFile($tmpFile);
+
+      $attachments[$bijlageNode->getName()] = $tmpFile;
+    }
+
+    return $attachments;
   }
 }
 

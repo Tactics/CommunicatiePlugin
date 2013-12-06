@@ -618,6 +618,29 @@ class ttCommunicatieActions extends sfActions
   }
   
   /**
+   * uitvoeren van de print validatie
+   *
+   * @return boolean
+   */
+  public function validatePrint()
+  {
+    try {
+     $this->validateAttachments();
+    } catch (ttCommunicatieException $e) {
+      $this->getRequest()->setError('bijlagen', $e->getMessage());
+    }
+
+    return !$this->getRequest()->hasErrors();
+  }
+  /**
+   * uitvoeren van de print error handler
+   */
+  public function handleErrorPrint()
+  {
+    $this->forward('ttCommunicatie', 'opmaak');
+  }
+  
+  /**
    * Afdrukken of e-mail verzenden
    */
   public function executePrint()
@@ -647,7 +670,7 @@ class ttCommunicatieActions extends sfActions
     if ($this->brief_template)
     {
       $cultureBrieven = $this->getCultureBrieven($this->brief_template, $emailLayout, false);
-      $this->briefTemplate->setCultureBrieven($cultureBrieven);
+      $this->brief_template->setCultureBrieven($cultureBrieven);
     }
 
     if ($emailverzenden)
@@ -744,7 +767,8 @@ class ttCommunicatieActions extends sfActions
       if (!empty($briefVerzondenIds))
       {        
         $batchVanaf = sfConfig::get('sf_communicatie_batchmailing_vanaf', false);
-        $briefVerzondenRs = $this->getBriefVerzondenRs($briefVerzondenIds);
+        $briefVerzondenRs = $this->getBriefVerzondenRs($briefVerzondenIds);        
+        $this->storeAttachments($briefVerzondenRs);        
         if(($batchVanaf === false) || (count($briefVerzondenIds) < $batchVanaf))
         {          
           $this->counter['verstuurd'] = $this->sendEmails($briefVerzondenRs);
@@ -787,8 +811,8 @@ class ttCommunicatieActions extends sfActions
    */
   private function sendEmails($briefVerzondenRs)
   {
-    $tmpAttachments = $this->getRequestAttachments();
     $aantalVerstuurd = 0;
+    $briefVerzondenRs->seek(0);
     while($briefVerzondenRs->next())
     {
       $briefVerzonden = new BriefVerzonden();
@@ -803,7 +827,7 @@ class ttCommunicatieActions extends sfActions
       $emailTo = $briefVerzonden->getAdres();
 
       try {
-        $briefVerzonden->verzendMail($tmpAttachments);
+        $briefVerzonden->verzendMail();
       }
       catch (Exception $e){
         $this->counter['error']++;
@@ -829,11 +853,6 @@ class ttCommunicatieActions extends sfActions
       {
         $object->notifyBriefVerzonden($briefVerzonden);
       }
-    }
-
-    foreach($tmpAttachments as $tmpFile)
-    {
-      unlink($tmpFile);
     }
 
     return $aantalVerstuurd;
@@ -1148,12 +1167,11 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-   * 
-   * @return array with attachements
+   * valideert de bijlagen   
+   * @throws ttCommunicatieException
    */
-  private function getRequestAttachments()
+  private function validateAttachments()
   {
-    $attachments = array();
     foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
     {
       // Controleren of bestand correct werd opgehaald.
@@ -1162,47 +1180,39 @@ class ttCommunicatieActions extends sfActions
         continue;
       }
 
+      $name = $fileInfo['name'];     
       if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
       {
         switch ($this->getRequest()->getFileError($fileId))
         {
           case UPLOAD_ERR_INI_SIZE:
-            echo  'Opgeladen bestand groter dan ' . ini_get('upload_max_filesize') . '.';
+            throw new ttCommunicatieException("Bijlage $name groter dan " . ini_get('upload_max_filesize') . '.');
             break;
           case UPLOAD_ERR_PARTIAL:
-            echo 'Bestand werd gedeeltelijk opgeladen.';
+            throw new ttCommunicatieException("Bijlage $name werd slechts gedeeltelijk opgeladen.");
             break;
           case UPLOAD_ERR_NO_TMP_DIR:
-            echo 'bestand', 'Systeem kon geen tijdelijke folder vinden.';
-            break;
           case UPLOAD_ERR_CANT_WRITE:
-            echo 'bestand', 'Systeem kon niet schrijven naar schijf.';
+            throw new ttCommunicatieException("Bijlage $name kon niet worden opgeslagen.");
             break;
           case UPLOAD_ERR_EXTENSION:
-            echo 'bestand', 'Incorrecte extensie.';
+            throw new ttCommunicatieException("Bijlage $name heeft een incorrecte extensie.");
+            break;
+          default:
+            throw new ttCommunicatieException("Ongekende fout voor bijlage $name");
             break;
         }
-        echo '<br /><a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
-        exit();
       }
-      else
+
+      $maxSizeInMB = 10;
+      $maxSize = $maxSizeInMB * 1024 * 1024;
+      if ($fileInfo['size'] > $maxSize)
       {
-        if (function_exists('sys_get_temp_dir'))
-        {
-          $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
-        }
-        else
-        {
-          $tmpFile = tempnam('/tmp', 'brief_bijlage');
-        }        
-        move_uploaded_file($fileInfo['tmp_name'], $tmpFile);
-        $attachments[$fileInfo['name']] = $tmpFile;
+        throw new ttCommunicatieException("Bestand $name groter dan {$maxSizeInMB}MB.");
       }
     }
-
-    return $attachments;
   }
-
+  
   /**
    * overschrijven van to, cc, bcc adhv request params
    * 
@@ -1361,6 +1371,44 @@ class ttCommunicatieActions extends sfActions
     }
 
     $object->addLog($log, $log_detail);
+  }
+
+  /**
+   * opslaan van bijlagen in dms
+   */
+  private function storeAttachments(Resultset $brief_verzonden_rs)
+  {
+    $storeName = sfConfig::get('sf_communicatie_dms_store', '');
+    if (!$this->getRequest()->hasFiles() || $this->getRequest()->hasFileErrors()
+        || !$storeName || !($dmsStore = DmsStorePeer::retrieveByName($storeName)))
+    {      
+      return;
+    }
+
+    $uuid = Misc::create_uuid();
+    $node = new DmsNode();
+    $node->setStoreId($dmsStore->getId());
+    $node->setIsFolder(1);    
+    $node->setName($uuid);
+    $node->setDiskName($uuid);
+    $node->save();
+
+    foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
+    {
+      $node->createNodeFromUpload($fileId, $fileInfo['name']);
+    }
+
+    $brief_verzonden_rs->seek(0);
+    while ($brief_verzonden_rs->next())
+    {
+      $briefVerzonden = new BriefVerzonden();
+      $briefVerzonden->hydrate($brief_verzonden_rs);
+      $objectNodeRef = new DmsObjectNodeRef();
+      $objectNodeRef->setObjectClass('BriefVerzonden');
+      $objectNodeRef->setObjectId($briefVerzonden->getId());
+      $objectNodeRef->setNodeId($node->getId());
+      $objectNodeRef->save();
+    }
   }
 }
   
