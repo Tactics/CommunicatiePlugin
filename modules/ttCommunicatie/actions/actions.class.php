@@ -30,19 +30,27 @@ class ttCommunicatieActions extends sfActions
     ini_set('unserialize_callback_func', '__autoload');
     
     $this->md5hash = $this->getRequestParameter('hash');
-
+    $this->object = $this->getUser()->getAttribute('object', null, $this->md5hash);
+    $this->bestemmeling = $this->getUser()->getAttribute('bestemmeling', null, $this->md5hash);
     $this->objectClass = $this->getUser()->getAttribute('object_class', null, $this->md5hash);
     $this->objectPeer = $this->objectClass . 'Peer';
     $this->criteria = clone $this->getUser()->getAttribute('object_criteria', new Criteria(), $this->md5hash);
     // om classes de in de criteria gebruikt worden te autoloaden
     $this->autoloadClasses = $this->getUser()->getAttribute('autoload_classes', array(), $this->md5hash);
-    $this->rs = $this->getRs();
+    if (!$this->object)
+    {
+      $this->rs = $this->getRs();
+    }
     
     $this->choose_template = $this->getUser()->getAttribute('choose_template', true, $this->md5hash);
     $this->edit_template = $this->getUser()->getAttribute('edit_template', true, $this->md5hash);
         
     $this->bestemmelingen = $this->getUser()->getAttribute('bestemmelingen', null, $this->md5hash);
-    if (isset($this->bestemmelingen))
+    if (isset($this->bestemmeling)) // voorbeeldfactuur
+    {
+      $this->bestemmelingen_aantal = 1;            
+    }
+    else if (isset($this->bestemmelingen))
     {
       $aantal = 0;
       foreach ($this->bestemmelingen as $objectId => $bestemmelingen)
@@ -105,8 +113,6 @@ class ttCommunicatieActions extends sfActions
     $this->forceer_versturen = $this->getUser()->getAttribute('forceer_versturen', false, $this->md5hash);
 
     // indien object gegeven, wordt criteria en objectClass/Peer enzo niet gebruikt.
-    $this->object = $this->getUser()->getAttribute('object', null, $this->md5hash);
-    
     if ($this->object)
     { 
       // voorbeelden hebben nog geen id
@@ -126,7 +132,7 @@ class ttCommunicatieActions extends sfActions
 
       if (isset($this->bestemmeling))
       {
-        $bestemmeling->setObject($this->object);
+        $this->bestemmeling->setObject($this->object);
       }
     }
     

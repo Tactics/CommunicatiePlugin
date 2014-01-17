@@ -24,13 +24,18 @@
         echo "\n\n<div STYLE=\"page-break-before: always\"/>\n\n";
       }
 
+      $objectBestemmelingen = array();
       if (isset($rs))
       {
         $object = new $objectClass();
         $object->hydrate($rs);
+        $objectBestemmelingen = isset($bestemmelingen[$object->getId()]) ? $bestemmelingen[$object->getId()] : array();
       }
-
-      $objectBestemmelingen = isset($bestemmelingen[$object->getId()]) ? $bestemmelingen[$object->getId()] : array();      
+      else if (isset($object) && isset($bestemmeling)) // voorbeeldfactuur
+      {
+        $objectBestemmelingen = array($bestemmeling);
+      }
+      
       if (empty($objectBestemmelingen))
       {
         continue;
@@ -180,12 +185,12 @@
         }
 
         $aantal_brieven++;
+      }
 
-        if (!isset($rs))
-        {
-          break;
-        }
-      }      
+      if (!isset($rs))
+      {
+        break;
+      } 
     }
 
     if (! $aantal_brieven)
