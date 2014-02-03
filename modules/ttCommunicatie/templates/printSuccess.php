@@ -19,11 +19,6 @@
     
     while (isset($rs) ? $rs->next() : true)
     {
-      if ($aantal_brieven > 0)
-      {
-        echo "\n\n<div STYLE=\"page-break-before: always\"/>\n\n";
-      }
-
       $objectBestemmelingen = array();
       if (isset($rs))
       {
@@ -159,6 +154,11 @@
           ';
 
           $brief = $watermerkDiv . $brief;
+        }
+
+        if ($aantal_brieven > 0)
+        {
+          echo "\n\n<div STYLE=\"page-break-before: always\"/>\n\n";
         }
 
         echo "<!-- Brief " . $aantal_brieven . "-->\n";
