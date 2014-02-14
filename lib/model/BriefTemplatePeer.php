@@ -509,7 +509,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           }
 
           // condition evalueren
-          if (eval("return " . html_entity_decode($condition[1]) . ";"))
+          if (eval("return " . html_entity_decode($condition[1], ENT_COMPAT, 'UTF-8') . ";"))
           {
             // {% endif %} er eerst uitknippen, want dat veranderd de offset van de if niet
             $offsetEndif = $matches[1][$index][1] - $changeInOffset;
