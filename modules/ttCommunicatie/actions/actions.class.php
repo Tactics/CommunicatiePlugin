@@ -195,9 +195,7 @@ class ttCommunicatieActions extends sfActions
     // indien enable_categories = true: alleen templates waartoe de user access heeft    
     if (sfConfig::get('sf_communicatie_enable_categories', false))
     {
-      $cton = $this->pager->getCriteria()->getNewCriterion(BriefTemplatePeer::CATEGORIE, array('value' => $this->getUser()->getTtCommunicatieCategory()));
-      $cton->addOr($this->pager->getCriteria()->getNewCriterion(BriefTemplatePeer::CATEGORIE, null, Criteria::ISNULL));
-      $this->pager->getCriteria()->add($cton);
+      $this->pager->add(BriefTemplatePeer::CATEGORIE, array('value' => $this->getUser()->getTtCommunicatieCategory()));
     }
     
     $this->pager->getCriteria()->add(BriefTemplatePeer::TYPE, BriefTemplatePeer::TYPE_DB);
