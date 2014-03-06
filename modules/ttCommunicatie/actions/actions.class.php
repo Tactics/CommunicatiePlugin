@@ -656,6 +656,11 @@ class ttCommunicatieActions extends sfActions
       }      
     }
 
+    if($this->getRequestParameter('commit') == 'Niet verstuurde brieven afdrukken')
+    {
+      $this->edit_template = false;
+    }
+
     if ($this->brief_template)
     {
       // brief layout ophalen
@@ -673,16 +678,17 @@ class ttCommunicatieActions extends sfActions
       }
     }
 
+    $this->logs = array();
+    if ($this->show_bestemmelingen)
+    {
+      $selectedBestemmelingen = $this->getRequestParameter("bestemmelingen", array());
+    }
+
     if ($emailverzenden)
     { 
       $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0);
       
       $tmpAttachments = $this->getRequestAttachments();
-      
-      if ($this->show_bestemmelingen)
-      {
-        $selectedBestemmelingen = $this->getRequestParameter("bestemmelingen", array());
-      }
 
       $rs = $this->getRs();
       while ($rs->next())      
@@ -708,13 +714,13 @@ class ttCommunicatieActions extends sfActions
               $brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);          
               if (! $brief_template)
               {
-                echo '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
+                $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
                 continue;                
               } 
             }
             else
             {
-              echo '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
+              $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
               continue;  
             }
 
@@ -724,19 +730,19 @@ class ttCommunicatieActions extends sfActions
               $this->brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
               if (! $this->brief_layout)
               {
-                echo '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
+                $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
                 continue;
               } 
             }  
             else
             {
-              echo '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
+              $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
               continue;  
             }
           }
           else
           {
-            echo '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
+            $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
             continue;            
           }  
 
@@ -755,8 +761,6 @@ class ttCommunicatieActions extends sfActions
         {
           $brief_template = $this->brief_template;
         }
-
-        echo $this->objectClass . ' (' . (method_exists($object, '__toString') ? $object->__toString() : 'id: ' . $object->getId()) . '): ';
 
         // sommige templates mogen niet worden verstuurd naar het object
         // volgens businessrules afh vd status van het object
@@ -891,11 +895,13 @@ class ttCommunicatieActions extends sfActions
               BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
 
               $verstuurd = true;
-              echo 'Bericht verzonden naar : ' . $email;
-              echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
-              echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
-              echo '<br/>';
+              $bericht = $this->objectClass . ' (' . (method_exists($object, '__toString') ? $object->__toString() : 'id: ' . $object->getId()) . '): ';
+              $bericht .= 'Bericht verzonden naar : ' . $email;
+              $bericht .= isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
+              $bericht .= isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
+              $bericht .= '<br/>';
               $counter['verstuurd']++;
+              $this->logs[] = $bericht;
 
               // Log de brief
               $briefVerzonden = new BriefVerzonden();
@@ -924,8 +930,7 @@ class ttCommunicatieActions extends sfActions
             }
             catch(Exception $e)
             {
-              $nietVerstuurdReden = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
-              echo $nietVerstuurdReden;
+              $this->logs[] = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
               $counter['error']++;
             }
           }
@@ -933,15 +938,16 @@ class ttCommunicatieActions extends sfActions
           {
             if (! $email)
             {
-              $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
+              $this->logs[] = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
             }
             else
             {
-              $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+              $this->logs[] = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
             }
 
-            echo $nietVerstuurdReden;
             $counter['wenstgeenmail']++;
+            $nietverstuurden[$bestemmeling->getObject()->getId()]['index'] = $index;
+            $nietverstuurden[$bestemmeling->getObject()->getId()]['bestemmeling'] = $bestemmeling;
           }
 
           if (method_exists($object, 'addLog'))
@@ -958,15 +964,12 @@ class ttCommunicatieActions extends sfActions
         unlink($tmpFile);
       }
 
-      echo '<br/><br/>Einde verzendlijst<br/><br/>';
-      echo 'Totaal:<br/>';
-      echo 'Reeds verstuurd: ' . $counter['reedsverstuurd'] . '<br/>';
-      echo 'Niet toegestaan: ' . $counter['niettoegestaan'] . '<br/>';
-      echo 'Verstuurd: ' . $counter['verstuurd'] . '<br />';
-      echo 'Error: ' . $counter['error'] . '<br />';
-      echo 'Wensen geen mail: ' . $counter['wenstgeenmail'] . '<br />';
-      echo '<a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
-      exit();
+      $this->counter = $counter;
+      $this->template_id = $this->getRequestParameter('template_id');
+      $this->nietVerstuurden = $nietverstuurden;
+      $this->setLayout(false);
+      $this->setTemplate('email');
+      return sfView::SUCCESS;
     }
     else
     { 
@@ -974,6 +977,17 @@ class ttCommunicatieActions extends sfActions
       {
         $this->rs = $this->getRs();
       }
+
+      if ($this->show_bestemmelingen)
+      {
+        $this->selectedBestemmelingen = isset($selectedBestemmelingen) ? $selectedBestemmelingen : null;
+      }
+      else
+      {
+        $bestemmelingen = $this->getRequestParameter('bestemmelingen');
+        $this->selectedBestemmelingen = isset($bestemmelingen) ? $this->getRequestParameter('bestemmelingen') : null;
+      }
+
       $this->voorbeeld = $voorbeeld;
       $this->emailverzenden = $emailverzenden;
       $this->viaemail = $viaemail;

@@ -35,7 +35,6 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 <div class="pageblock">
   <?php echo form_tag('ttCommunicatie/print', array(
     'name'      => 'print',
-    'target'    => '_blank',
     'multipart' => true
   )); ?>
   <?php echo input_hidden_tag('hash', $md5hash); ?>
@@ -132,7 +131,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
             'liefst' => 'Ja, indien gewenst',
             'altijd' => 'Ja, altijd',
             'nee' => 'Nee, alles afdrukkken op papier'
-          ), 'ja'), array('onchange' => 'jQuery(this).val() != "nee" ? jQuery(".emailonly").show() : jQuery(".emailonly").hide();'))?>
+          ), 'liefst'), array('onchange' => 'changeButtons(this.value)'))?>
       </td>
     </tr>
 
@@ -193,14 +192,14 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   </table>
 
   <hr />
-  <?php echo submit_tag('Voorbeeld brief'); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
-  <?php echo submit_tag('Voorbeeld e-mail'); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>    
+  <?php echo button_to_function('Voorbeeld brief', 'postForm("Voorbeeld brief")'); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
+  <?php echo button_to_function('Voorbeeld e-mail', 'postForm("Voorbeeld e-mail")'); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
 
-  <?php echo submit_tag('Brieven afdrukken', array('data-type' => 'brieven')); ?>
-  <?php echo submit_tag('E-mails verzenden', array('class' => 'emailonly', 'data-type' => 'e-mails')); ?>
+  <?php echo button_to_function('Brieven afdrukken', 'postForm("brieven afdrukken")', array('class' => 'briefonly', 'data-type' => 'brieven')); ?>
+  <?php echo button_to_function('E-mails verzenden', 'postForm("E-mails verzenden")', array('class' => 'emailonly', 'data-type' => 'e-mails')); ?>
   </form>
 </div>
-
+<div id="mailWindow" style="display:none;height:400px;overflow:scroll;"></div>
 
 <script type="text/javascript">
   var submitBtn = null;
@@ -208,6 +207,44 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   function insertPlaceholder(placeholder)
   {
     tinyMCE.execCommand('mceInsertContent', null, '%' + placeholder + '%');
+  }
+
+  function changeButtons(value)
+  {
+    if (value != "nee")
+    {
+      jQuery(".emailonly").show();
+      jQuery(".briefonly").hide();
+    } else {
+      jQuery(".emailonly").hide();
+      jQuery(".briefonly").show();
+    }
+  }
+
+  function postForm(commit)
+  {
+    if(commit == 'E-mails verzenden')
+    {
+      jQuery("#mailWindow").tt_window({width:'700px'});
+      var input = $("<input>").attr("type", "hidden").attr("name", "commit").val(commit);
+      jQuery(document.forms['print']).append($(input));
+      jQuery.ajax({
+        url: '<?php echo url_for('ttCommunicatie/print'); ?>',
+        type: 'POST',
+        data: jQuery(document.forms['print']).serialize(),
+        success: function(html)
+        {
+          jQuery('#mailWindow').html(html);
+        }
+      });
+    }
+    else
+    {
+      jQuery(document.forms['print']).attr('target', '_blank');
+      var input = $("<input>").attr("type", "hidden").attr("name", "commit").val(commit);
+      jQuery(document.forms['print']).append($(input));
+      jQuery(document.forms["print"]).submit();
+    }
   }
 
   <?php if ($show_bestemmelingen): ?>
@@ -243,7 +280,9 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
       relative_urls: false
     });
-    
+
+    $(".briefonly").hide();
+
     <?php if ($show_bestemmelingen): ?>
       $.expr[':'].icontains = function(a, i, m) {
         return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;

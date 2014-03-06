@@ -50,6 +50,15 @@
           }
         }        
 
+        // controle of bestemmeling afgevinkt is in lijst
+        if (isset($selectedBestemmelingen))
+        {
+          if (!isset($selectedBestemmelingen[$object->getId()]) || !in_array($index, $selectedBestemmelingen[$object->getId()]))
+          {
+            continue;
+          }
+        }
+
         if (! $brief_template)
         {
           // brief_template uit object zelf halen
