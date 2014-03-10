@@ -9,8 +9,8 @@
   
   <?php foreach ($language_array as $language): ?>
     <div id="<?php echo $language['label'] ?>">
-      <?php 
-         if (! $choose_template)
+      <?php
+         if (! $choose_template && $edit_template)
          {
            if (array_key_exists('default', $language) && $language['default'] == true)
            {
@@ -44,17 +44,17 @@
          }
          
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
-          'style' => 'width: 434px;'
+          'style' => 'width: 434px;', 'disabled' => !$edit_template
         ));
         echo ' (Invoegvelden toegestaan) <br /><br />';
-      
+
         // indien 1 bestemmeling, kunnen we de brief reeds parsen
         if (isset($bestemmeling))
         {
           $html = BriefTemplatePeer::parseForeachStatements($html, $bestemmeling);
           $html = BriefTemplatePeer::parseIfStatements($html, $bestemmeling);
           $html = BriefTemplatePeer::replacePlaceholdersFromObject($html, $bestemmeling);
-        }        
+        }
         echo textarea_tag('html[' . BriefTemplatePeer::getCulture($language) .']', $html);
       ?>
     </div>

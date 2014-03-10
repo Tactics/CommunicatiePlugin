@@ -142,7 +142,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       </tr>
     <?php endif; ?>
 
-    <?php if ($edit_template) : ?>
+    <?php if($choose_template): ?>
       <tr>
         <th>&nbsp;</th>
         <td>&nbsp;</td>
@@ -150,19 +150,20 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       <tr class="required">
         <th>Onderwerp/tekst:</th>
         <td>
-          <?php 
+          <?php
           include_partial('brief_text_area_vertaalbaar', array(
-            'brief_template'      => $brief_template,                                 
+            'brief_template'      => $brief_template,
             'systeemplaceholders' => $systeemplaceholders,
             'choose_template'     => $choose_template,
+            'edit_template'       => $edit_template,
             'bestemmeling' => isset($bestemmeling) ? $bestemmeling : null
           ));
           ?>
         </td>
         <td>
-          <?php if ($is_target) : ?>
+          <?php if ($is_target && $edit_template) : ?>
             <h2 class="pageblock" style="margin-left: 20px; width: 300px;">Invoegvelden</h2>
-            <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">            
+            <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">
             <?php
               $placeholders = eval("return $objectClass::getPlaceholders();");
               // Algemene placeholders indien gedefinieerd
@@ -170,7 +171,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
               {
                 $placeholders = array_merge($placeholders, Placeholder::getPlaceholders());
               }
-              showPlaceholders($placeholders);                      
+              showPlaceholders($placeholders);
             ?>
             </div>
           <?php endif; ?>
@@ -179,7 +180,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       <tr>
         <th>&nbsp;</th>
         <td>&nbsp;</td>
-      </tr>    
+      </tr>
     <?php endif; ?>
 
     <tr>
@@ -273,6 +274,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       width : "600",
       height : "454",
       language : "nl",
+      readonly: <?php echo $edit_template ? '0' : '1'; ?>,
       plugins: [
         "paste, link, pagebreak, jbimages"
       ],
@@ -328,16 +330,15 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           var onderwerp = data.onderwerp;
           
           //console.info(cultures);
-          <?php if ($edit_template) : ?>
-            $(cultures).each(function(i, culture){
-              var h = html[culture];
-              var o = onderwerp[culture];
-              var editorId = 'html_' + culture;
-              
-              tinyMCE.get(editorId).execCommand('mceSetContent', false, h);
-              $('#onderwerp_' + culture).val(o);
-            });
-          <?php endif; ?>
+          $(cultures).each(function(i, culture){
+            var h = html[culture];
+            var o = onderwerp[culture];
+            var editorId = 'html_' + culture;
+
+            tinyMCE.get(editorId).execCommand('mceSetContent', false, h);
+            $('#onderwerp_' + culture).val(o);
+          });
+
           //$('#sjabloon_reedsontvangen').html(data.reedsontvangen);
           $('#sjabloon_eenmalig').html(data.eenmalig);
         });
