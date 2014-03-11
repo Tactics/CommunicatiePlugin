@@ -32,6 +32,9 @@
       ?>
     </div>
 
-  <?php echo submit_tag('Niet verstuurde brieven afdrukken', array('name'=>'commit', 'data-type' => 'brieven'));?>
+  <?php if(count($nietVerstuurden)): ?>
+    <?php echo submit_tag('Niet verstuurde brieven afdrukken', array('name'=>'commit', 'data-type' => 'brieven'));?>
+  <?php endif; ?>
+  <?php echo button_to_function('Sluiten', "jQuery(this).parents('.ttBase-dialog-modal:first').overlay().close();") ?>
   </form>
 </div>
