@@ -205,7 +205,8 @@ function showPlaceholders($placeholders)
                 include_partial('brief_text_area_vertaalbaar', array(
                   'brief_template'      => $brief_template,                                   
                   'systeemplaceholders' => $systeemplaceholders,
-                  'choose_template'     => false
+                  'choose_template'     => false,
+                  'edit_template'       => true
                 ));                            
               ?>
             </td>
