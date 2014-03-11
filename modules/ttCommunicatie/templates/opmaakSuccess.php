@@ -142,7 +142,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       </tr>
     <?php endif; ?>
 
-    <?php if($choose_template): ?>
+    <?php if ($edit_template || $choose_template): ?>
       <tr>
         <th>&nbsp;</th>
         <td>&nbsp;</td>
