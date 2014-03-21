@@ -185,7 +185,7 @@ function showPlaceholders($placeholders)
       <td id="bestemmelingen">
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
         <label>
-          <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray()), array('disabled' => $brief_template->isSysteemTemplate())); ?>
+          <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray())); ?>
           <?php echo $oClass['label']; ?>          
         </label>
         <?php endforeach; ?>
