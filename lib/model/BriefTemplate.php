@@ -413,7 +413,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     Misc::use_helper('Date','Global', 'Url');
 
     $detail = 'Nr: ' . link_to($this->getId(), 'ttCommunicatie/edit/?template_id=' . $this->getId());
-    $detail .= $this->getGearchiveerd() ? '' : ' (gearchiveerd)';
+    $detail .= $this->getGearchiveerd() ? ' (gearchiveerd)' : '';
     $detail .= '<br/>';
 
     $detail .= $this->getNaam() . '<br />';
