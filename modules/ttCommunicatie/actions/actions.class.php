@@ -588,6 +588,12 @@ class ttCommunicatieActions extends sfActions
       $c->add(BriefTemplatePeer::GEARCHIVEERD, false);
       $objectClass = $this->is_target ? $this->objectClass : 'Algemeen';
       $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, "%|$objectClass|%", Criteria::LIKE);
+      if (sfConfig::get('sf_communicatie_enable_categories', false))
+      {
+        $categorieCton = $c->getNewCriterion(BriefTemplatePeer::CATEGORIE, NULL, Criteria::ISNULL);
+        $categorieCton->addOr($c->getNewCriterion(BriefTemplatePeer::CATEGORIE, $this->getUser()->getTtCommunicatieCategory()));
+        $c->add($categorieCton);
+      }
       $this->brief_templates = BriefTemplatePeer::getSorted($c);
     }
   }
