@@ -195,7 +195,10 @@ class ttCommunicatieActions extends sfActions
     // indien enable_categories = true: alleen templates waartoe de user access heeft    
     if (sfConfig::get('sf_communicatie_enable_categories', false))
     {
-      $this->pager->add(BriefTemplatePeer::CATEGORIE, array('value' => $this->getUser()->getTtCommunicatieCategory()));
+      $c = $this->pager->getCriteria();
+      $categorieCton = $c->getNewCriterion(BriefTemplatePeer::CATEGORIE, NULL, Criteria::ISNULL);
+      $categorieCton->addOr($c->getNewCriterion(BriefTemplatePeer::CATEGORIE, $this->getUser()->getTtCommunicatieCategory()));
+      $c->add($categorieCton);
     }
     
     $this->pager->getCriteria()->add(BriefTemplatePeer::TYPE, BriefTemplatePeer::TYPE_DB);
@@ -367,13 +370,15 @@ class ttCommunicatieActions extends sfActions
       $brief_template = new BriefTemplate();
       $brief_template->setType(BriefTemplatePeer::TYPE_DB);
       
-      // category goed zetten indien enabled
-      if (sfConfig::get('sf_communicatie_enable_categories', false))
-      {
-        $brief_template->setCategorie($this->getUser()->getTtCommunicatieCategory());
-      }      
-      
       $systeem = false;
+    }
+    
+    // category goed zetten indien enabled
+    if (sfConfig::get('sf_communicatie_enable_categories', false))
+    {
+      $categorie = $this->hasRequestParameter('voor_alle_categorieen')
+        ? null : $this->getUser()->getTtCommunicatieCategory();
+      $brief_template->setCategorie($categorie);
     }
     
     if (! $systeem)

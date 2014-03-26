@@ -254,7 +254,7 @@ function showPlaceholders($placeholders)
           </tr>
         </table>
     </tr>
-     <tr>
+    <tr>
       <th>&nbsp;</th>
       <td>&nbsp;</td>
     </tr>
@@ -281,11 +281,20 @@ function showPlaceholders($placeholders)
         <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getEenmaligVersturen())); ?>
       </td>
     </tr>
-    <th>Is publiciteit:</th>
-    <td>
-      <?php echo select_tag('is_publiciteit', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getIsPubliciteit())); ?>
-    </td>
+    <tr>
+      <th>Is publiciteit:</th>
+      <td>
+        <?php echo select_tag('is_publiciteit', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getIsPubliciteit())); ?>
+      </td>
     </tr>
+    <?php if (sfConfig::get('sf_communicatie_enable_categories', false)) : ?>
+      <tr>
+        <th>Voor alle categorieën</th>
+        <td>
+          <?php echo checkbox_tag('voor_alle_categorieen', 1, ($brief_template->getId() && $brief_template->getCategorie() === null)); ?>
+        </td>
+      </tr>
+    <?php endif; ?>
   </table>
   <hr>
   <?php 
