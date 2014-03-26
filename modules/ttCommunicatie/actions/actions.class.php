@@ -201,12 +201,8 @@ class ttCommunicatieActions extends sfActions
     $this->pager->getCriteria()->add(BriefTemplatePeer::TYPE, BriefTemplatePeer::TYPE_DB);
     
     $this->pager->add(BriefTemplatePeer::NAAM, array('comparison' => Criteria::LIKE));
-    $this->pager->add(BriefTemplatePeer::ONDERWERP, array('comparison' => Criteria::LIKE));
-    
-    if ($this->pager->add(BriefLayoutPeer::NAAM, array('comparison' => Criteria::LIKE)))
-    {
-      $this->pager->getCriteria()->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID);
-    }
+    $this->pager->add(BriefTemplatePeer::ONDERWERP, array('comparison' => Criteria::LIKE));    
+    $this->pager->add(BriefTemplatePeer::BESTEMMELING_CLASSES, array('comparison' => Criteria::LIKE));
     
     $this->pager->init();
   }

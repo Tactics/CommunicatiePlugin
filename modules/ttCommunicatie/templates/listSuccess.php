@@ -38,8 +38,8 @@
     <table class="formtable" width='100%'>
 		<tbody>
 			<tr>
-			  <th style="width: 125px;">Layout:</th>
-        <td><?php echo input_tag(BriefLayoutPeer::NAAM, $pager->get(BriefLayoutPeer::NAAM), array('style' => 'width: 180px;')); ?></td>
+			  <th style="width: 125px;">Bestemmeling:</th>
+        <td><?php echo input_tag(BriefTemplatePeer::BESTEMMELING_CLASSES, $pager->get(BriefTemplatePeer::BESTEMMELING_CLASSES), array('style' => 'width: 180px;')); ?></td>
 			</tr>
     </tbody>
     </table>
