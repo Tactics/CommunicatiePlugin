@@ -181,7 +181,7 @@ function showPlaceholders($placeholders)
       <td>&nbsp;</td>
     </tr>
     <tr <?php if ($sf_request->hasError('bestemmelingen')) {echo 'class="error"';} ?>>
-      <th>Mogelijke bestemmelingen:</th>
+      <th>Communicatie<br/> in functie van:</th>
       <td id="bestemmelingen">
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
         <label>
