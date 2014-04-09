@@ -376,12 +376,16 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 
   /**
    * Geef het criterion terug voor het object (BriefTemplate)
-   *
+   * @param \Criteria $criteria
+   * @param string $keyword
    * @return Criterion
    */
   public static function getAutocompleteCriterion(&$criteria, $keyword)
   {
-    $criteria->add(BriefTemplatePeer::CATEGORIE, sfContext::getInstance()->getUser()->getBedrijfId());
+    $sfUser = sfContext::getInstance()->getUser();
+    $bedrijfCton = $criteria->getNewCriterion(BriefTemplatePeer::CATEGORIE, $sfUser->getBedrijfId());
+    $bedrijfCton->addOr($criteria->getNewCriterion(BriefTemplatePeer::CATEGORIE, NULL, Criteria::ISNULL));
+    $criteria->add($bedrijfCton);
     $criteria->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|Dossier|%', Criteria::LIKE);
 
     $cton1 = $criteria->getNewCriterion(BriefTemplatePeer::NAAM, '%' . $keyword . '%', Criteria::LIKE);
