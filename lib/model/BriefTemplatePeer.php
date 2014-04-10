@@ -55,7 +55,9 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     if (sfConfig::get('sf_communicatie_enable_categories', false))
     {
       $user = sfContext::getInstance()->getUser();
-      $c->add(self::CATEGORIE, $user->getTtCommunicatieCategory(), Criteria::EQUAL);
+      $categorieCton = $c->getNewCriterion(self::CATEGORIE, $user->getTtCommunicatieCategory());
+      $categorieCton->addOr($c->getNewCriterion(self::CATEGORIE, NULL, Criteria::ISNULL));
+      $c->add($categorieCton);
     }
 
 
