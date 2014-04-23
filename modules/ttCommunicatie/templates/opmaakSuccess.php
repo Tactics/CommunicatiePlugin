@@ -226,15 +226,16 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   {
     if(commit == 'E-mails verzenden')
     {
-      jQuery("#mailWindow").tt_window({width:'700px'});
       var input = $("<input>").attr("type", "hidden").attr("name", "commit").val(commit);
       jQuery(document.forms['print']).append($(input));
+      tinyMCE.triggerSave(); //!important do not remove
       jQuery.ajax({
         url: '<?php echo url_for('ttCommunicatie/print'); ?>',
         type: 'POST',
         data: jQuery(document.forms['print']).serialize(),
         success: function(html)
         {
+          jQuery("#mailWindow").tt_window({width:'700px'});
           jQuery('#mailWindow').html(html);
         }
       });
