@@ -686,6 +686,7 @@ class ttCommunicatieActions extends sfActions
     }
 
     $this->logs = array();
+    $nietverstuurden = array();
     if ($this->show_bestemmelingen)
     {
       $selectedBestemmelingen = $this->getRequestParameter("bestemmelingen", array());
