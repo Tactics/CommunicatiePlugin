@@ -542,16 +542,7 @@ abstract class BaseBriefBijlagePeer {
 
 		}
 
-		$res =  BasePeer::doValidate(BriefBijlagePeer::DATABASE_NAME, BriefBijlagePeer::TABLE_NAME, $columns);
-    if ($res !== true) {
-        $request = sfContext::getInstance()->getRequest();
-        foreach ($res as $failed) {
-            $col = BriefBijlagePeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
-        }
-    }
-
-    return $res;
+		return BasePeer::doValidate(BriefBijlagePeer::DATABASE_NAME, BriefBijlagePeer::TABLE_NAME, $columns);
 	}
 
 	

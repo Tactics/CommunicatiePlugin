@@ -587,16 +587,7 @@ abstract class BaseBriefTemplatePeer {
 
 		}
 
-		$res =  BasePeer::doValidate(BriefTemplatePeer::DATABASE_NAME, BriefTemplatePeer::TABLE_NAME, $columns);
-    if ($res !== true) {
-        $request = sfContext::getInstance()->getRequest();
-        foreach ($res as $failed) {
-            $col = BriefTemplatePeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
-        }
-    }
-
-    return $res;
+		return BasePeer::doValidate(BriefTemplatePeer::DATABASE_NAME, BriefTemplatePeer::TABLE_NAME, $columns);
 	}
 
 	

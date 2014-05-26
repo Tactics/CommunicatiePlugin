@@ -13,21 +13,29 @@ class ttCommunicatieComponents extends sfComponents
    * 
    * @return \myFilteredPager
    */
-  public static function getCommunicatieLogPager($object_class, $object_id, $type = '' /* todo? $sqls */)
+  public static function getCommunicatieLogPager($object_class, $object_id, $type = '', $or_cton = null /* todo? $sqls */)
   {
     $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::CREATED_AT, false);
+    $c = $pager->getCriteria();
 
     if ($type == 'bestemmeling')
     {
-      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, $object_class);
-      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, $object_id);
+      $cton = $c->getNewCriterion(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING, $object_class);
+      $cton->addAnd($c->getNewCriterion(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING, $object_id));
     }
     else
     {
-      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
-      $pager->getCriteria()->add(BriefVerzondenPeer::OBJECT_ID, $object_id);
-    }    
-    
+      $cton = $c->getNewCriterion(BriefVerzondenPeer::OBJECT_CLASS, $object_class);
+      $cton->addAnd($c->getNewCriterion(BriefVerzondenPeer::OBJECT_ID, $object_id));
+    }
+
+    if($or_cton)
+    {
+      $cton->addOr($or_cton);
+    }
+
+    $c->add($cton);
+
     /*
      TODO: BasePeer::createSelectSql(Criteria $criteria, &$params)
       
@@ -58,8 +66,9 @@ class ttCommunicatieComponents extends sfComponents
     
     $this->type = isset($this->type) ? $this->type : '';
     $this->metFilter = isset($this->metFilter) ? $this->metFilter : false;
-    
-    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type);
+    $this->orCton = isset($this->or_cton) ? $this->or_cton : false;
+
+    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type, $this->orCton);
     $this->pager->init();
   }
   
