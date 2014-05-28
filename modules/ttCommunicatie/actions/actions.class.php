@@ -689,7 +689,7 @@ class ttCommunicatieActions extends sfActions
     $nietverstuurden = array();
     if ($this->show_bestemmelingen)
     {
-      $selectedBestemmelingen = $this->getRequestParameter("bestemmelingen", array());
+      $selectedBestemmelingen = array_flip($this->getRequestParameter("bestemmelingen", array()));
     }
 
     if ($emailverzenden)
@@ -825,12 +825,9 @@ class ttCommunicatieActions extends sfActions
           }          
         
           // controle of bestemmeling afgevinkt is in lijst
-          if (isset($selectedBestemmelingen))
-          {            
-            if (!isset($selectedBestemmelingen[$object->getId()]) || !in_array($index, $selectedBestemmelingen[$object->getId()]))
-            {
-              continue;
-            }
+          if (isset($selectedBestemmelingen) && !isset($selectedBestemmelingen[$object->getId() . '_' . $index]))
+          {
+            continue;
           }
           
           $email = $bestemmeling->getEmailTo();

@@ -50,13 +50,10 @@
           }
         }        
 
-        // controle of bestemmeling afgevinkt is in lijst
-        if (isset($selectedBestemmelingen))
+        // controle of bestemmeling afgevinkt is in lijst        
+        if (isset($selectedBestemmelingen) && !isset($selectedBestemmelingen[$object->getId() . '_' . $index]))
         {
-          if (!isset($selectedBestemmelingen[$object->getId()]) || !in_array($index, $selectedBestemmelingen[$object->getId()]))
-          {
-            continue;
-          }
+          continue;
         }
 
         if (! $brief_template)
