@@ -627,6 +627,7 @@ class ttCommunicatieActions extends sfActions
   {
     Misc::use_helper('Url');
     set_time_limit(0);
+    ini_set('memory_limit', '-1');
     
     $this->preExecuteVersturen();
 

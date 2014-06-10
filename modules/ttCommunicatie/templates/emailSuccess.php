@@ -26,7 +26,8 @@
         foreach ($nietVerstuurden as $index => $nt)
         {
           $i = $nt['index'];
-          echo checkbox_tag("bestemmelingen[".$nt['bestemmeling']->getObject()->getId()."][$i]", $i, true, array('class' => 'bestemmeling', 'name' => "bestemmelingen[".$nt['bestemmeling']->getObject()->getId()."][]"));
+          $id = $nt['bestemmeling']->getObject()->getId();
+          echo checkbox_tag("bestemmelingen[".$id."][$i]", $id.'_'.$i, true, array('class' => 'bestemmeling', 'name' => "bestemmelingen[]"));
           echo '&nbsp;' . $nt['bestemmeling']->getNaam() . '<br />';
         }
       ?>
