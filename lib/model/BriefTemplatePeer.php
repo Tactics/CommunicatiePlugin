@@ -672,7 +672,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function getDefaultPlaceholders($bestemmeling = null, $email_verzenden = false, $via_email = false, $generalPlaceholders = false)
   {
-    if (($via_email && $bestemmeling && ($bestemmeling->getObjectClass() == 'Persoon') && $bestemmeling->getWantsPublicity())
+    if (($via_email && $bestemmeling && ($bestemmeling->getObjectClass() == 'Persoon'))
         && ($uitschrijvenInfo = sfConfig::get('sf_communicatie_uitschrijven', null))
        )
     {
