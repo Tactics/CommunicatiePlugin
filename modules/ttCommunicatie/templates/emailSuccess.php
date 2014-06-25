@@ -17,6 +17,7 @@
   Verstuurd: <?php echo $counter['verstuurd']; ?><br />
   Error: <?php echo $counter['error']; ?><br />
   Wensen geen mail: <?php echo $counter['wenstgeenmail']; ?><br />
+  Wensen geen publiciteit: <?php echo $counter['wenstgeenpubliciteit']; ?><br />
 
   <?php echo form_tag('ttCommunicatie/print', array('name' => 'print', 'target' => '_blank'));?>
     <?php echo input_hidden_tag('hash', $md5hash); ?>

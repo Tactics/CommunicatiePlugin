@@ -695,7 +695,7 @@ class ttCommunicatieActions extends sfActions
 
     if ($emailverzenden)
     { 
-      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0);
+      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'wenstgeenpubliciteit' => 0);
       
       $tmpAttachments = $this->getRequestAttachments();
 
@@ -812,12 +812,12 @@ class ttCommunicatieActions extends sfActions
             
             $bestemmeling->setEmailTo($emailTo); 
             $bestemmeling->setEmailCc($emailCc);
-            $bestemmeling->setEmailBcc($emailBcc);
-            $bestemmeling->setPrefersEmail(true);            
+            $bestemmeling->setEmailBcc($emailBcc);                        
             if (false === strpos($emailTo, $oldEmail))
             {              
               // emailto is overschreven, dus bestemmelingen class wijzigen naar object zelf
               // zodat de email daar wordt gelogd + naam en adres wissen
+              $bestemmeling->setPrefersEmail(true);
               $bestemmeling->setObjectClass($this->objectClass);
               $bestemmeling->setObjectId($object->getId());
               $bestemmeling->setNaam('');
@@ -833,7 +833,11 @@ class ttCommunicatieActions extends sfActions
           
           $email = $bestemmeling->getEmailTo();
           $prefersEmail = $bestemmeling->getPrefersEmail();
-          if (((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd')) && $email)
+          $wantsPublicity = $bestemmeling->getWantsPublicity();          
+          if ($email
+              && ((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd'))
+              && (!$brief_template->getIsPubliciteit() || $wantsPublicity)
+             )
           {
             $culture = BriefTemplatePeer::calculateCulture($bestemmeling);
 
@@ -946,12 +950,17 @@ class ttCommunicatieActions extends sfActions
             {
               $this->logs[] = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
             }
-            else
+            else if (($verzenden_via == 'liefst') && !$prefersEmail)
             {
               $this->logs[] = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+              $counter['wenstgeenmail']++;
             }
-
-            $counter['wenstgeenmail']++;
+            else
+            {
+              $this->logs[] = "<font color=red>E-mail werd niet verzonden naar $email, reden: publiciteit niet gewenst.</font><br/>";
+              $counter['wenstgeenpubliciteit']++;
+            }
+            
             $nietverstuurden[$bestemmeling->getObject()->getId()]['index'] = $index;
             $nietverstuurden[$bestemmeling->getObject()->getId()]['bestemmeling'] = $bestemmeling;
           }
