@@ -253,7 +253,7 @@ function showPlaceholders($placeholders)
     // language tabs initialiseren
     $('#tabs').tt_tabs();
     
-    tinyMCE.init({        
+    tinyMCE.init({
       mode : "textareas",
       theme : "advanced", 
       theme_advanced_toolbar_location : "top",
@@ -264,9 +264,16 @@ function showPlaceholders($placeholders)
       pagebreak_separator : "%pagebreak%",
       theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
       theme_advanced_buttons2 : "",
-      theme_advanced_buttons3 : ""      
+      theme_advanced_buttons3 : "",
+      init_instance_callback : function(editor)
+      {
+        <?php if($brief_template && $brief_template->getBewerkbaar()):?>
+        editor.getBody().setAttribute('contenteditable',false);
+        <?php endif;?>
+      }
+
     });
-    
+
     <?php if ($show_bestemmelingen): ?>
     $.expr[':'].icontains = function(a, i, m) {            
       return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0; 
