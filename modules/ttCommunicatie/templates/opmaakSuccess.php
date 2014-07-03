@@ -267,7 +267,7 @@ function showPlaceholders($placeholders)
       theme_advanced_buttons3 : "",
       init_instance_callback : function(editor)
       {
-        <?php if($brief_template && $brief_template->getBewerkbaar()):?>
+        <?php if($brief_template && ! $brief_template->getBewerkbaar()):?>
         editor.getBody().setAttribute('contenteditable',false);
         <?php endif;?>
       }
