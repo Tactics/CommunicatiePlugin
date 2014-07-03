@@ -56,6 +56,8 @@ class BriefTemplateMapBuilder {
 
 		$tMap->addColumn('GEARCHIVEERD', 'Gearchiveerd', 'int', CreoleTypes::INTEGER, true, null);
 
+		$tMap->addColumn('BEWERKBAAR', 'Bewerkbaar', 'int', CreoleTypes::INTEGER, false, null);
+
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 
 		$tMap->addColumn('UPDATED_BY', 'UpdatedBy', 'int', CreoleTypes::INTEGER, false, null);

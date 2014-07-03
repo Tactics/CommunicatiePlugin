@@ -178,6 +178,13 @@ abstract class BaseBriefBijlagePeer {
 	
 	public static function doSelectRS(Criteria $criteria, $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:addDoSelectRS:addDoSelectRS') as $callable)
+    {
+      call_user_func($callable, 'BaseBriefBijlagePeer', $criteria, $con);
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -383,6 +390,17 @@ abstract class BaseBriefBijlagePeer {
 	
 	public static function doInsert($values, $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doInsert:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -404,12 +422,29 @@ abstract class BaseBriefBijlagePeer {
 			throw $e;
 		}
 
-		return $pk;
+		
+    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doInsert:post') as $callable)
+    {
+      call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con, $pk);
+    }
+
+    return $pk;
 	}
 
 	
 	public static function doUpdate($values, $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doUpdate:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -425,8 +460,16 @@ abstract class BaseBriefBijlagePeer {
 
 				$criteria->setDbName(self::DATABASE_NAME);
 
-		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	}
+		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	
+
+    foreach (sfMixer::getCallables('BaseBriefBijlagePeer:doUpdate:post') as $callable)
+    {
+      call_user_func($callable, 'BaseBriefBijlagePeer', $values, $con, $ret);
+    }
+
+    return $ret;
+  }
 
 	
 	public static function doDeleteAll($con = null)
@@ -499,16 +542,7 @@ abstract class BaseBriefBijlagePeer {
 
 		}
 
-		$res =  BasePeer::doValidate(BriefBijlagePeer::DATABASE_NAME, BriefBijlagePeer::TABLE_NAME, $columns);
-    if ($res !== true) {
-        $request = sfContext::getInstance()->getRequest();
-        foreach ($res as $failed) {
-            $col = BriefBijlagePeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
-        }
-    }
-
-    return $res;
+		return BasePeer::doValidate(BriefBijlagePeer::DATABASE_NAME, BriefBijlagePeer::TABLE_NAME, $columns);
 	}
 
 	

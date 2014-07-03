@@ -37,7 +37,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 
 	
-	protected $vertaald = true;
+	protected $vertaald = false;
 
 
 	
@@ -283,7 +283,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setVertaald($v)
 	{
 
-		if ($this->vertaald !== $v || $v === true) {
+		if ($this->vertaald !== $v || $v === false) {
 			$this->vertaald = $v;
 			$this->modifiedColumns[] = BriefLayoutPeer::VERTAALD;
 		}
@@ -393,6 +393,17 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	
 	public function delete($con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseBriefLayout:delete:pre') as $callable)
+    {
+      $ret = call_user_func($callable, $this, $con);
+      if ($ret)
+      {
+        return;
+      }
+    }
+
+
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
@@ -410,11 +421,28 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 			$con->rollback();
 			throw $e;
 		}
-	}
+	
 
+    foreach (sfMixer::getCallables('BaseBriefLayout:delete:post') as $callable)
+    {
+      call_user_func($callable, $this, $con);
+    }
+
+  }
 	
 	public function save($con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseBriefLayout:save:pre') as $callable)
+    {
+      $affectedRows = call_user_func($callable, $this, $con);
+      if (is_int($affectedRows))
+      {
+        return $affectedRows;
+      }
+    }
+
+
     if ($this->isNew() && !$this->isColumnModified(BriefLayoutPeer::CREATED_AT))
     {
       $this->setCreatedAt(time());
@@ -437,6 +465,11 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+    foreach (sfMixer::getCallables('BaseBriefLayout:save:post') as $callable)
+    {
+      call_user_func($callable, $this, $con, $affectedRows);
+    }
+
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollback();
@@ -838,5 +871,19 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 		$this->collBriefTemplates[] = $l;
 		$l->setBriefLayout($this);
 	}
+
+
+  public function __call($method, $arguments)
+  {
+    if (!$callable = sfMixer::getCallable('BaseBriefLayout:'.$method))
+    {
+      throw new sfException(sprintf('Call to undefined method BaseBriefLayout::%s', $method));
+    }
+
+    array_unshift($arguments, $this);
+
+    return call_user_func_array($callable, $arguments);
+  }
+
 
 } 

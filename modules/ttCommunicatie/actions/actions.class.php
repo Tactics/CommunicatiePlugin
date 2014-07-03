@@ -314,6 +314,7 @@ class ttCommunicatieActions extends sfActions
       $brief_template->setNaam($this->getRequestParameter('naam'));
       $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));
     }
+    $brief_template->setBewerkbaar($this->getRequestParameter('bewerkbaar', 0));
     $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
 
@@ -454,6 +455,7 @@ class ttCommunicatieActions extends sfActions
 
     echo json_encode(array(
       'html'      => $html,
+      'bewerkbaar' => $briefTemplate->getBewerkbaar(),
       'eenmalig'  => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
       'onderwerp' => $onderwerp,
       'cultures'  => $culture_arr

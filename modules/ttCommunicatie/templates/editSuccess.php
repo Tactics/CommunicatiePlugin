@@ -276,6 +276,12 @@ function showPlaceholders($placeholders)
       </td>
     </tr>
     <tr>
+      <th>Bewerkbaar voor versturen:</th>
+      <td>
+        <?php echo select_tag('bewerkbaar', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getBewerkbaar())); ?>
+      </td>
+    </tr>
+    <tr>
       <th>Slechts eenmalig versturen:</th>
       <td>        
         <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getEenmaligVersturen())); ?>

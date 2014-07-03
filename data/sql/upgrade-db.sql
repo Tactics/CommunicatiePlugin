@@ -18,3 +18,12 @@ ALTER TABLE `brief_layout` CHANGE `id` `id` INT( 11 ) NOT NULL AUTO_INCREMENT;
 -- -----------------------------------------------------------------------------
 ALTER TABLE brief_verzonden ADD object_class_bestemmeling VARCHAR(45) NULL DEFAULT NULL AFTER object_id;
 ALTER TABLE brief_verzonden ADD object_id_bestemmeling INT NULL DEFAULT NULL AFTER object_class_bestemmeling;
+
+
+-- -----------------------------------------------------------------------------
+-- 3/07/2014
+-- Taco Orens
+--
+-- Toelaten dat sommige templates bewerkbaar zijn
+-- -----------------------------------------------------------------------------
+ALTER TABLE brief_template ADD COLUMN bewerkbaar INT NOT NULL DEFAULT 1;

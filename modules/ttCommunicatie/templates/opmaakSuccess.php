@@ -321,15 +321,17 @@ function showPlaceholders($placeholders)
           var cultures  = data.cultures;
           var html      = data.html;
           var onderwerp = data.onderwerp;
-          
-          //console.info(cultures);
+
           <?php if ($edit_template) : ?>
+            tinyMCE.activeEditor.getBody().setAttribute('contenteditable', data.bewerkbaar == '1' ? true : false);
+
             $(cultures).each(function(i, culture){
               var h = html[culture];
               var o = onderwerp[culture];
               var editorId = 'html_' + culture;
               
               tinyMCE.getInstanceById(editorId).execCommand('mceSetContent', false, h);
+
               $('#onderwerp_' + culture).val(o);
             });
           <?php endif; ?>

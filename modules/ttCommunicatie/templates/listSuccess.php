@@ -83,6 +83,7 @@
                             array("name" => BriefTemplatePeer::BESTEMMELING_CLASSES, "text" => "Bestemmeling(en)", "sortable" => false, 'width' => 120),
                             array("name" => BriefTemplatePeer::BRIEF_LAYOUT_ID, "text" => "Layout", "sortable" => true, 'width' => 120),
                             array("name" => BriefTemplatePeer::EENMALIG_VERSTUREN, "text" => "Versturen", "sortable" => true, 'width' => 60 ),
+                            array("name" => BriefTemplatePeer::BEWERKBAAR, "text" => "Bewerkbaar", "sortable" => true, 'width' => 60, 'align' => 'center' ),
                             array("name" => BriefTemplatePeer::SYSTEEMNAAM, "text" => "Systeemnaam", 'width' => 30, 'align' => 'center'),
                             array("text" => "Acties", "width" => 85, "align" => "center"	),
                           ),
@@ -108,6 +109,7 @@
           trim($briefTemplate->getBestemmelingClasses(), '|'),
           $briefTemplate->getBriefLayoutId() ? $briefTemplate->getBriefLayout()->getNaam() : '-',
           $briefTemplate->getEenmaligVersturen() ? 'eenmaal' : 'meermaals',
+          $briefTemplate->getBewerkbaar() ? 'Ja' : 'Nee',
           $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
           array("content" =>
             //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .

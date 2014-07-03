@@ -57,6 +57,10 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 
 	
+	protected $bewerkbaar = 1;
+
+
+	
 	protected $created_by;
 
 
@@ -174,6 +178,13 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 		return $this->gearchiveerd;
+	}
+
+	
+	public function getBewerkbaar()
+	{
+
+		return $this->bewerkbaar;
 	}
 
 	
@@ -403,6 +414,20 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setBewerkbaar($v)
+	{
+
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->bewerkbaar !== $v || $v === 1) {
+			$this->bewerkbaar = $v;
+			$this->modifiedColumns[] = BriefTemplatePeer::BEWERKBAAR;
+		}
+
+	} 
+	
 	public function setCreatedBy($v)
 	{
 
@@ -493,19 +518,21 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			$this->gearchiveerd = $rs->getInt($startcol + 11);
 
-			$this->created_by = $rs->getInt($startcol + 12);
+			$this->bewerkbaar = $rs->getInt($startcol + 12);
 
-			$this->updated_by = $rs->getInt($startcol + 13);
+			$this->created_by = $rs->getInt($startcol + 13);
 
-			$this->created_at = $rs->getTimestamp($startcol + 14, null);
+			$this->updated_by = $rs->getInt($startcol + 14);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 15, null);
+			$this->created_at = $rs->getTimestamp($startcol + 15, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 16, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 16; 
+						return $startcol + 17; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefTemplate object", $e);
 		}
@@ -514,6 +541,17 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	
 	public function delete($con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseBriefTemplate:delete:pre') as $callable)
+    {
+      $ret = call_user_func($callable, $this, $con);
+      if ($ret)
+      {
+        return;
+      }
+    }
+
+
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
@@ -531,11 +569,28 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 			$con->rollback();
 			throw $e;
 		}
-	}
+	
 
+    foreach (sfMixer::getCallables('BaseBriefTemplate:delete:post') as $callable)
+    {
+      call_user_func($callable, $this, $con);
+    }
+
+  }
 	
 	public function save($con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseBriefTemplate:save:pre') as $callable)
+    {
+      $affectedRows = call_user_func($callable, $this, $con);
+      if (is_int($affectedRows))
+      {
+        return $affectedRows;
+      }
+    }
+
+
     if ($this->isNew() && !$this->isColumnModified(BriefTemplatePeer::CREATED_AT))
     {
       $this->setCreatedAt(time());
@@ -558,6 +613,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+    foreach (sfMixer::getCallables('BaseBriefTemplate:save:post') as $callable)
+    {
+      call_user_func($callable, $this, $con, $affectedRows);
+    }
+
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollback();
@@ -728,15 +788,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				return $this->getGearchiveerd();
 				break;
 			case 12:
-				return $this->getCreatedBy();
+				return $this->getBewerkbaar();
 				break;
 			case 13:
-				return $this->getUpdatedBy();
+				return $this->getCreatedBy();
 				break;
 			case 14:
-				return $this->getCreatedAt();
+				return $this->getUpdatedBy();
 				break;
 			case 15:
+				return $this->getCreatedAt();
+				break;
+			case 16:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -761,10 +824,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 			$keys[9] => $this->getSysteemnaam(),
 			$keys[10] => $this->getSysteemplaceholders(),
 			$keys[11] => $this->getGearchiveerd(),
-			$keys[12] => $this->getCreatedBy(),
-			$keys[13] => $this->getUpdatedBy(),
-			$keys[14] => $this->getCreatedAt(),
-			$keys[15] => $this->getUpdatedAt(),
+			$keys[12] => $this->getBewerkbaar(),
+			$keys[13] => $this->getCreatedBy(),
+			$keys[14] => $this->getUpdatedBy(),
+			$keys[15] => $this->getCreatedAt(),
+			$keys[16] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -817,15 +881,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$this->setGearchiveerd($value);
 				break;
 			case 12:
-				$this->setCreatedBy($value);
+				$this->setBewerkbaar($value);
 				break;
 			case 13:
-				$this->setUpdatedBy($value);
+				$this->setCreatedBy($value);
 				break;
 			case 14:
-				$this->setCreatedAt($value);
+				$this->setUpdatedBy($value);
 				break;
 			case 15:
+				$this->setCreatedAt($value);
+				break;
+			case 16:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -847,10 +914,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[9], $arr)) $this->setSysteemnaam($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setSysteemplaceholders($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setGearchiveerd($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCreatedBy($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setUpdatedBy($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCreatedAt($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setUpdatedAt($arr[$keys[15]]);
+		if (array_key_exists($keys[12], $arr)) $this->setBewerkbaar($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCreatedBy($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setUpdatedBy($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCreatedAt($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setUpdatedAt($arr[$keys[16]]);
 	}
 
 	
@@ -870,6 +938,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMNAAM)) $criteria->add(BriefTemplatePeer::SYSTEEMNAAM, $this->systeemnaam);
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMPLACEHOLDERS)) $criteria->add(BriefTemplatePeer::SYSTEEMPLACEHOLDERS, $this->systeemplaceholders);
 		if ($this->isColumnModified(BriefTemplatePeer::GEARCHIVEERD)) $criteria->add(BriefTemplatePeer::GEARCHIVEERD, $this->gearchiveerd);
+		if ($this->isColumnModified(BriefTemplatePeer::BEWERKBAAR)) $criteria->add(BriefTemplatePeer::BEWERKBAAR, $this->bewerkbaar);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_BY)) $criteria->add(BriefTemplatePeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefTemplatePeer::UPDATED_BY)) $criteria->add(BriefTemplatePeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_AT)) $criteria->add(BriefTemplatePeer::CREATED_AT, $this->created_at);
@@ -925,6 +994,8 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$copyObj->setSysteemplaceholders($this->systeemplaceholders);
 
 		$copyObj->setGearchiveerd($this->gearchiveerd);
+
+		$copyObj->setBewerkbaar($this->bewerkbaar);
 
 		$copyObj->setCreatedBy($this->created_by);
 
@@ -1139,5 +1210,19 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$this->collBriefBijlages[] = $l;
 		$l->setBriefTemplate($this);
 	}
+
+
+  public function __call($method, $arguments)
+  {
+    if (!$callable = sfMixer::getCallable('BaseBriefTemplate:'.$method))
+    {
+      throw new sfException(sprintf('Call to undefined method BaseBriefTemplate::%s', $method));
+    }
+
+    array_unshift($arguments, $this);
+
+    return call_user_func_array($callable, $arguments);
+  }
+
 
 } 
