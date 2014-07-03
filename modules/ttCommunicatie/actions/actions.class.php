@@ -34,6 +34,7 @@ class ttCommunicatieActions extends sfActions
     $this->criteria = clone $this->getUser()->getAttribute('bestemmelingen_criteria', new Criteria(), $this->md5hash);
     $this->choose_template = $this->getUser()->getAttribute('choose_template', true, $this->md5hash);
     $this->edit_template = $this->getUser()->getAttribute('edit_template', true, $this->md5hash);
+
     $this->bestemmelingenClass = $this->getUser()->getAttribute('bestemmelingen_class', null, $this->md5hash);
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
     $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
@@ -85,7 +86,7 @@ class ttCommunicatieActions extends sfActions
     }
 
     // indien geem template_id opgegeven en je er geen kan kiezen, dan kan edit niet
-    if (! $this->brief_template && ! $this->choose_template)
+    if (( $this->brief_template && ! $this->brief_template->getBewerkbaar()) || (! $this->brief_template && ! $this->choose_template))
     {
       $this->edit_template = false;
     }

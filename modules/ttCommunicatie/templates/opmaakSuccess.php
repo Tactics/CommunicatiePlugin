@@ -264,14 +264,7 @@ function showPlaceholders($placeholders)
       pagebreak_separator : "%pagebreak%",
       theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
       theme_advanced_buttons2 : "",
-      theme_advanced_buttons3 : "",
-      init_instance_callback : function(editor)
-      {
-        <?php if($brief_template && ! $brief_template->getBewerkbaar()):?>
-        editor.getBody().setAttribute('contenteditable',false);
-        <?php endif;?>
-      }
-
+      theme_advanced_buttons3 : ""
     });
 
     <?php if ($show_bestemmelingen): ?>
