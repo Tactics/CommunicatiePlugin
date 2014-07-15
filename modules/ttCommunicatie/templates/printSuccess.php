@@ -206,7 +206,6 @@
       <span style="font-size: 9px;">Totaal aantal <?php echo $viaemail ? 'e-mails: ' . $aantal_via_email : 'brieven: ' . $aantal_brieven; ?></span>
     </div>
 
-    <center>
     <div style="width: 210px;">
       <table style="width:100%">
         <tr>
@@ -235,7 +234,6 @@
         </tr>
       </table>
     </div>
-    </center>
   </div>
   
   <script type="text/javascript">

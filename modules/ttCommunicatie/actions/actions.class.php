@@ -778,7 +778,7 @@ class ttCommunicatieActions extends sfActions
             BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
 
             $verstuurd = true;
-            echo 'Bericht verzonden naar : ' . $email;
+            echo 'Bericht verzonden naar : ' . $email . (method_exists($object, '__toString') ? ' ( ' . $object . ' )' : '');
             echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
             echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
             echo '<br/>';
