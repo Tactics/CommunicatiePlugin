@@ -217,7 +217,7 @@ class BriefTemplate extends BaseBriefTemplate
   public function sendMailToObject(iMailer $object, $options = array())
   {
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
-
+    $afzender = isset($options['afzender']) ? $options['afzender'] : false;
     // Controleren of het mogelijk is deze brief_template te versturen naar $object.
     $b     = $this->getBestemmelingArray();
     $cName = get_class($object);
@@ -253,6 +253,7 @@ class BriefTemplate extends BaseBriefTemplate
     // Mail versturen
     $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
       'onderwerp' => $onderwerp,
+      'afzender' => $afzender,
       'skip_template' => true,
       'cc' => (method_exists($object, 'getMailerRecipientCC') ? $object->getMailerRecipientCC() : array()),
       'bcc' => (method_exists($object, 'getMailerRecipientBCC') ? $object->getMailerRecipientBCC() : array()),
