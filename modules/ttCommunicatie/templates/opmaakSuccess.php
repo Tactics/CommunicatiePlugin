@@ -104,8 +104,10 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                   <?php if ($choose_template) : ?>
                     <section class="col col-2">
                       <label class="label">Sjabloon:</label>
-                      <label class="select"><?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null, array('include_blank' => true))); ?></label>
-                      <i></i>
+                      <label class="select">
+                        <?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null, array('include_blank' => true))); ?>
+                        <i></i>
+                      </label>
                     </section>
                     <div style="clear:both"></div>
                   <?php endif; ?>
@@ -204,9 +206,10 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                       <label class="label">Bijlagen:</label>
                       <label class="input input-file">
                         <div class="button">
-                          <?php echo input_file_tag('bijlage0', array('class' => 'bijlagen')) ?>
+                          <?php echo input_file_tag('bijlage0', array('class' => 'bijlagen', 'onchange' => 'this.parentNode.nextSibling.value = this.value')) ?>
                           Bladeren
                         </div>
+                        <input type="text" readonly="">
                       </label>
                       <br />
                       <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
@@ -378,12 +381,11 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   function bijlageToevoegen()
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
-    var str = '<br /><label class="input input-file">';
+    var str = '<label class="input input-file">';
     str += '<div class="button">';
-    str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '">';
-    str += 'Bladeren </div></label>';
+    str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + ' onchange="this.parentNode.nextElementSibling.value = this.value">';
+    str += 'Bladeren </div><input type="text" readonly=""></label><br />';
 
     jQuery('a.bijlage_toevoegen').before(str);
-    jQuery('a.bijlage_toevoegen').before('<br />');
   }
 </script>

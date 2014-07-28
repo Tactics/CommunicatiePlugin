@@ -125,13 +125,12 @@ end_slot();
   function bijlageToevoegen()
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
-    var str = '<br /><label class="input input-file">';
+    var str = '<label class="input input-file">';
     str += '<div class="button">';
-    str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '">';
-    str += 'Bladeren </div></label>';
+    str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + ' onchange="this.parentNode.nextElementSibling.value = this.value">';
+    str += 'Bladeren </div><input type="text" readonly=""></label><br />';
     
     jQuery('a.bijlage_toevoegen').before(str);
-    jQuery('a.bijlage_toevoegen').before('<br />');
   }
 </script>
 
@@ -272,9 +271,10 @@ function showPlaceholders($placeholders)
                     <?php endforeach; ?>
                     <label class="input input-file">
                       <div class="button">
-                        <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages')) ?>
+                        <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages', 'onchange' => 'this.parentNode.nextElementSibling.value = this.value')) ?>
                         Bladeren
                       </div>
+                      <input type="text" readonly="">
                     </label>
                     <br />
                     <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
