@@ -386,7 +386,6 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $bedrijfCton = $criteria->getNewCriterion(BriefTemplatePeer::CATEGORIE, $sfUser->getBedrijfId());
     $bedrijfCton->addOr($criteria->getNewCriterion(BriefTemplatePeer::CATEGORIE, NULL, Criteria::ISNULL));
     $criteria->add($bedrijfCton);
-    $criteria->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|Dossier|%', Criteria::LIKE);
 
     $cton1 = $criteria->getNewCriterion(BriefTemplatePeer::NAAM, '%' . $keyword . '%', Criteria::LIKE);
 

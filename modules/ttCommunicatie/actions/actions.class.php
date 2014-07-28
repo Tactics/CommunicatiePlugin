@@ -184,7 +184,7 @@ class ttCommunicatieActions extends sfActions
    */
   public function executeList()
   {
-    $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list');
+    $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list', 1);
     
     // archief bekijken?
     if (!$this->getUser()->getAttribute('bekijk_archief', false))
@@ -1223,6 +1223,7 @@ class ttCommunicatieActions extends sfActions
   {
     $culture =  array_search($this->getRequestParameter('language_label'), BriefTemplatePeer::getCultureLabelArray());
     $brief_layout = BriefLayoutPeer::retrieveByPK($this->getRequestParameter('brief_layout_id'));
+
     $this->forward404Unless($culture && $brief_layout);
     
     $emailLayout = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
