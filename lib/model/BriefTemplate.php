@@ -218,6 +218,7 @@ class BriefTemplate extends BaseBriefTemplate
   {
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
     $afzender = isset($options['afzender']) ? $options['afzender'] : false;
+
     // Controleren of het mogelijk is deze brief_template te versturen naar $object.
     $b     = $this->getBestemmelingArray();
     $cName = get_class($object);
@@ -250,15 +251,19 @@ class BriefTemplate extends BaseBriefTemplate
     $brief = BriefTemplatePeer::parseIfStatements($brief, $object, true, $systeemvalues);
     $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
 
-    // Mail versturen
-    $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
+    $options = array(
       'onderwerp' => $onderwerp,
-      'afzender' => $afzender,
       'skip_template' => true,
       'cc' => (method_exists($object, 'getMailerRecipientCC') ? $object->getMailerRecipientCC() : array()),
       'bcc' => (method_exists($object, 'getMailerRecipientBCC') ? $object->getMailerRecipientBCC() : array()),
       'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
-    ));
+    );
+
+    // Enkel parameter meegeven indien gezet
+    if($afzender) $options['afzender']  = $afzender;
+
+    // Mail versturen
+    $mailSent = BerichtPeer::verstuurEmail($email, $brief, $options);
 
     $bestemmeling = null;
     if (method_exists($object, 'getBestemmeling'))
