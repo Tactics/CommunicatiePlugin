@@ -58,6 +58,7 @@ end_slot();
                 <?php echo input_hidden_tag("reset", 1); ?>
                 <?php echo submit_tag('Zoeken', array('class' => 'btn btn-primary')) ?>
                 <?php echo button_to_function('Filter wissen', 'formulierWissen();', array('class' => 'btn btn-default')); ?>
+                <?php echo button_to("Nieuw sjabloon", 'ttCommunicatie/create', array('class' => 'btn btn-primary')); ?>
               </footer>
               </form>
             </div>
@@ -89,7 +90,7 @@ end_slot();
       "sortorder"  => $pager->getOrderAsc() ? "ASC" : "DESC",
       "sorturi"    => 'ttCommunicatie/list',
       "sorttarget" => 'zoekresultaten',
-      "smartadmin" => true
+      "smartadmin" => sfConfig::get("sf_style_smartadmin")
     )
   );
 
@@ -112,7 +113,7 @@ end_slot();
       //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
         link_to("<i class='fa fa-pencil'></i>", "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()). ' ' .
         link_to_unless($briefTemplate->isSysteemtemplate(),  "<i class='fa fa-paste'></i>", "ttCommunicatie/copy?template_id=" . $briefTemplate->getId(), array('confirm' => 'Bent u zeker dat u een kopie wil maken van dit briefsjabloon?')). ' ' .
-        link_to_unless($briefTemplate->isSysteemtemplate(), ($briefTemplate->getGearchiveerd() ? "<i class='fa fa-file-text'></i>" : "<i class='fa fa-file-text-o'></i>"),  'ttCommunicatie/archiveer?id=' . $briefTemplate->getId(), array(
+        link_to_unless($briefTemplate->isSysteemtemplate(), ($briefTemplate->getGearchiveerd() ? "<i class='fa fa-file-text'></i>" : "<i class='fa fa-archive'></i>"),  'ttCommunicatie/archiveer?id=' . $briefTemplate->getId(), array(
           'confirm' => $briefTemplate->getGearchiveerd() ? "Bent u zeker dat u dit sjabloon uit het archief wenst te halen?" : "Bent u zeker dat u dit sjabloon wenst te archiveren?"
         )) . ' ' .
         ($sf_user->isSuperAdmin() ?
@@ -158,7 +159,7 @@ end_slot();
                 </div>
                 <div class="col-xs-12 col-sm-6">
                   <div class="dataTables_paginate paging_simple_numbers" style="text-align:center">
-                    <?php echo pager_navigation($pager, 'ttCommunicatie/list', "zoekresultaten", true) ?>
+                    <?php echo pager_navigation($pager, 'ttCommunicatie/list', "zoekresultaten", sfConfig::get("sf_style_smartadmin")) ?>
                   </div>
                 </div>
               </div>
@@ -171,7 +172,5 @@ end_slot();
     </article>
   </div>
 </section>
-  <hr />
-  <?php echo button_to("Nieuw sjabloon", 'ttCommunicatie/create', array('class' => 'btn btn-primary')); ?>
 </div><!-- /.pageblock -->
 <?php endif; ?>

@@ -1,6 +1,6 @@
 all:
   has_layout: on
-  stylesheets:    [/ttBase/ui/css/dialog.css, /ttBase/ui/css/tabs.css, jquery.lightbox-0.5.css, /jquery-menu/jquery.menu.css, /ttCommunicatie/css/screen.css, /smartadmin/css/bootstrap.min.css, /smartadmin/css/font-awesome.min.css, /smartadmin/css/smartadmin-production.css, /smartadmin/css/smartadmin-production_unminified.css, /smartadmin/css/smartadmin-production.min.css, /smartadmin/css/smartadmin-skins.css]
+  stylesheets:    [/ttBase/ui/css/dialog.css, /ttBase/ui/css/tabs.css, jquery.lightbox-0.5.css, /jquery-menu/jquery.menu.css, /ttCommunicatie/css/screen.css, <?php if(sfConfig::get("sf_style_smartadmin")){echo '/smartadmin/css/bootstrap.min.css, /smartadmin/css/font-awesome.min.css, /smartadmin/css/smartadmin-production.css, /smartadmin/css/smartadmin-production_unminified.css, /smartadmin/css/smartadmin-production.min.css, /smartadmin/css/smartadmin-skins.css';} ?>]
 #  javascripts:    [<?php echo (SF_DEBUG ? '/ttCommunicatie/js/jquery-1.7.1.js' : '/ttCommunicatie/js/jquery-1.7.1.min.js'); ?>]
 
 printSuccess:

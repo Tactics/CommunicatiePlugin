@@ -126,9 +126,9 @@ end_slot();
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
     var str = '<label class="input input-file">';
-    str += '<div class="button">';
+    str += '<span class="button">';
     str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + ' onchange="this.parentNode.nextElementSibling.value = this.value">';
-    str += 'Bladeren </div><input type="text" readonly=""></label><br />';
+    str += '<span class="bladeren">Bladeren</span></div><input type="text" class="bladeren" readonly=""></label><br />';
     
     jQuery('a.bijlage_toevoegen').before(str);
   }
@@ -199,7 +199,7 @@ function showPlaceholders($placeholders)
                   <?php endif; ?>
                   <section class="col col-2">
                     <label class="label">Communicatie in functie van:</label>
-                    <div id="bestemmelingen" class="inline-group">
+                    <span id="bestemmelingen" class="inline-group">
                       <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
                         <label class="checkbox <?php if ($sf_request->hasError('bestemmelingen')) {echo 'state-error';} ?>">
                           <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray())); ?>
@@ -207,7 +207,7 @@ function showPlaceholders($placeholders)
                           <?php echo $oClass['label']; ?>
                         </label>
                       <?php endforeach; ?>
-                    </div>
+                    </span>
                   </section>
                   <div style="clear:both"></div>
                   <section class="col col-6">
@@ -224,8 +224,8 @@ function showPlaceholders($placeholders)
                     </label>
                   </section>
                   <section class="col col-6">
-                    <label class="label"Invoegvelden</label>
-                    <label class="checkbox">
+                    <label class="label placeholders">Invoegvelden</label>
+                    <label class="checkbox placeholders">
                       <input type="checkbox" id="hideUnsupported">
                       <i></i>
                       Geef enkel invoegvelden weer die <br />door elk type bestemmeling ondersteund worden.
@@ -270,11 +270,11 @@ function showPlaceholders($placeholders)
                       <?php echo link_to($node->getDiskName(), 'ttCommunicatie/downloadAttachment?file_id=' . $node->getId()) . ' ' . link_to(image_tag('icons/trash_16.gif'), 'ttCommunicatie/deleteAttachment?file_id=' . $node->getId() . '&brief_bijlage_id=' . $brief_bijlage->getId() , array('title' => 'Verwijderen')) . '<br />'; ?>
                     <?php endforeach; ?>
                     <label class="input input-file">
-                      <div class="button">
+                      <span class="button">
                         <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages', 'onchange' => 'this.parentNode.nextElementSibling.value = this.value')) ?>
-                        Bladeren
-                      </div>
-                      <input type="text" readonly="">
+                        <span class="bladeren">Bladeren</span>
+                      </span>
+                      <input type="text" class="bladeren" readonly="">
                     </label>
                     <br />
                     <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>

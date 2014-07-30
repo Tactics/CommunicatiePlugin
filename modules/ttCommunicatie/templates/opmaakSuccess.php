@@ -186,8 +186,8 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                       </section>
                       <section class="col col-6">
                           <?php if ($is_target && $edit_template) : ?>
-                            <label class="label">Invoegvelden</label>
-                            <div id="placeholders" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">
+                            <label class="label placeholders">Invoegvelden</label>
+                            <div id="placeholders" style="overflow: auto; height: 500px; width: 275px; margin-left: 20px;">
                             <?php
                               $placeholders = eval("return $objectClass::getPlaceholders();");
                               // Algemene placeholders indien gedefinieerd
@@ -205,11 +205,11 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                     <section class="col col-2">
                       <label class="label">Bijlagen:</label>
                       <label class="input input-file">
-                        <div class="button">
-                          <?php echo input_file_tag('bijlage0', array('class' => 'bijlagen', 'onchange' => 'this.parentNode.nextSibling.value = this.value')) ?>
-                          Bladeren
-                        </div>
-                        <input type="text" readonly="">
+                        <span class="button">
+                          <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages', 'onchange' => 'this.parentNode.nextSibling.value = this.value')) ?>
+                          <span class="bladeren">Bladeren</span>
+                        </span>
+                        <input type="text" class="bladeren" readonly="">
                       </label>
                       <br />
                       <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
@@ -382,9 +382,9 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
     var str = '<label class="input input-file">';
-    str += '<div class="button">';
+    str += '<span class="button">';
     str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + ' onchange="this.parentNode.nextElementSibling.value = this.value">';
-    str += 'Bladeren </div><input type="text" readonly=""></label><br />';
+    str += '<span class="bladeren">Bladeren</span> </span><input type="text" class="bladeren" readonly=""></label><br />';
 
     jQuery('a.bijlage_toevoegen').before(str);
   }

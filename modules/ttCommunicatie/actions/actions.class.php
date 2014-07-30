@@ -184,7 +184,7 @@ class ttCommunicatieActions extends sfActions
    */
   public function executeList()
   {
-    $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list');
+    $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list', 1);
     
     // archief bekijken?
     if (!$this->getUser()->getAttribute('bekijk_archief', false))
