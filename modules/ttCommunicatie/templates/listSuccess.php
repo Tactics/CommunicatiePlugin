@@ -172,5 +172,4 @@ end_slot();
     </article>
   </div>
 </section>
-</div><!-- /.pageblock -->
 <?php endif; ?>
