@@ -46,6 +46,15 @@ end_slot();
 
   jQuery(function($)
   {
+    //string escaping
+    function escapeStr(str)
+    {
+      if (str)
+        return str.replace(/([ !"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~])/g,'\\\\$1')
+
+      return str;
+    }
+
     // language tabs initialiseren
     <?php echo sfConfig::get('sf_style_smartadmin') ? "$('#tabs').tabs();" : "$('#tabs').tt_tabs();"; ?>
 
@@ -65,7 +74,7 @@ end_slot();
     $('#bestemmelingen :checkbox').change(function()
     {
       // Geef placeholders van de verschillende targets weer
-      $('#placeholders #target_' + $(this).val()).toggleClass('active', this.checked);
+      $('#placeholders #target_' + escapeStr($(this).val())).toggleClass('active', this.checked);
 
       // Duid aan welke placeholders niet door alle targets ondersteund worden
       var shared = new Object();
