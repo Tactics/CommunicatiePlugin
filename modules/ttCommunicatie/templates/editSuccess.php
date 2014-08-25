@@ -47,7 +47,7 @@ end_slot();
   jQuery(function($)
   {
     // language tabs initialiseren
-    $('#tabs').tt_tabs();
+    <?php echo sfConfig::get('sf_style_smartadmin') ? "$('#tabs').tabs();" : "$('#tabs').tt_tabs();"; ?>
 
     tinyMCE.init({
       selector: "textarea",
@@ -197,7 +197,7 @@ function showPlaceholders($placeholders)
                     </section>
                     <div style="clear:both"></div>
                   <?php endif; ?>
-                  <section class="col col-2">
+                  <section class="col col-6">
                     <label class="label">Communicatie in functie van:</label>
                     <span id="bestemmelingen" class="inline-group">
                       <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
