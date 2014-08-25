@@ -1,98 +1,133 @@
 <?php if (!$sf_request->isXmlHttpRequest()) : ?>
 
+<section id="widget-grid">
+  <div class="row">
 <?php if ($metFilter) : ?>
-  <h2 class="pageblock">Zoeken</h2>
-  <div class="pageblock">
+    <article class="col-sm-12 col-md-12 col-lg-12 sortable-grid ui-sortable">
+      <div class="jarviswidget jarviswidget-sortable" id="wid-id-0" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false" role="widget">
+        <header role="heading">
+          <div class="jarviswidget-ctrls" role="menu">
+            <a href="javascript:void(0);" class="button-icon jarviswidget-toggle-btn" rel="tooltip" title="" data-placement="bottom" data-original-title="Collapse">
+              <i class="fa fa-minus"></i>
+            </a>
+          </div>
+          <h2>Zoeken</h2>
+          <span class="jarviswidget-loader">
+              <i class="fa fa-refresh fa-spin"></i>
+            </span>
+        </header>
+<!--    <div class="smaller">-->
+        <div role="content">
+          <div class="widget-body no-padding">
+            <?php
+            echo tt_form_remote_tag(array(
+              'update'   => 'zoekresultaten',
+              'url'      => 'ttCommunicatie/objectCommunicatieLog?object_class=' . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type,
+              'script'   => true,
+            ), array(
+              'id' => 'zoekform',
+              'class' => 'smart-form'
+            ));
+            ?>
+            <fieldset>
+              <div class="row">
+                <section class="col col-6">
+                  <label class="label">Onderwerp:</label>
+                  <label class="input"><?php echo input_tag(BriefVerzondenPeer::ONDERWERP, $pager->get(BriefVerzondenPeer::ONDERWERP)); ?></label>
+                </section>
+                <section class="col col-6">
+                  <label class="label">Tekst:</label>
+                  <label class="input"><?php echo input_tag(BriefVerzondenPeer::HTML, $pager->get(BriefVerzondenPeer::HTML)); ?></label>
+                </section>
+              </div>
+            </fieldset>
+            <footer>
+              <?php echo input_hidden_tag("reset", 1); ?>
+              <?php echo submit_tag('Zoeken', array('class' => 'btn btn-primary')) ?>
+              <?php echo button_to_function('Filter wissen', 'wisFormulier();', array('class' => 'btn btn-default')); ?>
+            </footer>
+            </form>
+          </div>
+        </div>
+      </div>
+    </article>
 
-    <div class="smaller">
-    <?php 
-    echo tt_form_remote_tag(array(
-      'update'   => 'zoekresultaten',
-      'url'      => 'ttCommunicatie/objectCommunicatieLog?object_class=' . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type,
-      'script'   => true,
-    ), array(
-      'id' => 'zoekform'
-    )); 
-    ?>
-
-    <table class="formtable" width='100%'>
-      <tbody>
-        <tr>
-          <th>Onderwerp:</th>
-          <td><?php echo input_tag(BriefVerzondenPeer::ONDERWERP, $pager->get(BriefVerzondenPeer::ONDERWERP)); ?></td>
-        </tr>
-        <tr>
-          <th>Tekst:</th>
-          <td><?php echo input_tag(BriefVerzondenPeer::HTML, $pager->get(BriefVerzondenPeer::HTML)); ?></td>
-        </tr>
-      <tbody>
-    </table>
-    </div>
-
-    <?php echo input_hidden_tag("reset", 1); ?>
-    <br/>
-    <?php echo submit_tag('Zoeken') ?>	  
-    <?php echo button_to_function('Filter wissen', 'wisFormulier();'); ?>  
-    </form>
-  </div>
-
-
-<h2 class="pageblock">Resultaten</h2>
-<div id="eventlist" class="pageblock">
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12 sortable-grid ui-sortable">
+      <div class="jarviswidget jarviswidget-sortable" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false" role="widget">
+        <header role="heading">
+          <div class="jarviswidget-ctrls" role="menu">
+            <a href="javascript:void(1);" class="button-icon jarviswidget-toggle-btn" rel="tooltip" title="" data-placement="bottom" data-original-title="Collapse">
+              <i class="fa fa-minus"></i>
+            </a>
+          </div>
+          <h2>Resultaten</h2>
+          <span class="jarviswidget-loader">
+            <i class="fa fa-refresh fa-spin"></i>
+          </span>
+        </header>
+        <div role="content">
+          <div id="zoekresultaten">
 <?php endif; // endif met filter?>
-  <div id="zoekresultaten">
 <?php endif; // endif !ajaxrequest?>
-  <div class="filter">
-    &nbsp;<?php echo $pager->getNbResults() ?> resultaten gevonden, <strong><?php echo $pager->getFirstIndice() ?>-<?php echo $pager->getLastIndice() ?></strong> worden weergegeven.
-  </div>
+            <div class="widget-body no-padding">
+              <div id="dt_basic_wrapper" class="dataTables_wrapper form-inline no-footer">
+                <?php
+                    $table = new myTable(
+                                        array(
+                                          array("name" => "medium", "text" => "Medium", 'sortable' => true),
+                                          array("name" => "adres", "text" => "Adres", 'sortable' => true),
+                                          array("name" => "created_at", "text" => "Tijdstip", 'sortable' => true),
+                                          array("name" => "onderwerp", "text" => "Onderwerp", 'sortable' => true),
+                                          array("name" => "acties", "text" => "Acties", "align" => "center", "width" => "40")
+                                        ), array(
+                                            'sorturi' => "ttCommunicatie/objectCommunicatieLog?object_class=" . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type,
+                                            'sorttarget' => 'zoekresultaten',
+                                            'sortfield'  => $pager->getOrderBy(),
+                                            'sortorder'  => $pager->getOrderAsc() ? "ASC" : "DESC",
+                                        )
+                                      );
 
-  <?php
 
-    $table = new myTable(
+                    foreach($pager->getResults() as $briefVerzonden)
+                    {
+                      $table->addRow(
                         array(
-                          array("name" => "medium", "text" => "Medium", 'sortable' => true),
-                          array("name" => "adres", "text" => "Adres", 'sortable' => true),
-                          array("name" => "created_at", "text" => "Tijdstip", 'sortable' => true),
-                          array("name" => "onderwerp", "text" => "Onderwerp", 'sortable' => true),
-                          array("name" => "acties", "text" => "Acties", "align" => "center", "width" => "40")
-                        ), array(
-                            'sorturi' => "ttCommunicatie/objectCommunicatieLog?object_class=" . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type,
-                            'sorttarget' => 'zoekresultaten',
-                            'sortfield'  => $pager->getOrderBy(),
-                            'sortorder'  => $pager->getOrderAsc() ? "ASC" : "DESC",
+                          $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
+                          $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
+                          format_date($briefVerzonden->getCreatedAt(), 'f'),
+                          $briefVerzonden->getOnderwerp(),
+                          link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' .
+                          ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ?
+                            link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});") :
+                            ''
+                          )
                         )
                       );
+                    }
 
-
-    foreach($pager->getResults() as $briefVerzonden)
-    {
-      $table->addRow(
-        array(
-          $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
-          $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
-          format_date($briefVerzonden->getCreatedAt(), 'f'),
-          $briefVerzonden->getOnderwerp(),
-          link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' . 
-          ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ? 
-            link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});") : 
-            ''
-          )
-        )
-      );
-    }
-
-    echo $table;
-  ?>
-
-  <?php echo pager_navigation($pager, 'ttCommunicatie/objectCommunicatieLog?object_class=' . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type, 'eventlist') ?>
-
-<?php if (!$sf_request->isXmlHttpRequest()) : ?>
-    </div> <!-- end zoekresultaten -->
-  <br />
-    
-<?php if ($metFilter) : ?>
-</div>
-<?php endif; // endif metFilter ?>
+                    echo $table;
+                  ?>
+                <div class="dt-toolbar-footer">
+                  <div class="col-sm-6 col-xs-12 hidden-xs">
+                    <div class="dataTables_info" id="dt_basic_info" role="status" aria-live="polite">
+                      &nbsp;<span class="text-primary" style="font-weight:bold"><?php echo $pager->getNbResults() ?></span> resultaten gevonden, <span class="txt-color-darken" style="font-weight:bold"><?php echo $pager->getLastIndice() ? $pager->getFirstIndice() : 0 ?></span>-<span class="txt-color-darken" style="font-weight:bold"><?php echo $pager->getLastIndice() ?></span> worden weergegeven.
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="dataTables_paginate paging_simple_numbers" style="text-align:center">
+                      <?php echo pager_navigation($pager, 'ttCommunicatie/objectCommunicatieLog?object_class=' . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type, 'eventlist', sfConfig::get('sf_style_smartadmin')) ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  <?php if (! $sf_request->isXmlHttpRequest()) : ?>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
 
 <div id="log_event_detail"></div>
 
