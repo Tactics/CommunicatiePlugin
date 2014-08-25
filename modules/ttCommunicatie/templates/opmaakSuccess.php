@@ -63,54 +63,19 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                 <fieldset>
                   <div class="row">
                     <?php if ($show_bestemmelingen): ?>
-                      <div id="dialog-bestemmelingen" style="display:none;">
-                      <h2>Bestemmelingen</h2>
-                      <span>
-                        <?php
-                          echo label_for('search', 'Zoeken');
-                          echo '&nbsp;';
-                          echo input_tag('search');
-                        ?>
-                      </span><br /><br />
-                      <span>
-                      <?php
-                        echo checkbox_tag('select_all', 1, 1);
-                        echo '&nbsp;';
-                        echo label_for('select_all', 'Selecteer / deselecteer alle');
-                      ?>
-                      </span>
-                      <hr />
-                      <div style="height: 170px; overflow: auto;">
-                        <ul style="list-style-type:none;">
-                          <?php foreach ($bestemmelingen as $objectId => $objectBestemmelingen) : ?>
-                            <?php foreach ($objectBestemmelingen as $index => $objectBestemmeling) : ?>
-                                <label class="checkbox">
-                                  <?php
-                                  echo checkbox_tag("bestemmelingen[$objectId][$index]", $index, true, array('class' => 'bestemmeling', 'name' => "bestemmelingen[$objectId][]")); ?>
-                                  <i></i>
-                                  <?php echo '&nbsp;' . $objectBestemmeling->getNaam();
-                                  ?>
-                                </label>
-                              </li>
-                            <?php endforeach; ?>
-                          <?php endforeach; ?>
-                        </ul>
-                      </div>
-                      <hr />
-                      <?php echo button_to_function('Opslaan', 'jQuery("#dialog-bestemmelingen").tt_window().close(); countBestemmelingen();');?>
-                      </div>
-                  <?php endif; ?>
+                      <?php include_partial('showBestemmelingen', array('bestemmelingen' => $bestemmelingen)); ?>
+                    <?php endif; ?>
 
-                  <?php if ($choose_template) : ?>
-                    <section class="col col-2">
-                      <label class="label">Sjabloon:</label>
-                      <label class="select">
-                        <?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null, array('include_blank' => true))); ?>
-                        <i></i>
-                      </label>
-                    </section>
-                    <div style="clear:both"></div>
-                  <?php endif; ?>
+                    <?php if ($choose_template) : ?>
+                      <section class="col col-2">
+                        <label class="label">Sjabloon:</label>
+                        <label class="select">
+                          <?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null, array('include_blank' => true))); ?>
+                          <i></i>
+                        </label>
+                      </section>
+                      <div style="clear:both"></div>
+                    <?php endif; ?>
 
                   <?php if ($bestemmelingen_aantal === 1) :
                     $emailTo = $bestemmeling->getEmailTo();
@@ -315,23 +280,6 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     });
 
     $(".briefonly").hide();
-
-    <?php if ($show_bestemmelingen): ?>
-      $.expr[':'].icontains = function(a, i, m) {
-        return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-      };
-
-      $('#select_all').change(function(){
-        $('input.bestemmeling').attr('checked', $(this).is(':checked')).change();
-      }).change();
-
-      $('#search').keyup(function(){
-        var search = $(this).val();
-
-        $('#dialog-bestemmelingen li').show();
-        $('#dialog-bestemmelingen li > label').not(':icontains("' + search + '")').closest('li').hide();
-      });
-    <?php endif; ?>
 
     // confirmBox indien > $waarschuwingsAantal bestemmelingen
     $('form[name=print]').on('click', 'input[type=submit]', function(){
