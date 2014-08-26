@@ -230,7 +230,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
         data: jQuery(document.forms['print']).serialize(),
         success: function(html)
         {
-          jQuery("#mailWindow").tt_window({width:'700px'});
+          <?php echo sfConfig::get('sf_style_smartadmin') ? "jQuery('#mailWindow').dialog({ title: '<div class=\'widget-header\'><h4>Verzonden</h4></div>', width: 700});" : "jQuery('#mailWindow').tt_window({width:'700px'});"; ?>
           jQuery('#mailWindow').html(html);
         }
       });
@@ -247,7 +247,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   <?php if ($show_bestemmelingen): ?>
   function showDialog(dialog)
   {
-    jQuery(dialog).tt_window();
+    <?php echo sfConfig::get('sf_style_smartadmin') ? "jQuery(dialog).dialog()" : "jQuery(dialog).tt_window()"; ?>
     jQuery('div.close').remove();
   }    
     

@@ -9,7 +9,7 @@
  * @version    1.0
  */
 
-interface iTtCommunicatie extends iMailer
+interface iTtCommunicatie 
 {
   /**
    * @return string Culture
