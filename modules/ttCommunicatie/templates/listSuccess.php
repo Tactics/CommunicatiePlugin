@@ -111,15 +111,15 @@ end_slot();
       $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
       array("content" =>
       //link_to(image_tag('icons/zoom_16.gif'), 'ttCommunicatie/show?id=' . $briefTemplate->getId(), array('title' => 'Bekijken')) .
-        link_to("<i class='fa fa-pencil'></i>", "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()). ' ' .
-        link_to_unless($briefTemplate->isSysteemtemplate(),  "<i class='fa fa-paste'></i>", "ttCommunicatie/copy?template_id=" . $briefTemplate->getId(), array('confirm' => 'Bent u zeker dat u een kopie wil maken van dit briefsjabloon?')). ' ' .
-        link_to_unless($briefTemplate->isSysteemtemplate(), ($briefTemplate->getGearchiveerd() ? "<i class='fa fa-file-text'></i>" : "<i class='fa fa-archive'></i>"),  'ttCommunicatie/archiveer?id=' . $briefTemplate->getId(), array(
+        link_to("<i class='fa fa-pencil' title='Bewerken'></i>", "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()). ' ' .
+        link_to_unless($briefTemplate->isSysteemtemplate(),  "<i class='fa fa-copy' title='Kopiëren'></i>", "ttCommunicatie/copy?template_id=" . $briefTemplate->getId(), array('confirm' => 'Bent u zeker dat u een kopie wil maken van dit briefsjabloon?')). ' ' .
+        link_to_unless($briefTemplate->isSysteemtemplate(), ($briefTemplate->getGearchiveerd() ? "<i class='fa fa-file-text' title='Dearchiveren'></i>" : "<i class='fa fa-archive' title='Archiveren'></i>"),  'ttCommunicatie/archiveer?id=' . $briefTemplate->getId(), array(
           'confirm' => $briefTemplate->getGearchiveerd() ? "Bent u zeker dat u dit sjabloon uit het archief wenst te halen?" : "Bent u zeker dat u dit sjabloon wenst te archiveren?"
         )) . ' ' .
         ($sf_user->isSuperAdmin() ?
           ($briefTemplate->isVerwijderbaar() ?
             link_to(
-              "<i class='fa fa-trash-o'></i>",
+              "<i class='fa fa-trash-o' title='Verwijderen'></i>",
               'ttCommunicatie/delete?template_id=' . $briefTemplate->getId(),
               array(
                 'confirm' => 'Bent u zeker dat u dit sjabloon wenst te verwijderen?'
