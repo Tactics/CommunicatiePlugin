@@ -171,7 +171,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                       <label class="label">Bijlagen:</label>
                       <label class="input input-file">
                         <span class="button">
-                          <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages', 'onchange' => 'this.parentNode.nextSibling.value = this.value')) ?>
+                          <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages', 'onchange' => 'this.parentNode.nextElementSibling.value = this.value')) ?>
                           <span class="bladeren">Bladeren</span>
                         </span>
                         <input type="text" class="bladeren" readonly="">

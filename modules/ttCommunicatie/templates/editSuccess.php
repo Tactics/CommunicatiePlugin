@@ -293,7 +293,7 @@ function showPlaceholders($placeholders)
                     <label class="label">Layout:</label>
                     <label class="select">
                       <?php echo select_tag('brief_layout_id', objects_for_select(BriefLayoutPeer::getSorted(), 'getId', 'getNaam', $brief_template->getBriefLayoutId(), array('include_blank' => true, 'class' =>  $sf_request->hasError('brief_layout_id') ? "error" : ""))); ?>
-                      <i></i>
+                      <i style="left: 268px !important;"></i>
                     </label>
                   </section>
                   <div style="clear:both"></div>
@@ -301,7 +301,7 @@ function showPlaceholders($placeholders)
                     <label class="label">Slechts eenmalig versturen:</label>
                     <label class="select">
                       <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee', 1 => 'ja')), $brief_template->getEenmaligVersturen()); ?>
-                      <i></i>
+                      <i style="left: 268px !important;"></i>
                     </label>
                   </section>
                   <div style="clear:both"></div>
@@ -309,7 +309,7 @@ function showPlaceholders($placeholders)
                     <label class="label">Is publiciteit:</label>
                     <label class="select">
                       <?php echo select_tag('is_publiciteit', options_for_select(array(0 => 'nee', 1 => 'ja')), $brief_template->getIsPubliciteit()); ?>
-                      <i></i>
+                      <i style="left: 268px !important;"></i>
                     </label>
                   </section>
                   <?php if (sfConfig::get('sf_communicatie_enable_categories', false)) : ?>
