@@ -6,7 +6,7 @@
       <li><a title="<?php echo $language['label'] ?>" href="#<?php echo $language['label'] ?>"><?php echo $language['label'] ?></a></li>
     <?php endforeach; ?>
   </ul>
-  
+
   <?php foreach ($language_array as $language): ?>
     <div id="<?php echo $language['label'] ?>">
       <?php
@@ -44,7 +44,7 @@
          }
          
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
-          'style' => 'width: 434px;', 'disabled' => !$edit_template
+          'style' => 'width: 434px;', 'disabled' => !$edit_template, 'class' => $sf_request->hasError('onderwerp') ? 'state-error' : ''
         ));
         echo ' (Invoegvelden toegestaan) <br /><br />';
 

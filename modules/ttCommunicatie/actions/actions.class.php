@@ -1230,6 +1230,7 @@ class ttCommunicatieActions extends sfActions
   {
     $culture =  array_search($this->getRequestParameter('language_label'), BriefTemplatePeer::getCultureLabelArray());
     $brief_layout = BriefLayoutPeer::retrieveByPK($this->getRequestParameter('brief_layout_id'));
+
     $this->forward404Unless($culture && $brief_layout);
     
     $emailLayout = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);

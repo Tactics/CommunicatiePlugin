@@ -1,15 +1,15 @@
 all:
   has_layout: on
-  stylesheets:    [/ttCommunicatie/css/screen.css]
-  javascripts:    [-*, <?php echo (SF_DEBUG ? '/ttCommunicatie/js/jquery-1.7.1.js' : '/ttCommunicatie/js/jquery-1.7.1.min.js'); ?>]
-  
+  stylesheets:    [/ttBase/ui/css/dialog.css, /ttBase/ui/css/tabs.css, jquery.lightbox-0.5.css, /jquery-menu/jquery.menu.css, /ttCommunicatie/css/screen.css, <?php if(sfConfig::get("sf_style_smartadmin")){echo '/smartadmin/css/bootstrap.min.css, /smartadmin/css/font-awesome.min.css, /smartadmin/css/smartadmin-production.css, /smartadmin/css/smartadmin-production_unminified.css, /smartadmin/css/smartadmin-production.min.css, /smartadmin/css/smartadmin-skins.css';} ?>]
+#  javascripts:    [<?php echo (SF_DEBUG ? '/ttCommunicatie/js/jquery-1.7.1.js' : '/ttCommunicatie/js/jquery-1.7.1.min.js'); ?>]
+
 printSuccess:
   stylesheets: [-*, /ttCommunicatie/css/screen.css, /ttCommunicatie/css/print.css: {media: print}]
   
 editSuccess:
-  javascripts: [/ttCommunicatie/js/tinymce/tinymce.min.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
+  javascripts: [/ttCommunicatie/js/tinymce4/tinymce.min.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
   stylesheets: [/ttBase/ui/css/tabs.css]
   
 opmaakSuccess:
-  javascripts: [/ttCommunicatie/js/tinymce/tinymce.min.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js, /ttBase/ui/js/dialog.js, /ttBase/ui/js/tools.overlay-1.1.2.js, /ttBase/ui/js/tools.expose-1.0.5.js]
+  javascripts: [/ttCommunicatie/js/tinymce4/tinymce.min.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js, /ttBase/ui/js/dialog.js, /ttBase/ui/js/tools.overlay-1.1.2.js, /ttBase/ui/js/tools.expose-1.0.5.js]
   stylesheets: [/ttBase/ui/css/tabs.css, /ttBase/ui/css/dialog.css]
