@@ -226,24 +226,39 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       throw new sfException("Mail already sent.");
     }
     
-    // default placeholders die in layout gebruikt kunnen worden
-    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true);
+    $bestemmeling->setObject($object);
     
-    $culture    = $bestemmeling->getCulture();
-    $values     = $object->fillPlaceholders(null, $culture);
-    $values     = array_merge($defaultPlaceholders, $values, $systeemvalues);
-    $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
-    $values['onderwerp'] = $onderwerp;
+    // brief layout ophalen
+    $this->brief_layout = $this->getBriefLayout();
+
+    // onderwerp en tekst ophalen
+    $onderwerpen = $this->getOnderwerpCultureArr();
+    $htmls = $this->getHtmlCultureArr();
+
+    $this->cultureBrieven = array();
+    foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
+    {
+      $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody('mail', $culture, $htmls[$culture], true);
+      $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
+    }
     
-    $email       = $bestemmeling->getEmailTo();
-    $html        = $this->getTranslatedHtml($culture);
-    $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
+    // work with copy of culturebrieven
+    $tmpCultureBrieven = $this->cultureBrieven;
+
+    // parse Foreach and If statements
+    $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
+    $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
+
+    // replace placeholders
+    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true, true, true);
+    $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, $defaultPlaceholders);
+    $head = $tmpCultureBrieven[$culture]['head'];
+    $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
+    $body = $tmpCultureBrieven[$culture]['body'];
+    $brief = $head . $body;
     
-    $brief = $headAndBody['head'] . $headAndBody['body'];
-    $brief = BriefTemplatePeer::parseForeachStatements($brief, $bestemmeling, true, $systeemvalues);
-    $brief = BriefTemplatePeer::parseIfStatements($brief, $bestemmeling, true, $systeemvalues);
-    $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
-    
+    $email = $bestemmeling->getEmailTo();
+        
     // Mail versturen
     $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
       'onderwerp' => $onderwerp,
