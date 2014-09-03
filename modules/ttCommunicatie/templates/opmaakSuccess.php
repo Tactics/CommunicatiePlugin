@@ -34,6 +34,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 <h2 class="pageblock">Brief opmaken</h2>
 <div class="pageblock">
   <?php echo form_tag('ttCommunicatie/print', array(
+    'id' => 'opmaakForm',
     'name'      => 'print',
     'multipart' => true
   )); ?>
@@ -194,10 +195,17 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       var input = $("<input>").attr("type", "hidden").attr("name", "commit").val(commit);
       jQuery(document.forms['print']).append($(input));
       tinyMCE.triggerSave(); //!important do not remove
+      
+      // build "multipart/form-data".
+      var formEl = document.getElementById("opmaakForm");
+      var formData = new FormData(formEl);
+
       jQuery.ajax({
         url: '<?php echo url_for('ttCommunicatie/print'); ?>',
         type: 'POST',
-        data: jQuery(document.forms['print']).serialize(),
+        contentType: false,
+        processData: false,
+        data: formData,        
         success: function(html)
         {
           jQuery("#mailWindow").tt_window({width:'700px'});
