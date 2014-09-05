@@ -13,6 +13,7 @@ class ttCommunicatieBestemmeling
   protected $wants_publicity = true;
   protected $culture = '';
   protected $object = null; //  te verzenden object
+  protected $bestemmeling = null; // de bestemmeling
 
   /**
    * Geeft e-mail adres van de bestemmeling terug
@@ -115,12 +116,17 @@ class ttCommunicatieBestemmeling
    */
   public function getBestemmeling()
   {
-    if (!($this->object_class && $this->object_id) || !method_exists($this->object_class . 'Peer', 'retrieveByPK'))
+    if (!isset($this->bestemmeling))
     {
-      return null;
+      if (!($this->object_class && $this->object_id) || !method_exists($this->object_class . 'Peer', 'retrieveByPK'))
+      {
+        return null;
+      }
+      
+      $this->bestemmeling = call_user_func($this->object_class . 'Peer::retrieveByPK', $this->object_id);
     }
 
-    return call_user_func($this->object_class . 'Peer::retrieveByPK', $this->object_id);
+    return $this->bestemmeling;
   }
 
   /**
@@ -211,6 +217,16 @@ class ttCommunicatieBestemmeling
   public function setWantsPublicity($wants_publicity)
   {
     $this->wants_publicity = $wants_publicity;
+  }
+  
+  /**
+   * zet de bestemmeling
+   * 
+   * @param mixed $bestemmeling
+   */
+  public function setBestemmeling($bestemmeling)
+  {
+    $this->bestemmeling = $bestemmeling;
   }
 
   /**
