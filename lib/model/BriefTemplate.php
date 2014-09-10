@@ -265,7 +265,17 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       'onderwerp' => $onderwerp,
       'skip_template' => true,
       'cc' => $bestemmeling->getEmailCc(),
-      'bcc' => $bestemmeling->getEmailBcc()
+      'bcc' => $bestemmeling->getEmailBcc(),
+      'img_path' => array(
+        array(
+          'prefix' => 'cid:',
+          'dir' => sfConfig::get('sf_data_dir') . '/brieven/layouts/images/'
+        ),
+        array(
+          'prefix' => '/images/brief_templates/',
+          'dir' => sfConfig::get('sf_web_dir') . '/images/brief_templates/'
+        )
+      )
     ));
 
     // Mail loggen
