@@ -256,6 +256,7 @@ class BriefTemplate extends BaseBriefTemplate
       'skip_template' => true,
       'cc' => (method_exists($object, 'getMailerRecipientCC') ? $object->getMailerRecipientCC() : array()),
       'bcc' => (method_exists($object, 'getMailerRecipientBCC') ? $object->getMailerRecipientBCC() : array()),
+      'reply-to' => (method_exists($object, 'getMailerRecipientReplyTo') ? $object->getMailerRecipientReplyTo() : array()),
       'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
     );
 
