@@ -266,6 +266,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       'skip_template' => true,
       'cc' => $bestemmeling->getEmailCc(),
       'bcc' => $bestemmeling->getEmailBcc(),
+      'attachements' => $this->getAttachments(),
       'img_path' => array(
         array(
           'prefix' => 'cid:',
