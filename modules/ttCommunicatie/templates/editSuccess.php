@@ -135,9 +135,9 @@ end_slot();
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
     var str = '<label class="input input-file">';
-    str += '<span class="button">';
+    str += '<span class="button" />';
     str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + ' onchange="this.parentNode.nextElementSibling.value = this.value">';
-    str += '<span class="bladeren">Bladeren</span></div><input type="text" class="bladeren" readonly=""></label><br />';
+    str += '<span class="bladeren">Bladeren</span><input type="text" class="bladeren" readonly=""></label><br />';
     
     jQuery('a.bijlage_toevoegen').before(str);
   }
