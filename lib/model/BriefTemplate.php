@@ -221,7 +221,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
     
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-    if ($this->getEenmaligVersturen() && $this->reedsVerstuurdNaar($cName, $object->getId()))
+    if ($this->getEenmaligVersturen() && $this->reedsVerstuurdNaar(get_class($object), $object->getId()))
     {
       throw new sfException("Mail already sent.");
     }
