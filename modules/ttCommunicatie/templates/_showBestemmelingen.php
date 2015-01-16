@@ -19,10 +19,11 @@
     <ul style="list-style-type:none;">
       <?php foreach ($bestemmelingen as $objectId => $objectBestemmelingen) : ?>
         <?php foreach ($objectBestemmelingen as $index => $objectBestemmeling) : ?>
+        <li>
           <label class="checkbox">
             <?php
-            echo checkbox_tag("bestemmelingen[$objectId][$index]", $index, true, array('class' => 'bestemmeling', 'name' => "bestemmelingen[$objectId][]")); ?>
-            <i></i>
+          echo checkbox_tag("bestemmelingen[]", $objectId . '_' . $index, true, array('class' => 'bestemmeling'));?>
+                      <i></i>
             <?php echo '&nbsp;' . $objectBestemmeling->getNaam();
             ?>
           </label>
@@ -32,7 +33,7 @@
     </ul>
   </div>
   <hr />
-  <?php echo button_to_function('Opslaan', 'jQuery("#dialog-bestemmelingen").tt_window().close(); countBestemmelingen();');?>
+  <?php echo button_to_function('Opslaan', sfConfig::get('sf_style_smartadmin') ? 'jQuery("#dialog-bestemmelingen").dialog("close"); countBestemmelingen();' : 'jQuery("#dialog-bestemmelingen").tt_window().close(); countBestemmelingen();');?>
 </div>
 
 <script type="text/javascript">
@@ -48,8 +49,15 @@
     $('#search').keyup(function(){
       var search = $(this).val();
 
-      $('#dialog-bestemmelingen li').show();
-      $('#dialog-bestemmelingen li > label').not(':icontains("' + search + '")').closest('li').hide();
+      if($(this).val() != '')
+      {
+        $('#dialog-bestemmelingen li').show();
+        $('#dialog-bestemmelingen li > label').not(':icontains("' + search + '")').closest('li').hide();
+      }
+      else
+      {
+        $('#dialog-bestemmelingen li').show();
+      }
     });    
   });
 </script>
