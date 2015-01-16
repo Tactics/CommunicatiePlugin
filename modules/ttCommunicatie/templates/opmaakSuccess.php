@@ -247,7 +247,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   <?php if ($show_bestemmelingen): ?>
   function showDialog(dialog)
   {
-    <?php echo sfConfig::get('sf_style_smartadmin') ? "jQuery(dialog).dialog()" : "jQuery(dialog).tt_window()"; ?>
+    <?php echo sfConfig::get('sf_style_smartadmin') ? "jQuery(dialog).dialog();" : "jQuery(dialog).tt_window();"; ?>
     jQuery('div.close').remove();
   }    
     
