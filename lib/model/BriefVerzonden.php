@@ -43,11 +43,6 @@ class BriefVerzonden extends BaseBriefVerzonden
         'forceer_versturen' => true
       ));
 
-      // log een kopie, maar met aangepaste created_at
-      $briefVerzonden = $this->copy();
-      $briefVerzonden->setCreatedAt(time());
-      $briefVerzonden->save();
-
       return '<div class="alert alert-success fade-in"><button data-dismiss="alert" class="close">×</button><i class="fa-fw fa fa-check"></i>Mail is verzonden.</div>';
     }
     catch(sfException $e)
