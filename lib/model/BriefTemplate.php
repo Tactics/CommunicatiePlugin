@@ -218,10 +218,16 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
    */
   public function sendMailToObject($object, ttCommunicatieBestemmeling $bestemmeling, $options = array())
   {
+    $defaultOptions = array(
+      'systeemvalues' => array(),
+      'forceer_versturen' => false
+    );
+    $options = array_merge($defaultOptions, $options);
+
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
     
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-    if ($this->getEenmaligVersturen() && $this->reedsVerstuurdNaar(get_class($object), $object->getId()))
+    if (!$options['forceer_versturen'] && $this->getEenmaligVersturen() && $this->reedsVerstuurdNaar(get_class($object), $object->getId()))
     {
       throw new sfException("Mail already sent.");
     }

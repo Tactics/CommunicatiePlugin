@@ -16,21 +16,31 @@ class BriefVerzonden extends BaseBriefVerzonden
    */
   public function getObject()
   {
-    $object = eval("return {$this->getObjectClass()}Peer::retrieveByPk({$this->getObjectId()});");
-    return $object;
+    return Misc::getObject($this->getObjectClass(), $this->getObjectId());
   }
 
-  /**
+    /**
    * Opnieuw verzenden van een e-mail.
    */
   public function herzendEmail()
   {
-    try {
-      BerichtPeer::verstuurEmail($this->getAdres(), $this->getHtml(), array(
-        'onderwerp' => $this->getOnderwerp(),
-        'skip_template' => true,         
-        'afzender' => sfConfig::get("sf_mail_sender"),
-        'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
+    $template = $this->getBriefTemplate();
+    $object = $this->getObject();
+    if (!$template || !$object)
+    {
+      return '<div class="alert alert-warning fade-in"><button data-dismiss="alert" class="close">×</button><i class="fa-fw fa fa-warning"></i>Mail is niet verzonden.</div>';
+    }
+
+    $attachements = array();
+    if (method_exists($object, 'getBriefAttachments'))
+    {
+      $attachements = $object->getBriefAttachments();
+    }
+    try{
+      $template->sendMailToObject($object, $object->getTtCommunicatieBestemmeling(), array(
+        'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR,
+        'attachements' => $attachements,
+        'forceer_versturen' => true
       ));
 
       // log een kopie, maar met aangepaste created_at
@@ -38,12 +48,14 @@ class BriefVerzonden extends BaseBriefVerzonden
       $briefVerzonden->setCreatedAt(time());
       $briefVerzonden->save();
 
-      return "Mail verzonden.";
+      return '<div class="alert alert-success fade-in"><button data-dismiss="alert" class="close">×</button><i class="fa-fw fa fa-check"></i>Mail is verzonden.</div>';
     }
     catch(sfException $e)
     {
-      return "Mail kon niet worden verzonden.";
+      return sprintf('<div class="alert alert-danger fade-in"><button data-dismiss="alert" class="close">×</button><i class="fa-fw fa fa-times"></i>Mail kon niet worden verzonden: %s </div>', $e->getMessage());
     }
+
+
   }
 }
 

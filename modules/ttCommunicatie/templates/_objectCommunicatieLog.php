@@ -148,8 +148,8 @@
     {
       jQuery.ajax({
         url: '<?php echo url_for('ttCommunicatie/herzendEmail?id=9999') ?>'.replace(9999, brief_verzonden_id),
-        success: function(msg) {
-          alert(msg);
+        success: function(html) {
+          jQuery('div#content').prepend(html);
         }
       });
     }
