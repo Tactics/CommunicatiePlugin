@@ -91,6 +91,24 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	protected $lastBriefBijlageCriteria = null;
 
 	
+	protected $collActiviteitsRelatedByConfiguredBriefTemplateId;
+
+	
+	protected $lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = null;
+
+	
+	protected $collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+
+	
+	protected $lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = null;
+
+	
+	protected $collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+
+	
+	protected $lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = null;
+
+	
 	protected $alreadyInSave = false;
 
 	
@@ -664,6 +682,30 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId !== null) {
+				foreach($this->collActiviteitsRelatedByConfiguredBriefTemplateId as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId !== null) {
+				foreach($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId !== null) {
+				foreach($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -723,6 +765,30 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 				if ($this->collBriefBijlages !== null) {
 					foreach($this->collBriefBijlages as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId !== null) {
+					foreach($this->collActiviteitsRelatedByConfiguredBriefTemplateId as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId !== null) {
+					foreach($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId !== null) {
+					foreach($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1013,6 +1079,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$copyObj->addBriefBijlage($relObj->copy($deepCopy));
 			}
 
+			foreach($this->getActiviteitsRelatedByConfiguredBriefTemplateId() as $relObj) {
+				$copyObj->addActiviteitRelatedByConfiguredBriefTemplateId($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getActiviteitsRelatedByConfiguredPersoonBriefTemplateId() as $relObj) {
+				$copyObj->addActiviteitRelatedByConfiguredPersoonBriefTemplateId($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId() as $relObj) {
+				$copyObj->addActiviteitRelatedByConfiguredOrganisatieBriefTemplateId($relObj->copy($deepCopy));
+			}
+
 		} 
 
 		$copyObj->setNew(true);
@@ -1205,6 +1283,1686 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 		$this->collBriefBijlages[] = $l;
 		$l->setBriefTemplate($this);
+	}
+
+	
+	public function initActiviteitsRelatedByConfiguredBriefTemplateId()
+	{
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+		}
+	}
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+			   $this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				ActiviteitPeer::addSelectColumns($criteria);
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				ActiviteitPeer::addSelectColumns($criteria);
+				if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+					$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+	
+	public function countActiviteitsRelatedByConfiguredBriefTemplateId($criteria = null, $distinct = false, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+		return ActiviteitPeer::doCount($criteria, $distinct, $con);
+	}
+
+	
+	public function addActiviteitRelatedByConfiguredBriefTemplateId(Activiteit $l)
+	{
+		$this->collActiviteitsRelatedByConfiguredBriefTemplateId[] = $l;
+		$l->setBriefTemplateRelatedByConfiguredBriefTemplateId($this);
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinLocatie($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinLocatie($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinLocatie($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinOrganisatieType($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinActiviteitCategorie($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinActiviteitCategorie($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinActiviteitCategorie($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinPersoon($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinPersoon($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinPersoon($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieRelatedByCompetentie1Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie1Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie1Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieRelatedByCompetentie2Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie2Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie2Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieRelatedByCompetentie3Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie3Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie3Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieRelatedByCompetentie4Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie4Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie4Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieRelatedByCompetentie5Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie5Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie5Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
+	}
+
+	
+	public function initActiviteitsRelatedByConfiguredPersoonBriefTemplateId()
+	{
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+		}
+	}
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+			   $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				ActiviteitPeer::addSelectColumns($criteria);
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				ActiviteitPeer::addSelectColumns($criteria);
+				if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+					$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+	
+	public function countActiviteitsRelatedByConfiguredPersoonBriefTemplateId($criteria = null, $distinct = false, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+		return ActiviteitPeer::doCount($criteria, $distinct, $con);
+	}
+
+	
+	public function addActiviteitRelatedByConfiguredPersoonBriefTemplateId(Activiteit $l)
+	{
+		$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId[] = $l;
+		$l->setBriefTemplateRelatedByConfiguredPersoonBriefTemplateId($this);
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinLocatie($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinLocatie($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinLocatie($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinOrganisatieType($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinActiviteitCategorie($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinActiviteitCategorie($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinActiviteitCategorie($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinPersoon($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinPersoon($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinPersoon($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieRelatedByCompetentie1Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie1Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie1Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieRelatedByCompetentie2Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie2Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie2Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieRelatedByCompetentie3Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie3Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie3Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieRelatedByCompetentie4Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie4Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie4Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieRelatedByCompetentie5Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie5Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie5Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
+	}
+
+	
+	public function initActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId()
+	{
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+		}
+	}
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+			   $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				ActiviteitPeer::addSelectColumns($criteria);
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				ActiviteitPeer::addSelectColumns($criteria);
+				if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+					$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+	
+	public function countActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId($criteria = null, $distinct = false, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+		return ActiviteitPeer::doCount($criteria, $distinct, $con);
+	}
+
+	
+	public function addActiviteitRelatedByConfiguredOrganisatieBriefTemplateId(Activiteit $l)
+	{
+		$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId[] = $l;
+		$l->setBriefTemplateRelatedByConfiguredOrganisatieBriefTemplateId($this);
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinLocatie($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinLocatie($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinLocatie($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinOrganisatieType($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinActiviteitCategorie($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinActiviteitCategorie($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinActiviteitCategorie($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinPersoon($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinPersoon($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinPersoon($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieRelatedByCompetentie1Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie1Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie1Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieRelatedByCompetentie2Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie2Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie2Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieRelatedByCompetentie3Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie3Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie3Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie1SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie2SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie3SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieRelatedByCompetentie4Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie4Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie4Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie4SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieRelatedByCompetentie5Id($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie5Id($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieRelatedByCompetentie5Id($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+
+	
+	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseActiviteitPeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
+			} else {
+
+				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
+				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinCompetentieSpecialisatieRelatedByCompetentie5SpecialisatieId($criteria, $con);
+			}
+		}
+		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
+
+		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
 	}
 
 
