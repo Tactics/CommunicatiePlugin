@@ -13,10 +13,19 @@ class ttCommunicatieComponents extends sfComponents
    * 
    * @return \myFilteredPager
    */
-  public static function getCommunicatieLogPager($object_class, $object_id, $type = '', $or_cton = null /* todo? $sqls */)
+  public static function getCommunicatieLogPager($object_class, $object_id, $type = '', $or_cton = null, $onderwerp = null, $html = null /* todo? $sqls */)
   {
     $pager = new myFilteredPager('BriefVerzonden', $object_class . $object_id . 'Communicatielog', null, BriefVerzondenPeer::CREATED_AT, false);
     $c = $pager->getCriteria();
+
+    if ($onderwerp)
+    {
+      $c->add(BriefVerzondenPeer::ONDERWERP, '%'.$onderwerp.'%', Criteria::LIKE);
+    }
+    if ($html)
+    {
+      $c->add(BriefVerzondenPeer::HTML, '%'.$html.'%', Criteria::LIKE);
+    }
 
     if ($type == 'bestemmeling')
     {
@@ -68,7 +77,10 @@ class ttCommunicatieComponents extends sfComponents
     $this->metFilter = isset($this->metFilter) ? $this->metFilter : false;
     $this->orCton = isset($this->or_cton) ? $this->or_cton : false;
 
-    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type, $this->orCton);
+    $onderwerp = $this->getRequestParameter('brief_verzonden_ONDERWERP');
+    $html = $this->getRequestParameter('brief_verzonden_HTML');
+
+    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type, $this->orCton, $onderwerp, $html);
     $this->pager->init();
   }
   
