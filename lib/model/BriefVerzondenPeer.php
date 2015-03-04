@@ -16,6 +16,7 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
   
   const STATUS_VERZONDEN = 'verzonden';
   const STATUS_NT_VERZONDEN = 'niet verzonden';
+  const STATUS_BOUNCED = 'bounced';
 
   /**
    * Geeft de verschillende media weer in een formaat voor
