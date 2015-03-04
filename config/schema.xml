@@ -43,6 +43,7 @@
     <column name="custom" type="BOOLEAN" required="true" default="0"/>
     <column name="culture" type="VARCHAR" size="45"/>
     <column name="status" type="VARCHAR" size="45" required="true"/>
+    <column name="uuid" type="VARCHAR" size="45"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>

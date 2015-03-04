@@ -902,6 +902,9 @@ class ttCommunicatieActions extends sfActions
                 $options['bcc'] = $bcc;
               }
 
+              $uuid = uniqid();
+              $options['UUID'] = $uuid;
+
               BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
 
               $verstuurd = true;
@@ -930,6 +933,7 @@ class ttCommunicatieActions extends sfActions
               $briefVerzonden->setCulture($culture);
               $briefVerzonden->setHtml($body);
               $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
+              $briefVerzonden->setUuid($uuid);
               $briefVerzonden->save();
 
               // notify object dat er een brief naar het object verzonden is
@@ -940,7 +944,7 @@ class ttCommunicatieActions extends sfActions
             }
             catch(Exception $e)
             {
-              $this->logs[] = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
+              $this->logs[] = '<span color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</span><br/>';
               $counter['error']++;
             }
           }
@@ -948,16 +952,16 @@ class ttCommunicatieActions extends sfActions
           {
             if (! $email)
             {
-              $this->logs[] = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</span><br/>";
             }
             else if (($verzenden_via == 'liefst') && !$prefersEmail)
             {
-              $this->logs[] = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</span><br/>";
               $counter['wenstgeenmail']++;
             }
             else
             {
-              $this->logs[] = "<font color=red>E-mail werd niet verzonden naar $email, reden: publiciteit niet gewenst.</font><br/>";
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: publiciteit niet gewenst.</span><br/>";
               $counter['wenstgeenpubliciteit']++;
             }
             

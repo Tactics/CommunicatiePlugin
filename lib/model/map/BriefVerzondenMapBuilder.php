@@ -62,6 +62,8 @@ class BriefVerzondenMapBuilder {
 
 		$tMap->addColumn('STATUS', 'Status', 'string', CreoleTypes::VARCHAR, true, 45);
 
+		$tMap->addColumn('UUID', 'Uuid', 'string', CreoleTypes::VARCHAR, false, 45);
+
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 
 		$tMap->addColumn('UPDATED_BY', 'UpdatedBy', 'int', CreoleTypes::INTEGER, false, null);
