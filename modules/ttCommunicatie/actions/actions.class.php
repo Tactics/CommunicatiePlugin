@@ -1292,6 +1292,35 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
+   * Toont alle 'bounced' verzonden brieven
+   */
+  public function executeBounceLog()
+  {
+    $this->pager = new myFilteredPager('BriefVerzonden', 'ttCommunicatie/bounceLog');
+
+    $c = $this->pager->getCriteria();
+
+    $c->add(BriefVerzondenPeer::STATUS, BriefVerzondenPeer::STATUS_BOUNCED);
+
+    $onderwerp = $this->pager->addAndGet(BriefVerzondenPeer::ONDERWERP, array('addToCriteria' => false));
+    if($onderwerp)
+    {
+      $c->add(BriefVerzondenPeer::ONDERWERP, '%'.$onderwerp.'%', Criteria::LIKE);
+    }
+
+    $verzondenDoor = $this->pager->addAndGet(BriefVerzondenPeer::CREATED_BY, array('addToCriteria' => false));
+    if($verzondenDoor)
+    {
+      $c->add(BriefVerzondenPeer::CREATED_BY, $verzondenDoor);
+    }
+
+    $this->pager->add(BriefVerzondenPeer::CREATED_AT . '_van', array('dbFieldname' => BriefVerzondenPeer::CREATED_AT, 'type' => myFilteredPager::TYPE_PROPELDATE, 'comparison' => Criteria::GREATER_EQUAL));
+    $this->pager->add(BriefVerzondenPeer::CREATED_AT . '_tot', array('dbFieldname' => BriefVerzondenPeer::CREATED_AT, 'type' => myFilteredPager::TYPE_PROPELDATE, 'comparison' => Criteria::LESS_EQUAL));
+
+    $this->pager->init();
+  }
+
+  /**
    * 
    * @return array with attachements
    */
