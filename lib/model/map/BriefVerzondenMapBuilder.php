@@ -64,6 +64,8 @@ class BriefVerzondenMapBuilder {
 
 		$tMap->addColumn('UUID', 'Uuid', 'string', CreoleTypes::VARCHAR, false, 45);
 
+		$tMap->addColumn('BOUNCE_MSG', 'BounceMsg', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 
 		$tMap->addColumn('UPDATED_BY', 'UpdatedBy', 'int', CreoleTypes::INTEGER, false, null);
