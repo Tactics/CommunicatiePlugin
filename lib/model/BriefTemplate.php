@@ -296,6 +296,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $briefVerzonden->setOnderwerp($onderwerp);
     $briefVerzonden->setCulture($culture);
     $briefVerzonden->setHtml($brief);
+    $briefVerzonden->setStatus($mailSent > 0 ? BriefVerzondenPeer::STATUS_VERZONDEN : BriefVerzondenPeer::STATUS_NT_VERZONDEN);
     $briefVerzonden->save();
     
     return $mailSent;
