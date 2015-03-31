@@ -1308,11 +1308,7 @@ class ttCommunicatieActions extends sfActions
       $c->add(BriefVerzondenPeer::ONDERWERP, '%'.$onderwerp.'%', Criteria::LIKE);
     }
 
-    $verzondenDoor = $this->pager->addAndGet(BriefVerzondenPeer::CREATED_BY, array('addToCriteria' => false));
-    if($verzondenDoor)
-    {
-      $c->add(BriefVerzondenPeer::CREATED_BY, $verzondenDoor);
-    }
+    $this->pager->add(BriefVerzondenPeer::CREATED_BY);
 
     $this->pager->add(BriefVerzondenPeer::CREATED_AT . '_van', array('dbFieldname' => BriefVerzondenPeer::CREATED_AT, 'type' => myFilteredPager::TYPE_PROPELDATE, 'comparison' => Criteria::GREATER_EQUAL));
     $this->pager->add(BriefVerzondenPeer::CREATED_AT . '_tot', array('dbFieldname' => BriefVerzondenPeer::CREATED_AT, 'type' => myFilteredPager::TYPE_PROPELDATE, 'comparison' => Criteria::LESS_EQUAL));

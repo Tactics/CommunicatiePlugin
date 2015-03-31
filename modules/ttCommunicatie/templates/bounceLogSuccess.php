@@ -25,7 +25,7 @@
       </tr>
       <tr>
         <th>Verzonden door:</th>
-        <td><?php echo select_tag(BriefVerzondenPeer::CREATED_BY, options_for_select(array('' => 'Iedereen', $sf_user->getPersoonId() => 'Mezelf'),$pager->get(BriefVerzondenPeer::CREATED_BY))); ?></td>
+        <td><?php echo select_tag(BriefVerzondenPeer::CREATED_BY, options_for_select(array('' => 'Iedereen', $sf_user->getAccountId() => 'Mezelf'),$pager->get(BriefVerzondenPeer::CREATED_BY))); ?></td>
       </tr>
       <tr>
         <th>Verzonden op:</th>
