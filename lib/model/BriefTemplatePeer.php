@@ -432,23 +432,18 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
   /**
    *
    * @param string $systeemnaam
-   * @param type $con
+   * @param Criteria $criteria
    * @return BriefTemplate
    */
-  public static function retrieveBySysteemnaam($systeemnaam, $con = null)
+  public static function retrieveBySysteemnaam($systeemnaam, $criteria = null)
 	{
-		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
-		}
-
-		$criteria = new Criteria(BriefTemplatePeer::DATABASE_NAME);
-
+    if (!$criteria)
+    {
+      $criteria = new Criteria();
+    }
 		$criteria->add(BriefTemplatePeer::SYSTEEMNAAM, $systeemnaam);
-
-
-		$v = BriefTemplatePeer::doSelect($criteria, $con);
-
-		return !empty($v) > 0 ? $v[0] : null;
+    
+    return BriefTemplatePeer::doSelectOne($criteria);
 	}
 
   /**
