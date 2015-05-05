@@ -867,7 +867,7 @@ class ttCommunicatieActions extends sfActions
             // object-eigen attachements
             if (method_exists($object, 'getBriefAttachments'))
             {
-              $objectAttachments = $object->getBriefAttachments();
+              $objectAttachments = $object->getBriefAttachments($brief_template);
               $attachments = array_merge($attachments, $objectAttachments);
             }
 
