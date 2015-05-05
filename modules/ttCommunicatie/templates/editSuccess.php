@@ -300,7 +300,7 @@ function showPlaceholders($placeholders)
                   <section class="col col-2">
                     <label class="label">Slechts eenmalig versturen:</label>
                     <label class="select">
-                      <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee', 1 => 'ja')), $brief_template->getEenmaligVersturen()); ?>
+                      <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee', 1 => 'ja'), $brief_template->getEenmaligVersturen())); ?>
                       <i style="left: 268px !important;"></i>
                     </label>
                   </section>
@@ -308,7 +308,7 @@ function showPlaceholders($placeholders)
                   <section class="col col-2">
                     <label class="label">Is publiciteit:</label>
                     <label class="select">
-                      <?php echo select_tag('is_publiciteit', options_for_select(array(0 => 'nee', 1 => 'ja')), $brief_template->getIsPubliciteit()); ?>
+                      <?php echo select_tag('is_publiciteit', options_for_select(array(0 => 'nee', 1 => 'ja'), $brief_template->getIsPubliciteit())); ?>
                       <i style="left: 268px !important;"></i>
                     </label>
                   </section>
