@@ -51,7 +51,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     <?php if ($choose_template) : ?>
       <tr>
         <th>Sjabloon:</th>
-        <td><?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null, array('include_blank' => true))); ?></td>
+        <td><?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null)); ?></td>
       </tr>      
     <?php endif; ?>
 
