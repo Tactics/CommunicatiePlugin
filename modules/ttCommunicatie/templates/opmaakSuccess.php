@@ -176,7 +176,11 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                           <span class="bladeren">Bladeren</span>
                         </span>
                         <input type="text" class="bladeren" readonly="">
+                        <a href="#" onclick="clearBijlage(this); return false;" style="position: absolute; left: 285px; top: 8px">
+                          <?php echo image_tag('icons/trash_16.gif'); ?>
+                        </a>
                       </label>
+
                       <br />
                       <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
                     </section>
@@ -346,8 +350,16 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     var str = '<label class="input input-file">';
     str += '<span class="button">';
     str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + ' onchange="this.parentNode.nextElementSibling.value = this.value">';
-    str += '<span class="bladeren">Bladeren</span> </span><input type="text" class="bladeren" readonly=""></label><br />';
+    str += '<span class="bladeren">Bladeren</span> </span><input type="text" class="bladeren" readonly="">';
+    str += '<a href="#" onclick="clearBijlage(this); return false;" style="position: absolute; left: 285px; top: 8px"><?php echo image_tag("icons/trash_16.gif"); ?></a>';
+    str += '</label><br />';
 
     jQuery('a.bijlage_toevoegen').before(str);
+  }
+
+  function clearBijlage(el)
+  {
+    jQuery(el).parent().find('input.new_brief_bijlages').val('');
+    jQuery(el).prev().val('');
   }
 </script>
