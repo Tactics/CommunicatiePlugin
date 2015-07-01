@@ -72,7 +72,6 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                         <label class="label">Sjabloon:</label>
                         <label class="select">
                           <?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null, array('include_blank' => true))); ?>
-                          <i></i>
                         </label>
                       </section>
                       <div style="clear:both"></div>
