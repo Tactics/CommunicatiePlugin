@@ -16,6 +16,7 @@
   Niet toegestaan: <?php echo $counter['niettoegestaan']; ?><br/>
   Verstuurd: <?php echo $counter['verstuurd']; ?><br />
   Error: <?php echo $counter['error']; ?><br />
+  Geen emailadres: <?php echo $counter['geenmail']; ?><br />
   Wensen geen mail: <?php echo $counter['wenstgeenmail']; ?><br />
   Wensen geen publiciteit: <?php echo $counter['wenstgeenpubliciteit']; ?><br />
 

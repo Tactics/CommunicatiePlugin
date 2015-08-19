@@ -695,7 +695,7 @@ class ttCommunicatieActions extends sfActions
 
     if ($emailverzenden)
     { 
-      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'wenstgeenpubliciteit' => 0);
+      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'geenmail' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'wenstgeenpubliciteit' => 0);
       
       $tmpAttachments = $this->getRequestAttachments();
 
@@ -954,6 +954,7 @@ class ttCommunicatieActions extends sfActions
             {
               $nietVerstuurdReden = 'geen e-mail adres.';
               $this->logs[] = "<span color=red>E-mail werd niet verzonden, reden: $nietVerstuurdReden</span><br/>";
+              $counter['geenmail']++;
             }
             else if (($verzenden_via == 'liefst') && !$prefersEmail)
             {
