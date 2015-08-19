@@ -789,8 +789,6 @@ class ttCommunicatieActions extends sfActions
           continue;
         }        
 
-        $verstuurd = false;                     
-
         foreach ($bestemmelingen as $index => $bestemmeling)
         {
           $bestemmeling->setObject($object);
@@ -833,7 +831,8 @@ class ttCommunicatieActions extends sfActions
           
           $email = $bestemmeling->getEmailTo();
           $prefersEmail = $bestemmeling->getPrefersEmail();
-          $wantsPublicity = $bestemmeling->getWantsPublicity();          
+          $wantsPublicity = $bestemmeling->getWantsPublicity();
+          $verstuurd = false;
           if ($email
               && ((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd'))
               && (!$brief_template->getIsPubliciteit() || $wantsPublicity)
