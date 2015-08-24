@@ -695,7 +695,7 @@ class ttCommunicatieActions extends sfActions
 
     if ($emailverzenden)
     { 
-      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'wenstgeenpubliciteit' => 0);
+      $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'geenmail' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'wenstgeenpubliciteit' => 0);
       
       $tmpAttachments = $this->getRequestAttachments();
 
@@ -789,8 +789,6 @@ class ttCommunicatieActions extends sfActions
           continue;
         }        
 
-        $verstuurd = false;                     
-
         foreach ($bestemmelingen as $index => $bestemmeling)
         {
           $bestemmeling->setObject($object);
@@ -833,7 +831,8 @@ class ttCommunicatieActions extends sfActions
           
           $email = $bestemmeling->getEmailTo();
           $prefersEmail = $bestemmeling->getPrefersEmail();
-          $wantsPublicity = $bestemmeling->getWantsPublicity();          
+          $wantsPublicity = $bestemmeling->getWantsPublicity();
+          $verstuurd = false;
           if ($email
               && ((($verzenden_via == 'liefst') && $prefersEmail) || ($verzenden_via == 'altijd'))
               && (!$brief_template->getIsPubliciteit() || $wantsPublicity)
@@ -944,7 +943,8 @@ class ttCommunicatieActions extends sfActions
             }
             catch(Exception $e)
             {
-              $this->logs[] = '<span color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</span><br/>';
+              $nietVerstuurdReden = nl2br($e->getMessage());
+              $this->logs[] = '<span color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . $nietVerstuurdReden . '</span><br/>';
               $counter['error']++;
             }
           }
@@ -952,16 +952,20 @@ class ttCommunicatieActions extends sfActions
           {
             if (! $email)
             {
-              $this->logs[] = "<span color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</span><br/>";
+              $nietVerstuurdReden = 'geen e-mail adres.';
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden, reden: $nietVerstuurdReden</span><br/>";
+              $counter['geenmail']++;
             }
             else if (($verzenden_via == 'liefst') && !$prefersEmail)
             {
-              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</span><br/>";
+              $nietVerstuurdReden = 'communicatie via e-mail niet gewenst.';
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: $nietVerstuurdReden</span><br/>";
               $counter['wenstgeenmail']++;
             }
             else
             {
-              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: publiciteit niet gewenst.</span><br/>";
+              $nietVerstuurdReden = 'publiciteit niet gewenst.';
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: $nietVerstuurdReden</span><br/>";
               $counter['wenstgeenpubliciteit']++;
             }
             
