@@ -1,6 +1,6 @@
 all:
   has_layout: on
-  stylesheets:    [/ttCommunicatie/css/screen.css, /ttBase/css/smartadmin_to_sf1.css]
+  stylesheets:    [/ttCommunicatie/css/screen.css, <?php if(!sfConfig::get("sf_style_smartadmin")){echo '/ttBase/css/smartadmin_to_sf1.css'}; ?>]
   javascripts:    [-*, <?php echo (SF_DEBUG ? '/ttCommunicatie/js/jquery-1.7.1.js' : '/ttCommunicatie/js/jquery-1.7.1.min.js'); ?>]
   
 printSuccess:
