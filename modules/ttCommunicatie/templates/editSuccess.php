@@ -64,7 +64,7 @@ end_slot();
       height : "454",
       language : "nl",
       plugins: [
-        "paste, link, pagebreak, table, jbimages"
+        "paste, link, pagebreak, table, jbimages, code"
       ],
       pagebreak_separator : "%pagebreak%",
       toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
