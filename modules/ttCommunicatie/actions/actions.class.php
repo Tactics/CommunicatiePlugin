@@ -940,7 +940,8 @@ class ttCommunicatieActions extends sfActions
             }
             catch(Exception $e)
             {
-              $this->logs[] = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
+              $nietVerstuurdReden = nl2br($e->getMessage());
+              $this->logs[] = '<span color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</span><br/>';
               $counter['error']++;
             }
           }
@@ -948,16 +949,19 @@ class ttCommunicatieActions extends sfActions
           {
             if (! $email)
             {
-              $this->logs[] = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
+              $nietVerstuurdReden = 'geen e-mail adres.';
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</span><br/>";
             }
             else if (($verzenden_via == 'liefst') && !$prefersEmail)
             {
-              $this->logs[] = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+              $nietVerstuurdReden = 'communicatie via e-mail niet gewenst.';
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</span><br/>";
               $counter['wenstgeenmail']++;
             }
             else
             {
-              $this->logs[] = "<font color=red>E-mail werd niet verzonden naar $email, reden: publiciteit niet gewenst.</font><br/>";
+              $nietVerstuurdReden = 'publiciteit niet gewenst.';
+              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: publiciteit niet gewenst.</span><br/>";
               $counter['wenstgeenpubliciteit']++;
             }
             
