@@ -336,7 +336,7 @@ function showPlaceholders($placeholders)
               <?php
               echo input_hidden_tag('language_label');
               // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
-              echo submit_tag('Voorbeeld brief', array('class' => 'btn btn-default'));
+              echo submit_tag('Voorbeeld brief', array('class' => 'btn btn-default button-target-blank'));
               echo '&nbsp;';
               // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
               echo submit_tag('Voorbeeld e-mail', array('class' => 'btn btn-default button-target-blank'));
@@ -361,7 +361,7 @@ function showPlaceholders($placeholders)
     $('input[name="commit"]').click(function(){
       var form = $(this).closest('form');
       
-      if ($(this).attr('class') == 'button-target-blank')
+      if ($(this).hasClass('button-target-blank'))
       {
         form.attr('target', '_blank');
       }
