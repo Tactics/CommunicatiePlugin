@@ -50,8 +50,11 @@
           }
         }        
 
-        // controle of bestemmeling afgevinkt is in lijst        
-        if (isset($selectedBestemmelingen) && !isset($selectedBestemmelingen[$object->getId() . '_' . $index]))
+        // controle of bestemmeling afgevinkt is in lijst, indien het om een vb gaat selecteer zowiezo de eerste.
+        // Indien het om een voorbeeld gaat, zal $rs enkel de eerste bestemmeling bevatten.
+        // Indien deze bestemmeling niet geselecteerd werd, zou het voorbeeld leeg zijn.
+        // Daarom checken we enkel de geselecteerde bestemmelingen wanneer het NIET om een voorbeeld gaat.
+        if ((!$voorbeeld) && isset($selectedBestemmelingen) && !isset($selectedBestemmelingen[$object->getId() . '_' . $index]))
         {
           continue;
         }
