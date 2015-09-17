@@ -135,11 +135,19 @@ end_slot();
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
     var str = '<label class="input input-file">';
-    str += '<span class="button" />';
-    str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + ' onchange="this.parentNode.nextElementSibling.value = this.value">';
-    str += '<span class="bladeren">Bladeren</span><input type="text" class="bladeren" readonly=""></label><br />';
-    
+    str += '<span class="button">';
+    str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '" onchange="this.parentNode.nextElementSibling.value=this.value">';
+    str += '<span class="bladeren">Bladeren</span> </span><input type="text" class="bladeren" readonly="">';
+    str += '<a href="#" onclick="clearBijlage(this); return false;" style="position: absolute; left: 285px; top: 8px"><?php echo image_tag("icons/trash_16.gif"); ?></a>';
+    str += '</label><br />';
+
     jQuery('a.bijlage_toevoegen').before(str);
+  }
+
+  function clearBijlage(el)
+  {
+    jQuery(el).parent().find('input.new_brief_bijlages').val('');
+    jQuery(el).prev().val('');
   }
 </script>
 
@@ -328,7 +336,7 @@ function showPlaceholders($placeholders)
               <?php
               echo input_hidden_tag('language_label');
               // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
-              echo submit_tag('Voorbeeld brief', array('class' => 'btn btn-default'));
+              echo submit_tag('Voorbeeld brief', array('class' => 'btn btn-default button-target-blank'));
               echo '&nbsp;';
               // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
               echo submit_tag('Voorbeeld e-mail', array('class' => 'btn btn-default button-target-blank'));
@@ -353,7 +361,7 @@ function showPlaceholders($placeholders)
     $('input[name="commit"]').click(function(){
       var form = $(this).closest('form');
       
-      if ($(this).attr('class') == 'button-target-blank')
+      if ($(this).hasClass('button-target-blank'))
       {
         form.attr('target', '_blank');
       }
