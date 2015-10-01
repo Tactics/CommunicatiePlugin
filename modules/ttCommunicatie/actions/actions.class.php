@@ -1008,7 +1008,7 @@ class ttCommunicatieActions extends sfActions
       else
       {
         $bestemmelingen = $this->getRequestParameter('bestemmelingen');
-        $this->selectedBestemmelingen = isset($bestemmelingen) ? $this->getRequestParameter('bestemmelingen') : null;
+        $this->selectedBestemmelingen = isset($bestemmelingen) ? array_flip($bestemmelingen) : null;
       }
 
       $this->voorbeeld = $voorbeeld;

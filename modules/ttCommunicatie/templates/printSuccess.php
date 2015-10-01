@@ -48,10 +48,10 @@
           {
             continue;
           }
-        }        
+        }
 
-        // controle of bestemmeling afgevinkt is in lijst        
-        if ($show_bestemmelingen && isset($selectedBestemmelingen) && !isset($selectedBestemmelingen[$object->getId() . '_' . $index]))
+        // controle of bestemmeling afgevinkt is in lijst
+        if (isset($selectedBestemmelingen) && !isset($selectedBestemmelingen[$object->getId() . '_' . $index]))
         {
           continue;
         }
