@@ -723,13 +723,13 @@ class ttCommunicatieActions extends sfActions
               $brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);          
               if (! $brief_template)
               {
-                $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
+                $this->logs[] = '<span style="color:red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</span><br/>';
                 continue;                
               } 
             }
             else
             {
-              $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
+              $this->logs[] = '<span style="color:red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</span><br/>';
               continue;  
             }
 
@@ -739,19 +739,19 @@ class ttCommunicatieActions extends sfActions
               $this->brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
               if (! $this->brief_layout)
               {
-                $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
+                $this->logs[] = '<span style="color:red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</span><br/>';
                 continue;
               } 
             }  
             else
             {
-              $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
+              $this->logs[] = '<span style="color:red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</span><br/>';
               continue;  
             }
           }
           else
           {
-            $this->logs[] = '<font color="red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
+            $this->logs[] = '<span style="color:red">' . $this->objectClass . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</span><br/>';
             continue;            
           }  
 
@@ -944,7 +944,7 @@ class ttCommunicatieActions extends sfActions
             catch(Exception $e)
             {
               $nietVerstuurdReden = nl2br($e->getMessage());
-              $this->logs[] = '<span color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . $nietVerstuurdReden . '</span><br/>';
+              $this->logs[] = '<span style="color:red">E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . $nietVerstuurdReden . '</span><br/>';
               $counter['error']++;
             }
           }
@@ -953,19 +953,19 @@ class ttCommunicatieActions extends sfActions
             if (! $email)
             {
               $nietVerstuurdReden = 'geen e-mail adres.';
-              $this->logs[] = "<span color=red>E-mail werd niet verzonden, reden: $nietVerstuurdReden</span><br/>";
+              $this->logs[] = "<span style='color:red'>E-mail werd niet verzonden, reden: $nietVerstuurdReden</span><br/>";
               $counter['geenmail']++;
             }
             else if (($verzenden_via == 'liefst') && !$prefersEmail)
             {
               $nietVerstuurdReden = 'communicatie via e-mail niet gewenst.';
-              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: $nietVerstuurdReden</span><br/>";
+              $this->logs[] = "<span style='color:red'>E-mail werd niet verzonden naar $email, reden: $nietVerstuurdReden</span><br/>";
               $counter['wenstgeenmail']++;
             }
             else
             {
               $nietVerstuurdReden = 'publiciteit niet gewenst.';
-              $this->logs[] = "<span color=red>E-mail werd niet verzonden naar $email, reden: $nietVerstuurdReden</span><br/>";
+              $this->logs[] = "<span style='color:red'>E-mail werd niet verzonden naar $email, reden: $nietVerstuurdReden</span><br/>";
               $counter['wenstgeenpubliciteit']++;
             }
             
