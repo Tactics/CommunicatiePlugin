@@ -68,13 +68,13 @@
               $object_brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
               if (! $object_brief_template)
               {
-                echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
+                echo '<span style="color:red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</span><br/>';
                 continue;
               }
             }
             else
             {
-              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
+              echo '<span style="color:red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</span><br/>';
               continue;
             }
 
@@ -84,19 +84,19 @@
               $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
               if (! $brief_layout)
               {
-                echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
+                echo '<span style="color:red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</span><br/>';
                 continue;
               }
             }
             else
             {
-              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
+              echo '<span style="color:red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</span><br/>';
               continue;
             }
           }
           else
           {
-            echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
+            echo '<span style="color:red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</span><br/>';
             continue;
           }
 
@@ -124,7 +124,7 @@
 
         if (! $brief_layout)
         {
-          echo "<font color=red>{$objectClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) niet gevonden.</font><br/>";
+          echo "<span style='color:red'>{$objectClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) niet gevonden.</span><br/>";
           continue;
         }
 
@@ -216,8 +216,7 @@
       <span style="font-size: 9px;">Totaal aantal <?php echo $viaemail ? 'e-mails: ' . $aantal_via_email : 'brieven: ' . $aantal_brieven; ?></span>
     </div>
 
-    <center>
-    <div style="width: 210px;">
+    <div style="width: 210px; margin-left: auto; margin-right: auto;">
       <table style="width:100%">
         <tr>
           <?php /*
@@ -245,7 +244,7 @@
         </tr>
       </table>
     </div>
-    </center>
+
   </div>
   
   <script type="text/javascript">
