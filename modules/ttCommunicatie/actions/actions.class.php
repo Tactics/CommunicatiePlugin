@@ -9,7 +9,7 @@
  * applicatie. Mag niet doorverkocht worden, noch rechtstreeks noch via een
  * derde partij. Meer informatie in het desbetreffende aankoopcontract. 
  */
- 
+
 /**
  * brieven acties.
  *
@@ -868,6 +868,42 @@ class ttCommunicatieActions extends sfActions
             {
               $objectAttachments = $object->getBriefAttachments();
               $attachments = array_merge($attachments, $objectAttachments);
+            }
+
+            // Indien er een sjabloon aanhangt als pdf bijlage.
+            if ($brief_template->getPdfTemplateId())
+            {
+              /** @var BriefTemplate $pdfBijlageTemplate */
+              $pdfBijlageTemplate = BriefTemplatePeer::retrieveByPK($brief_template->getPdfTemplateId());
+              $htmlContent = $pdfBijlageTemplate->getHtmlContent($bestemmeling);
+
+              $bijlageBrieven = $htmlContent['brief'];
+              $culture = $htmlContent['culture'];
+              $head = $bijlageBrieven[$culture]['head'];
+              $body = $bijlageBrieven[$culture]['body'];
+              $bijlageBrief = $head . $body;
+
+              $filename = $bijlageBrieven[$culture]['onderwerp'];
+
+              // CID images vervangen.
+              $imgPath = sfConfig::get('sf_data_dir') . '/brieven/layouts/images/';
+              $prefix = 'cid:';
+
+              // Vind all cidxx.jpg/png/gif bestanden in de mailbody en in de css
+              preg_match_all("/" . preg_quote($prefix, '/') . '([A-Za-z0-9_\-\/]+\.(jpg|gif|png))/im', $bijlageBrief, $matches);
+
+              // Alle matches vervangen met de correcte source.
+              $matches = $matches[1];
+              $matches = array_unique($matches);
+              foreach($matches as $figuur) { $bijlageBrief = str_replace($prefix . $figuur, $imgPath . $figuur, $bijlageBrief); }
+
+              // Pdf file genereren van html sjabloon en toevoegen aan de attachments.
+              $htmlToPdfConverter = sfContext::getInstance()->getContainer()->get("html_pdf.converter");
+              $pdfFile = $htmlToPdfConverter->getPdfFromHtml($bijlageBrief);
+              $attachments[$filename . '.pdf'] = $pdfFile;
+
+              // Ook toevoegen aan tmpAttachments zodat dat gegenereerde bijlage verwijdert wordt.
+              $tmpAttachments[$filename . '.pdf'] = $pdfFile;
             }
 
             $nietVerstuurdReden = '';

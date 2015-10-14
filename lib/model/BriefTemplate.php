@@ -227,32 +227,11 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     }
     
     $bestemmeling->setObject($object);
-    
-    // brief layout ophalen
-    $this->brief_layout = $this->getBriefLayout();
 
-    // onderwerp en tekst ophalen
-    $onderwerpen = $this->getOnderwerpCultureArr();
-    $htmls = $this->getHtmlCultureArr();
+    $htmlContent = $this->getHtmlContent($bestemmeling, $systeemvalues);
+    $tmpCultureBrieven = $htmlContent['brief'];
+    $culture = $htmlContent['culture'];
 
-    $this->cultureBrieven = array();
-    foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
-    {
-      $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody('mail', $culture, $htmls[$culture], true);
-      $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
-    }
-    
-    // work with copy of culturebrieven
-    $tmpCultureBrieven = $this->cultureBrieven;
-
-    // parse Foreach and If statements
-    $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
-    $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
-
-    // replace placeholders
-    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true, true, true);
-    $defaultPlaceholders = array_merge($defaultPlaceholders, $systeemvalues);
-    $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, $defaultPlaceholders);
     $head = $tmpCultureBrieven[$culture]['head'];
     $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
     $body = $tmpCultureBrieven[$culture]['body'];
@@ -294,6 +273,46 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $briefVerzonden->save();
     
     return $mailSent;
+  }
+
+  /**
+   * Haalt de inhoud van het sjabloon op + verwerkt de inhoud (placeholders,...)
+   *
+   * @param ttCommunicatieBestemmeling $bestemmeling
+   * @param array $systeemvalues
+   * @param string $layoutType
+   *
+   * @return array
+   */
+  public function getHtmlContent(ttCommunicatieBestemmeling $bestemmeling, $systeemvalues = array(), $layoutType = 'mail')
+  {
+    // brief layout ophalen
+    $this->brief_layout = $this->getBriefLayout();
+
+    // onderwerp en tekst ophalen
+    $onderwerpen = $this->getOnderwerpCultureArr();
+    $htmls = $this->getHtmlCultureArr();
+
+    $this->cultureBrieven = array();
+    foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
+    {
+      $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody($layoutType, $culture, $htmls[$culture], true);
+      $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
+    }
+
+    // work with copy of culturebrieven
+    $tmpCultureBrieven = $this->cultureBrieven;
+
+    // parse Foreach and If statements
+    $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseForeachStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
+    $tmpCultureBrieven[$culture]['body'] = BriefTemplatePeer::parseIfStatements($tmpCultureBrieven[$culture]['body'], $bestemmeling, true);
+
+    // replace placeholders
+    $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true, true, true);
+    $defaultPlaceholders = array_merge($defaultPlaceholders, $systeemvalues);
+    $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, $defaultPlaceholders);
+
+    return array('culture' => $culture, 'brief' => $tmpCultureBrieven);
   }
   
   /**
