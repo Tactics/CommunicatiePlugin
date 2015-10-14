@@ -389,6 +389,7 @@ class ttCommunicatieActions extends sfActions
     $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
     $brief_template->setIsPubliciteit($this->getRequestParameter('is_publiciteit', 0));
+    $brief_template->setPdfTemplateId($this->getRequestParameter('pdf_template_id'));
     
     $brief_template->save();
       

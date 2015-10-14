@@ -432,9 +432,27 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $bedrijfCton = $criteria->getNewCriterion(BriefTemplatePeer::CATEGORIE, $sfUser->getBedrijfId());
     $bedrijfCton->addOr($criteria->getNewCriterion(BriefTemplatePeer::CATEGORIE, NULL, Criteria::ISNULL));
     $criteria->add($bedrijfCton);
+
+    // Indien tonen van archief aan, laten we ook de niet actief personen zien
+    if (! sfContext::getInstance()->getUser()->getAttribute('bekijk_archief', false))
+    {
+      $criteria->add(BriefTemplatePeer::GEARCHIVEERD, 0);
+    }
+
     if (isset($params['bestemmelingClass']) && $params['bestemmelingClass'])
     {
-      $criteria->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$params['bestemmelingClass'].'|%', Criteria::LIKE);
+      foreach ($params['bestemmelingClass'] as $bestemmeling)
+      {
+        if (!isset($bestemmelingCton))
+        {
+          $bestemmelingCton = $criteria->getNewCriterion(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$bestemmeling.'|%', Criteria::LIKE);
+        }
+        else
+        {
+          $bestemmelingCton->addAnd($criteria->getNewCriterion(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$bestemmeling.'|%', Criteria::LIKE));
+        }
+      }
+      $criteria->add($bestemmelingCton);
     }
 
     $cton1 = $criteria->getNewCriterion(BriefTemplatePeer::NAAM, '%' . $keyword . '%', Criteria::LIKE);
@@ -445,13 +463,6 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     }
 
     $cton1->addOr($criteria->getNewCriterion(BriefTemplatePeer::ONDERWERP, '%' . $keyword . '%', Criteria::LIKE));
-
-    // Indien tonen van archief aan, laten we ook de niet actief personen zien
-    if (! sfContext::getInstance()->getUser()->getAttribute('bekijk_archief', false))
-    {
-      $cton2 = $criteria->getNewCriterion(BriefTemplatePeer::GEARCHIVEERD, 0);
-      $cton1 = $cton1->addAnd($cton2);
-    }
 
     return $cton1;
   }

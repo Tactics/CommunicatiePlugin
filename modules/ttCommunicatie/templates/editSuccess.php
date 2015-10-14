@@ -295,6 +295,18 @@ function showPlaceholders($placeholders)
         </td>
       </tr>
     <?php endif; ?>
+    <tr>
+      <th>Sjabloon als bijlage:</th>
+      <td>
+        <?php
+        include_component('ttAutocomplete', 'autocomplete', array(
+          'id' => 'pdf_template_id',
+          'object' => BriefTemplatePeer::retrieveByPK($brief_template->getPdfTemplateId()),
+          'class' => 'BriefTemplate',
+          'params_callback' => 'getSelectedClasses'
+        )); ?>
+      </td>
+    </tr>
   </table>
   <hr>
   <?php 
@@ -332,5 +344,15 @@ function showPlaceholders($placeholders)
     $('#tabs a').click(function(){
       $('#language_label').val($(this).attr('title'));
     }).click();
+
   });
+
+  function getSelectedClasses()
+  {
+    var selectedClasses = [];
+    jQuery('input[name="classes[]"]:checked').each(function(){
+      selectedClasses.push(jQuery(this).val());
+    });
+    return {bestemmelingClass: selectedClasses};
+  }
 </script>
