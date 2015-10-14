@@ -873,6 +873,41 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	}
 
 
+	
+	public function getBriefTemplatesJoinBriefTemplateRelatedByPdfTemplateId($criteria = null, $con = null)
+	{
+				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefTemplatePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collBriefTemplates === null) {
+			if ($this->isNew()) {
+				$this->collBriefTemplates = array();
+			} else {
+
+				$criteria->add(BriefTemplatePeer::BRIEF_LAYOUT_ID, $this->getId());
+
+				$this->collBriefTemplates = BriefTemplatePeer::doSelectJoinBriefTemplateRelatedByPdfTemplateId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(BriefTemplatePeer::BRIEF_LAYOUT_ID, $this->getId());
+
+			if (!isset($this->lastBriefTemplateCriteria) || !$this->lastBriefTemplateCriteria->equals($criteria)) {
+				$this->collBriefTemplates = BriefTemplatePeer::doSelectJoinBriefTemplateRelatedByPdfTemplateId($criteria, $con);
+			}
+		}
+		$this->lastBriefTemplateCriteria = $criteria;
+
+		return $this->collBriefTemplates;
+	}
+
+
   public function __call($method, $arguments)
   {
     if (!$callable = sfMixer::getCallable('BaseBriefLayout:'.$method))
