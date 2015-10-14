@@ -875,7 +875,7 @@ class ttCommunicatieActions extends sfActions
             {
               /** @var BriefTemplate $pdfBijlageTemplate */
               $pdfBijlageTemplate = BriefTemplatePeer::retrieveByPK($brief_template->getPdfTemplateId());
-              $htmlContent = $pdfBijlageTemplate->getHtmlContent($bestemmeling);
+              $htmlContent = $pdfBijlageTemplate->getHtmlContent($bestemmeling, array(), 'pdf');
 
               $bijlageBrieven = $htmlContent['brief'];
               $culture = $htmlContent['culture'];
