@@ -42,9 +42,13 @@ class BriefLayoutMapBuilder {
 
 		$tMap->addColumn('MAIL_BESTAND', 'MailBestand', 'string', CreoleTypes::VARCHAR, false, 100);
 
+		$tMap->addColumn('PDF_BESTAND', 'PdfBestand', 'string', CreoleTypes::VARCHAR, false, 100);
+
 		$tMap->addColumn('PRINT_STYLESHEETS', 'PrintStylesheets', 'string', CreoleTypes::VARCHAR, false, 255);
 
 		$tMap->addColumn('MAIL_STYLESHEETS', 'MailStylesheets', 'string', CreoleTypes::VARCHAR, false, 255);
+
+		$tMap->addColumn('PDF_STYLESHEETS', 'PdfStylesheets', 'string', CreoleTypes::VARCHAR, false, 255);
 
 		$tMap->addColumn('VERTAALD', 'Vertaald', 'boolean', CreoleTypes::BOOLEAN, false, null);
 

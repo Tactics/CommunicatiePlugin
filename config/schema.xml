@@ -70,8 +70,10 @@
     <column name="naam" type="VARCHAR" size="255" required="true"/>
     <column name="print_bestand" type="VARCHAR" size="100"/>
     <column name="mail_bestand" type="VARCHAR" size="100"/>
+    <column name="pdf_bestand" type="VARCHAR" size="100"/>
     <column name="print_stylesheets" type="VARCHAR" size="255"/>
     <column name="mail_stylesheets" type="VARCHAR" size="255"/>
+    <column name="pdf_stylesheets" type="VARCHAR" size="255"/>
     <column name="vertaald" type="BOOLEAN" default="false"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
