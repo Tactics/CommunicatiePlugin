@@ -775,7 +775,7 @@ class ttCommunicatieActions extends sfActions
         // volgens businessrules afh vd status van het object
         if (method_exists($object, 'sendingTemplateAllowed') && !$object->sendingTemplateAllowed($brief_template))
         {
-          echo 'Niet toegestaan.<br/>';
+          $this->logs[] = 'Niet toegestaan.<br/>';
           $counter['niettoegestaan']++;
           continue;
         }
@@ -784,7 +784,7 @@ class ttCommunicatieActions extends sfActions
         // @todo: fix this, voor elke bestemmeling checken? of oke zo?
         if (!$this->forceer_versturen && $brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($this->objectClass, $object->getId()))
         {
-          echo 'Reeds verstuurd.<br/>';
+          $this->logs[] = 'Reeds verstuurd.<br/>';
           $counter['reedsverstuurd']++;
           continue;
         }        
