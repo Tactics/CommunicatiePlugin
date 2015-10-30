@@ -41,26 +41,33 @@ class BriefLayout extends BaseBriefLayout
 
     return false;
   }
-  
+
   /**
    * Geeft head en body terug
-   * 
-   * @param string $type : 'mail' of 'brief'
-   * @param string $culture : 
-   * 
+   *
+   * @param string $type : 'mail' of 'brief' of 'pdf'
+   * @param string $culture :
+   * @param $html
+   * @param bool $emailverzenden
+   *
    * @return string
+   * @throws sfException
    */
   public function getHeadAndBody($type, $culture, $html, $emailverzenden = false)
   {
-    if ($type == 'mail')
-    {
-      $layout_bestand = $this->getMailBestand();
-      $layout_stylesheets = $this->getMailStylesheets();
-    }
-    else
-    {
-      $layout_bestand = $this->getPrintBestand();
-      $layout_stylesheets = $this->getPrintStylesheets();
+    switch ($type) {
+      case 'mail':
+        $layout_bestand = $this->getMailBestand();
+        $layout_stylesheets = $this->getMailStylesheets();
+        break;
+      case 'pdf':
+        $layout_bestand = $this->getPdfBestand() ?: $this->getMailBestand();
+        $layout_stylesheets = $this->getPdfStylesheets();
+        break;
+      default:
+        $layout_bestand = $this->getPrintBestand();
+        $layout_stylesheets = $this->getPrintStylesheets();
+        break;
     }
     
     // Lees alle stylesheets in

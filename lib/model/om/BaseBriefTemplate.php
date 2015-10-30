@@ -61,6 +61,10 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 
 	
+	protected $pdf_template_id;
+
+
+	
 	protected $created_by;
 
 
@@ -77,6 +81,15 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	
 	protected $aBriefLayout;
+
+	
+	protected $aBriefTemplateRelatedByPdfTemplateId;
+
+	
+	protected $collBriefTemplatesRelatedByPdfTemplateId;
+
+	
+	protected $lastBriefTemplateRelatedByPdfTemplateIdCriteria = null;
 
 	
 	protected $collBriefVerzondens;
@@ -107,6 +120,12 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	
 	protected $lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = null;
+
+	
+	protected $collDossierTypes;
+
+	
+	protected $lastDossierTypeCriteria = null;
 
 	
 	protected $alreadyInSave = false;
@@ -203,6 +222,13 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 		return $this->gearchiveerd;
+	}
+
+	
+	public function getPdfTemplateId()
+	{
+
+		return $this->pdf_template_id;
 	}
 
 	
@@ -442,6 +468,24 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setPdfTemplateId($v)
+	{
+
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->pdf_template_id !== $v) {
+			$this->pdf_template_id = $v;
+			$this->modifiedColumns[] = BriefTemplatePeer::PDF_TEMPLATE_ID;
+		}
+
+		if ($this->aBriefTemplateRelatedByPdfTemplateId !== null && $this->aBriefTemplateRelatedByPdfTemplateId->getId() !== $v) {
+			$this->aBriefTemplateRelatedByPdfTemplateId = null;
+		}
+
+	} 
+	
 	public function setCreatedBy($v)
 	{
 
@@ -534,19 +578,21 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			$this->gearchiveerd = $rs->getInt($startcol + 12);
 
-			$this->created_by = $rs->getInt($startcol + 13);
+			$this->pdf_template_id = $rs->getInt($startcol + 13);
 
-			$this->updated_by = $rs->getInt($startcol + 14);
+			$this->created_by = $rs->getInt($startcol + 14);
 
-			$this->created_at = $rs->getTimestamp($startcol + 15, null);
+			$this->updated_by = $rs->getInt($startcol + 15);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 16, null);
+			$this->created_at = $rs->getTimestamp($startcol + 16, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 17, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-						return $startcol + 17; 
+						return $startcol + 18; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefTemplate object", $e);
 		}
@@ -654,6 +700,13 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$this->setBriefLayout($this->aBriefLayout);
 			}
 
+			if ($this->aBriefTemplateRelatedByPdfTemplateId !== null) {
+				if ($this->aBriefTemplateRelatedByPdfTemplateId->isModified()) {
+					$affectedRows += $this->aBriefTemplateRelatedByPdfTemplateId->save($con);
+				}
+				$this->setBriefTemplateRelatedByPdfTemplateId($this->aBriefTemplateRelatedByPdfTemplateId);
+			}
+
 
 						if ($this->isModified()) {
 				if ($this->isNew()) {
@@ -665,6 +718,14 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 					$affectedRows += BriefTemplatePeer::doUpdate($this, $con);
 				}
 				$this->resetModified(); 			}
+
+			if ($this->collBriefTemplatesRelatedByPdfTemplateId !== null) {
+				foreach($this->collBriefTemplatesRelatedByPdfTemplateId as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
 
 			if ($this->collBriefVerzondens !== null) {
 				foreach($this->collBriefVerzondens as $referrerFK) {
@@ -700,6 +761,14 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId !== null) {
 				foreach($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collDossierTypes !== null) {
+				foreach($this->collDossierTypes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -749,6 +818,12 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->aBriefTemplateRelatedByPdfTemplateId !== null) {
+				if (!$this->aBriefTemplateRelatedByPdfTemplateId->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aBriefTemplateRelatedByPdfTemplateId->getValidationFailures());
+				}
+			}
+
 
 			if (($retval = BriefTemplatePeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
@@ -789,6 +864,14 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 				if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId !== null) {
 					foreach($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collDossierTypes !== null) {
+					foreach($this->collDossierTypes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -853,15 +936,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				return $this->getGearchiveerd();
 				break;
 			case 13:
-				return $this->getCreatedBy();
+				return $this->getPdfTemplateId();
 				break;
 			case 14:
-				return $this->getUpdatedBy();
+				return $this->getCreatedBy();
 				break;
 			case 15:
-				return $this->getCreatedAt();
+				return $this->getUpdatedBy();
 				break;
 			case 16:
+				return $this->getCreatedAt();
+				break;
+			case 17:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -887,10 +973,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 			$keys[10] => $this->getSysteemnaam(),
 			$keys[11] => $this->getSysteemplaceholders(),
 			$keys[12] => $this->getGearchiveerd(),
-			$keys[13] => $this->getCreatedBy(),
-			$keys[14] => $this->getUpdatedBy(),
-			$keys[15] => $this->getCreatedAt(),
-			$keys[16] => $this->getUpdatedAt(),
+			$keys[13] => $this->getPdfTemplateId(),
+			$keys[14] => $this->getCreatedBy(),
+			$keys[15] => $this->getUpdatedBy(),
+			$keys[16] => $this->getCreatedAt(),
+			$keys[17] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -946,15 +1033,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$this->setGearchiveerd($value);
 				break;
 			case 13:
-				$this->setCreatedBy($value);
+				$this->setPdfTemplateId($value);
 				break;
 			case 14:
-				$this->setUpdatedBy($value);
+				$this->setCreatedBy($value);
 				break;
 			case 15:
-				$this->setCreatedAt($value);
+				$this->setUpdatedBy($value);
 				break;
 			case 16:
+				$this->setCreatedAt($value);
+				break;
+			case 17:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -977,10 +1067,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[10], $arr)) $this->setSysteemnaam($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setSysteemplaceholders($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setGearchiveerd($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCreatedBy($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setUpdatedBy($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCreatedAt($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setUpdatedAt($arr[$keys[16]]);
+		if (array_key_exists($keys[13], $arr)) $this->setPdfTemplateId($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCreatedBy($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setUpdatedBy($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCreatedAt($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setUpdatedAt($arr[$keys[17]]);
 	}
 
 	
@@ -1001,6 +1092,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMNAAM)) $criteria->add(BriefTemplatePeer::SYSTEEMNAAM, $this->systeemnaam);
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMPLACEHOLDERS)) $criteria->add(BriefTemplatePeer::SYSTEEMPLACEHOLDERS, $this->systeemplaceholders);
 		if ($this->isColumnModified(BriefTemplatePeer::GEARCHIVEERD)) $criteria->add(BriefTemplatePeer::GEARCHIVEERD, $this->gearchiveerd);
+		if ($this->isColumnModified(BriefTemplatePeer::PDF_TEMPLATE_ID)) $criteria->add(BriefTemplatePeer::PDF_TEMPLATE_ID, $this->pdf_template_id);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_BY)) $criteria->add(BriefTemplatePeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefTemplatePeer::UPDATED_BY)) $criteria->add(BriefTemplatePeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_AT)) $criteria->add(BriefTemplatePeer::CREATED_AT, $this->created_at);
@@ -1059,6 +1151,8 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 		$copyObj->setGearchiveerd($this->gearchiveerd);
 
+		$copyObj->setPdfTemplateId($this->pdf_template_id);
+
 		$copyObj->setCreatedBy($this->created_by);
 
 		$copyObj->setUpdatedBy($this->updated_by);
@@ -1070,6 +1164,14 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 		if ($deepCopy) {
 									$copyObj->setNew(false);
+
+			foreach($this->getBriefTemplatesRelatedByPdfTemplateId() as $relObj) {
+				if($this->getPrimaryKey() === $relObj->getPrimaryKey()) {
+						continue;
+				}
+
+				$copyObj->addBriefTemplateRelatedByPdfTemplateId($relObj->copy($deepCopy));
+			}
 
 			foreach($this->getBriefVerzondens() as $relObj) {
 				$copyObj->addBriefVerzonden($relObj->copy($deepCopy));
@@ -1089,6 +1191,10 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			foreach($this->getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId() as $relObj) {
 				$copyObj->addActiviteitRelatedByConfiguredOrganisatieBriefTemplateId($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getDossierTypes() as $relObj) {
+				$copyObj->addDossierType($relObj->copy($deepCopy));
 			}
 
 		} 
@@ -1143,6 +1249,140 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 			
 		}
 		return $this->aBriefLayout;
+	}
+
+	
+	public function setBriefTemplateRelatedByPdfTemplateId($v)
+	{
+
+
+		if ($v === null) {
+			$this->setPdfTemplateId(NULL);
+		} else {
+			$this->setPdfTemplateId($v->getId());
+		}
+
+
+		$this->aBriefTemplateRelatedByPdfTemplateId = $v;
+	}
+
+
+	
+	public function getBriefTemplateRelatedByPdfTemplateId($con = null)
+	{
+		if ($this->aBriefTemplateRelatedByPdfTemplateId === null && ($this->pdf_template_id !== null)) {
+						include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefTemplatePeer.php';
+
+			$this->aBriefTemplateRelatedByPdfTemplateId = BriefTemplatePeer::retrieveByPK($this->pdf_template_id, $con);
+
+			
+		}
+		return $this->aBriefTemplateRelatedByPdfTemplateId;
+	}
+
+	
+	public function initBriefTemplatesRelatedByPdfTemplateId()
+	{
+		if ($this->collBriefTemplatesRelatedByPdfTemplateId === null) {
+			$this->collBriefTemplatesRelatedByPdfTemplateId = array();
+		}
+	}
+
+	
+	public function getBriefTemplatesRelatedByPdfTemplateId($criteria = null, $con = null)
+	{
+				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefTemplatePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collBriefTemplatesRelatedByPdfTemplateId === null) {
+			if ($this->isNew()) {
+			   $this->collBriefTemplatesRelatedByPdfTemplateId = array();
+			} else {
+
+				$criteria->add(BriefTemplatePeer::PDF_TEMPLATE_ID, $this->getId());
+
+				BriefTemplatePeer::addSelectColumns($criteria);
+				$this->collBriefTemplatesRelatedByPdfTemplateId = BriefTemplatePeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(BriefTemplatePeer::PDF_TEMPLATE_ID, $this->getId());
+
+				BriefTemplatePeer::addSelectColumns($criteria);
+				if (!isset($this->lastBriefTemplateRelatedByPdfTemplateIdCriteria) || !$this->lastBriefTemplateRelatedByPdfTemplateIdCriteria->equals($criteria)) {
+					$this->collBriefTemplatesRelatedByPdfTemplateId = BriefTemplatePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastBriefTemplateRelatedByPdfTemplateIdCriteria = $criteria;
+		return $this->collBriefTemplatesRelatedByPdfTemplateId;
+	}
+
+	
+	public function countBriefTemplatesRelatedByPdfTemplateId($criteria = null, $distinct = false, $con = null)
+	{
+				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefTemplatePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(BriefTemplatePeer::PDF_TEMPLATE_ID, $this->getId());
+
+		return BriefTemplatePeer::doCount($criteria, $distinct, $con);
+	}
+
+	
+	public function addBriefTemplateRelatedByPdfTemplateId(BriefTemplate $l)
+	{
+		$this->collBriefTemplatesRelatedByPdfTemplateId[] = $l;
+		$l->setBriefTemplateRelatedByPdfTemplateId($this);
+	}
+
+
+	
+	public function getBriefTemplatesRelatedByPdfTemplateIdJoinBriefLayout($criteria = null, $con = null)
+	{
+				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefTemplatePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collBriefTemplatesRelatedByPdfTemplateId === null) {
+			if ($this->isNew()) {
+				$this->collBriefTemplatesRelatedByPdfTemplateId = array();
+			} else {
+
+				$criteria->add(BriefTemplatePeer::PDF_TEMPLATE_ID, $this->getId());
+
+				$this->collBriefTemplatesRelatedByPdfTemplateId = BriefTemplatePeer::doSelectJoinBriefLayout($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(BriefTemplatePeer::PDF_TEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastBriefTemplateRelatedByPdfTemplateIdCriteria) || !$this->lastBriefTemplateRelatedByPdfTemplateIdCriteria->equals($criteria)) {
+				$this->collBriefTemplatesRelatedByPdfTemplateId = BriefTemplatePeer::doSelectJoinBriefLayout($criteria, $con);
+			}
+		}
+		$this->lastBriefTemplateRelatedByPdfTemplateIdCriteria = $criteria;
+
+		return $this->collBriefTemplatesRelatedByPdfTemplateId;
 	}
 
 	
@@ -2963,6 +3203,286 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
 
 		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
+	}
+
+	
+	public function initDossierTypes()
+	{
+		if ($this->collDossierTypes === null) {
+			$this->collDossierTypes = array();
+		}
+	}
+
+	
+	public function getDossierTypes($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collDossierTypes === null) {
+			if ($this->isNew()) {
+			   $this->collDossierTypes = array();
+			} else {
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				DossierTypePeer::addSelectColumns($criteria);
+				$this->collDossierTypes = DossierTypePeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				DossierTypePeer::addSelectColumns($criteria);
+				if (!isset($this->lastDossierTypeCriteria) || !$this->lastDossierTypeCriteria->equals($criteria)) {
+					$this->collDossierTypes = DossierTypePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastDossierTypeCriteria = $criteria;
+		return $this->collDossierTypes;
+	}
+
+	
+	public function countDossierTypes($criteria = null, $distinct = false, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+		return DossierTypePeer::doCount($criteria, $distinct, $con);
+	}
+
+	
+	public function addDossierType(DossierType $l)
+	{
+		$this->collDossierTypes[] = $l;
+		$l->setBriefTemplate($this);
+	}
+
+
+	
+	public function getDossierTypesJoinAccountRelatedByCreatedBy($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collDossierTypes === null) {
+			if ($this->isNew()) {
+				$this->collDossierTypes = array();
+			} else {
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountRelatedByCreatedBy($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastDossierTypeCriteria) || !$this->lastDossierTypeCriteria->equals($criteria)) {
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountRelatedByCreatedBy($criteria, $con);
+			}
+		}
+		$this->lastDossierTypeCriteria = $criteria;
+
+		return $this->collDossierTypes;
+	}
+
+
+	
+	public function getDossierTypesJoinAccountRelatedByUpdatedBy($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collDossierTypes === null) {
+			if ($this->isNew()) {
+				$this->collDossierTypes = array();
+			} else {
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountRelatedByUpdatedBy($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastDossierTypeCriteria) || !$this->lastDossierTypeCriteria->equals($criteria)) {
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountRelatedByUpdatedBy($criteria, $con);
+			}
+		}
+		$this->lastDossierTypeCriteria = $criteria;
+
+		return $this->collDossierTypes;
+	}
+
+
+	
+	public function getDossierTypesJoinPersoon($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collDossierTypes === null) {
+			if ($this->isNew()) {
+				$this->collDossierTypes = array();
+			} else {
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinPersoon($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastDossierTypeCriteria) || !$this->lastDossierTypeCriteria->equals($criteria)) {
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinPersoon($criteria, $con);
+			}
+		}
+		$this->lastDossierTypeCriteria = $criteria;
+
+		return $this->collDossierTypes;
+	}
+
+
+	
+	public function getDossierTypesJoinAccountGroupRelatedByViewAccountGroupId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collDossierTypes === null) {
+			if ($this->isNew()) {
+				$this->collDossierTypes = array();
+			} else {
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountGroupRelatedByViewAccountGroupId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastDossierTypeCriteria) || !$this->lastDossierTypeCriteria->equals($criteria)) {
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountGroupRelatedByViewAccountGroupId($criteria, $con);
+			}
+		}
+		$this->lastDossierTypeCriteria = $criteria;
+
+		return $this->collDossierTypes;
+	}
+
+
+	
+	public function getDossierTypesJoinAccountGroupRelatedByEditAccountGroupId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collDossierTypes === null) {
+			if ($this->isNew()) {
+				$this->collDossierTypes = array();
+			} else {
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountGroupRelatedByEditAccountGroupId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastDossierTypeCriteria) || !$this->lastDossierTypeCriteria->equals($criteria)) {
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinAccountGroupRelatedByEditAccountGroupId($criteria, $con);
+			}
+		}
+		$this->lastDossierTypeCriteria = $criteria;
+
+		return $this->collDossierTypes;
+	}
+
+
+	
+	public function getDossierTypesJoinDossierTypeRelatedByVereistDossiertypeId($criteria = null, $con = null)
+	{
+				include_once 'lib/model/om/BaseDossierTypePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collDossierTypes === null) {
+			if ($this->isNew()) {
+				$this->collDossierTypes = array();
+			} else {
+
+				$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinDossierTypeRelatedByVereistDossiertypeId($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(DossierTypePeer::BEVESTIGINGSTEMPLATE_ID, $this->getId());
+
+			if (!isset($this->lastDossierTypeCriteria) || !$this->lastDossierTypeCriteria->equals($criteria)) {
+				$this->collDossierTypes = DossierTypePeer::doSelectJoinDossierTypeRelatedByVereistDossiertypeId($criteria, $con);
+			}
+		}
+		$this->lastDossierTypeCriteria = $criteria;
+
+		return $this->collDossierTypes;
 	}
 
 

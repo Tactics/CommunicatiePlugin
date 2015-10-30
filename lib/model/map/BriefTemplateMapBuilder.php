@@ -58,6 +58,8 @@ class BriefTemplateMapBuilder {
 
 		$tMap->addColumn('GEARCHIVEERD', 'Gearchiveerd', 'int', CreoleTypes::INTEGER, true, null);
 
+		$tMap->addForeignKey('PDF_TEMPLATE_ID', 'PdfTemplateId', 'int', CreoleTypes::INTEGER, 'brief_template', 'ID', false, null);
+
 		$tMap->addColumn('CREATED_BY', 'CreatedBy', 'int', CreoleTypes::INTEGER, false, null);
 
 		$tMap->addColumn('UPDATED_BY', 'UpdatedBy', 'int', CreoleTypes::INTEGER, false, null);
