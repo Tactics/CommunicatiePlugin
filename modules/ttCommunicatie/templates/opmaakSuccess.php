@@ -330,7 +330,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
             $(data.pdfBijlage['classes']).each(function(i, bestemmeling){
               jQuery('input[name="classes"]').val(bestemmeling);
             });
-            $('.pdfBijlages').html(data.pdfBijlage['naam']);
+            $('.pdfBijlages').html('').html(data.pdfBijlage['naam']);
             $('.pdfSelect').toggle(!data.pdfBijlage['id']);
           }
         });
