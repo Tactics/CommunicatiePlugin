@@ -296,7 +296,7 @@ function showPlaceholders($placeholders)
       </tr>
     <?php endif; ?>
     <tr>
-      <th>Sjabloon als bijlage:</th>
+      <th>Sjabloon als bijlage (pdf):</th>
       <td>
         <?php
         include_component('ttAutocomplete', 'autocomplete', array(
