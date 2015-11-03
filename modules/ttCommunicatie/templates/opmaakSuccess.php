@@ -150,6 +150,32 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     <?php endif; ?>
 
     <tr>
+      <th>Sjabloon bijlage (pdf):</th>
+      <td>
+        <div class="pdfBijlages">
+          <?php
+          /** @var BriefTemplate $pdfBijlage */
+          if ($brief_template && $brief_template->getPdfTemplateId())
+          {
+            $pdfBijlage = $pdfBijlage = BriefTemplatePeer::retrieveByPK($brief_template->getPdfTemplateId());
+            echo $pdfBijlage->getNaam() . '<br />';
+          }
+          ?>
+        </div>
+        <div class="pdfSelect">
+          <?php
+          include_component('ttAutocomplete', 'autocomplete', array(
+            'id' => 'pdf_template_id',
+            'object' => $brief_template ? BriefTemplatePeer::retrieveByPK($brief_template->getPdfTemplateId()): null,
+            'class' => 'BriefTemplate',
+            'params_callback' => 'getSelectedClasses'
+          )); ?>
+        </div>
+        <?php echo input_hidden_tag('classes') ?>
+      </td>
+    </tr>
+
+    <tr>
       <th>Bijlagen:</th>
       <td>
         <?php echo input_file_tag('bijlage0', array('class' => 'bijlagen')) ?> <br />
@@ -298,11 +324,27 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 
           //$('#sjabloon_reedsontvangen').html(data.reedsontvangen);
           $('#sjabloon_eenmalig').html(data.eenmalig);
+
+          if (data.pdfBijlage)
+          {
+            $(data.pdfBijlage['classes']).each(function(i, bestemmeling){
+              jQuery('input[name="classes"]').val(bestemmeling);
+            });
+            $('.pdfBijlages').html(data.pdfBijlage['naam']);
+            $('.pdfSelect').toggle(!data.pdfBijlage['id']);
+          }
         });
       }
     }).change();  
     <?php endif; ?>
   });
+
+  function getSelectedClasses()
+  {
+    var selectedClasses = [];
+    selectedClasses.push(jQuery('input[name="classes"]').val());
+    return {bestemmelingClass: selectedClasses};
+  }
 
   function bijlageToevoegen()
   {

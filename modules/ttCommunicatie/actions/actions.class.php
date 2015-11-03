@@ -525,12 +525,22 @@ class ttCommunicatieActions extends sfActions
     $html = $briefTemplate->getHtmlCultureArr();
     $onderwerp = $briefTemplate->getOnderwerpCultureArr();
     $culture_arr = array_keys($cultures);
-    
+
+    $pdfBijlage = array();
+    if ($briefTemplate->getPdfTemplateId())
+    {
+      $bijlage = BriefTemplatePeer::retrieveByPK($briefTemplate->getPdfTemplateId());
+      $pdfBijlage['id'] = $briefTemplate->getPdfTemplateId();
+      $pdfBijlage['naam'] = $bijlage->getNaam();
+    }
+    $pdfBijlage['classes'] = $briefTemplate->getBestemmelingArray();
+
     echo json_encode(array(
-      'html'      => $html,
-      'eenmalig'  => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
-      'onderwerp' => $onderwerp,
-      'cultures'  => $culture_arr
+      'html'       => $html,
+      'eenmalig'   => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
+      'onderwerp'  => $onderwerp,
+      'cultures'   => $culture_arr,
+      'pdfBijlage' => $pdfBijlage
     ));
 
     exit();
@@ -872,10 +882,10 @@ class ttCommunicatieActions extends sfActions
             }
 
             // Indien er een sjabloon aanhangt als pdf bijlage.
-            if ($brief_template->getPdfTemplateId())
+            if ($this->getRequestParameter("pdf_template_id", $brief_template->getPdfTemplateId()))
             {
               /** @var BriefTemplate $pdfBijlageTemplate */
-              $pdfBijlageTemplate = BriefTemplatePeer::retrieveByPK($brief_template->getPdfTemplateId());
+              $pdfBijlageTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter("pdf_template_id", $brief_template->getPdfTemplateId()));
               $htmlContent = $pdfBijlageTemplate->getHtmlContent($bestemmeling, array(), 'pdf');
 
               $bijlageBrieven = $htmlContent['brief'];
