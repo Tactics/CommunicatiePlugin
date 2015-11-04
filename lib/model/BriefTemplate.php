@@ -439,20 +439,12 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       $criteria->add(BriefTemplatePeer::GEARCHIVEERD, 0);
     }
 
-    if (isset($params['bestemmelingClass']) && $params['bestemmelingClass'])
+    if (isset($params['bestemmelingClass']))
     {
-      foreach ($params['bestemmelingClass'] as $bestemmeling)
+      foreach ((array) $params['bestemmelingClass'] as $bestemmeling)
       {
-        if (!isset($bestemmelingCton))
-        {
-          $bestemmelingCton = $criteria->getNewCriterion(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$bestemmeling.'|%', Criteria::LIKE);
-        }
-        else
-        {
-          $bestemmelingCton->addAnd($criteria->getNewCriterion(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$bestemmeling.'|%', Criteria::LIKE));
-        }
+        $criteria->add($criteria->getNewCriterion(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$bestemmeling.'|%', Criteria::LIKE));
       }
-      $criteria->add($bestemmelingCton);
     }
 
     $cton1 = $criteria->getNewCriterion(BriefTemplatePeer::NAAM, '%' . $keyword . '%', Criteria::LIKE);
