@@ -689,9 +689,21 @@ class ttCommunicatieActions extends sfActions
       $onderwerpen = $this->edit_template ? $this->getRequestParameter('onderwerp') : ($this->brief_template ? $this->brief_template->getOnderwerpCultureArr() : null);
       $htmls = $this->edit_template ? $this->getRequestParameter('html') : ($this->brief_template ? $this->brief_template->getHtmlCultureArr() : null);
 
+      // Print de bijlage mee af als er 1 aanhangt.
+      if (!$this->edit_template && $this->brief_template->getPdfTemplateId())
+      {
+        $pdfTemplate = BriefTemplatePeer::retrieveByPK($this->brief_template->getPdfTemplateId());
+        $pdfHtmls = $pdfTemplate->getHtmlCultureArr();
+      }
+
       $this->cultureBrieven = array();
       foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
       {
+        if (isset($pdfHtmls))
+        {
+          $htmls[$culture] .= "\n\n<div STYLE=\"page-break-before: always\"></div>\n\n";
+          $htmls[$culture] .= $pdfHtmls[$culture];
+        }
         $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
         $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
       }
@@ -882,10 +894,11 @@ class ttCommunicatieActions extends sfActions
             }
 
             // Indien er een sjabloon aanhangt als pdf bijlage.
-            if ($this->getRequestParameter("pdf_template_id", $brief_template->getPdfTemplateId()))
+            if ($this->getRequestParameter("pdf_template_id") || $brief_template->getPdfTemplateId())
             {
+              $pdfTemplateId = $this->getRequestParameter("pdf_template_id") ?: $brief_template->getPdfTemplateId();
               /** @var BriefTemplate $pdfBijlageTemplate */
-              $pdfBijlageTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter("pdf_template_id", $brief_template->getPdfTemplateId()));
+              $pdfBijlageTemplate = BriefTemplatePeer::retrieveByPK($pdfTemplateId);
               $htmlContent = $pdfBijlageTemplate->getHtmlContent($bestemmeling, array(), 'pdf');
 
               $bijlageBrieven = $htmlContent['brief'];
