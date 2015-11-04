@@ -238,6 +238,40 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $brief = $head . $body;
     
     $email = $bestemmeling->getEmailTo();
+
+    $attachments = $this->getAttachments();
+    // Indien er een sjabloon aanhangt als pdf bijlage.
+    if ($this->getPdfTemplateId())
+    {
+      /** @var BriefTemplate $pdfBijlageTemplate */
+      $pdfBijlageTemplate = BriefTemplatePeer::retrieveByPK($this->getPdfTemplateId());
+      $htmlContent = $pdfBijlageTemplate->getHtmlContent($bestemmeling, array(), 'pdf');
+
+      $bijlageBrieven = $htmlContent['brief'];
+      $culture = $htmlContent['culture'];
+      $head = $bijlageBrieven[$culture]['head'];
+      $body = $bijlageBrieven[$culture]['body'];
+      $bijlageBrief = $head . $body;
+
+      $filename = $bijlageBrieven[$culture]['onderwerp'];
+
+      // CID images vervangen.
+      $imgPath = sfConfig::get('sf_data_dir') . '/brieven/layouts/images/';
+      $prefix = 'cid:';
+
+      // Vind all cidxx.jpg/png/gif bestanden in de mailbody en in de css
+      preg_match_all("/" . preg_quote($prefix, '/') . '([A-Za-z0-9_\-\/]+\.(jpg|gif|png))/im', $bijlageBrief, $matches);
+
+      // Alle matches vervangen met de correcte source.
+      $matches = $matches[1];
+      $matches = array_unique($matches);
+      foreach($matches as $figuur) { $bijlageBrief = str_replace($prefix . $figuur, $imgPath . $figuur, $bijlageBrief); }
+
+      // Pdf file genereren van html sjabloon en toevoegen aan de attachments.
+      $htmlToPdfConverter = sfContext::getInstance()->getContainer()->get("html_pdf.converter");
+      $pdfFile = $htmlToPdfConverter->getPdfFromHtml($bijlageBrief);
+      $attachments[$filename . '.pdf'] = $pdfFile;
+    }
         
     // Mail versturen
     $mailSent = BerichtPeer::verstuurEmail($email, $brief, array(
@@ -245,7 +279,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       'skip_template' => true,
       'cc' => $bestemmeling->getEmailCc(),
       'bcc' => $bestemmeling->getEmailBcc(),
-      'attachements' => $this->getAttachments(),
+      'attachements' => $attachments,
       'img_path' => array(
         array(
           'prefix' => 'cid:',
@@ -257,6 +291,9 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
         )
       )
     ));
+
+    // Is er een pdf gegenereerd? Verwijder deze dan na het sturen van de mail.
+    if (isset($pdfFile)) { unlink($pdfFile); }
 
     // Mail loggen
     $briefVerzonden = new BriefVerzonden();
