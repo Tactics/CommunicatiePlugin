@@ -1081,6 +1081,7 @@ class ttCommunicatieActions extends sfActions
    */
   public function executeHerzendEmail()
   {
+    /** @var BriefVerzonden $briefVerzonden */
     $briefVerzonden = BriefVerzondenPeer::retrieveByPk($this->getRequestParameter('id'));
     $this->forward404Unless($briefVerzonden && $briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL);
     

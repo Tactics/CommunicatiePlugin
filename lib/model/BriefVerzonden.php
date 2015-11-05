@@ -40,7 +40,8 @@ class BriefVerzonden extends BaseBriefVerzonden
       $template->sendMailToObject($object, $object->getTtCommunicatieBestemmeling(), array(
         'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR,
         'attachements' => $attachements,
-        'forceer_versturen' => true
+        'forceer_versturen' => true,
+        'briefVerzondenId' => $this->getId()
       ));
 
       return '<div class="alert alert-success fade-in"><button data-dismiss="alert" class="close">×</button><i class="fa-fw fa fa-check"></i>Mail is verzonden.</div>';

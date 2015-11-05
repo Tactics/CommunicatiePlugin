@@ -247,6 +247,14 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody('mail', $culture, $htmls[$culture], true);
       $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
     }
+
+    if (isset($options['briefVerzondenId']))
+    {
+      /** @var BriefVerzonden $oudeBriefVerzonden */
+      $oudeBriefVerzonden = BriefVerzondenPeer::retrieveByPK($options['briefVerzondenId']);
+      $this->cultureBrieven[$culture]['body'] = $oudeBriefVerzonden->getHtml();
+      $this->cultureBrieven[$culture]['onderwerp'] = $oudeBriefVerzonden->getOnderwerp();
+    }
     
     // work with copy of culturebrieven
     $tmpCultureBrieven = $this->cultureBrieven;
