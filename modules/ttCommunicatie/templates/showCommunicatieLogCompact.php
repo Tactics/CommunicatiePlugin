@@ -35,7 +35,7 @@
           <?php endif; ?>
           <tr>
             <th><label class="label">Body:</label></th>
-            <td><label class="label"><?php echo nl2br($briefVerzonden->getHtml()) ?></label></td>
+            <td><label class="label"><?php echo $briefVerzonden->getHtml() ?></label></td>
           </tr>
         </table>
       </td>

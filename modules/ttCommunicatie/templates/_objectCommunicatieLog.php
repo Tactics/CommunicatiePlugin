@@ -96,9 +96,13 @@
                           $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
                           format_date($briefVerzonden->getCreatedAt(), 'f'),
                           $briefVerzonden->getOnderwerp(),
-                          link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' .
+                          (sfConfig::get('sf_style_smartadmin') ?
+                            link_to_function('<i class="fa fa-search"></i>', 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' :
+                            link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;') .
                           ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ?
-                            link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});") :
+                              (sfConfig::get('sf_style_smartadmin') ?
+                                link_to_function('<i class="fa fa-envelope"></i>', "herzendEmail({$briefVerzonden->getId()});") :
+                                link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});")) :
                             ''
                           )
                         )

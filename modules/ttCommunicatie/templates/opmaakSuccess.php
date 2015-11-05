@@ -348,7 +348,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     var cnt = jQuery('input.new_brief_bijlages').size();
     var str = '<label class="input input-file">';
     str += '<span class="button">';
-    str += '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '" onchange="this.parentNode.nextElementSibling.value = this.value">';
+    str += '<input class="new_brief_bijlages" id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '" onchange="this.parentNode.nextElementSibling.value=this.value">';
     str += '<span class="bladeren">Bladeren</span> </span><input type="text" class="bladeren" readonly="">';
     str += '<a href="#" onclick="clearBijlage(this); return false;" style="position: absolute; left: 285px; top: 8px"><?php echo image_tag("icons/trash_16.gif"); ?></a>';
     str += '</label><br />';
