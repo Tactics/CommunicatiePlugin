@@ -480,7 +480,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     {
       foreach ((array) $params['bestemmelingClass'] as $bestemmeling)
       {
-        $criteria->add($criteria->getNewCriterion(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$bestemmeling.'|%', Criteria::LIKE));
+        if ($bestemmeling) $criteria->add($criteria->getNewCriterion(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|'.$bestemmeling.'|%', Criteria::LIKE));
       }
     }
 

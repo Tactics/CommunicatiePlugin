@@ -171,7 +171,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
             'params_callback' => 'getSelectedClasses'
           )); ?>
         </div>
-        <?php echo input_hidden_tag('classes') ?>
+        <?php echo input_hidden_tag('classes', $brief_template ? $brief_template->getBestemmelingClasses() : null) ?>
       </td>
     </tr>
 
@@ -342,7 +342,8 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   function getSelectedClasses()
   {
     var selectedClasses = [];
-    selectedClasses.push(jQuery('input[name="classes"]').val());
+    var arrayResultaten = jQuery('input[name="classes"]').val().split('|');
+    selectedClasses = $.merge(selectedClasses, arrayResultaten);
     return {bestemmelingClass: selectedClasses};
   }
 
