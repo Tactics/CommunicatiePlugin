@@ -23,6 +23,7 @@
   <?php echo form_tag('ttCommunicatie/print', array('name' => 'print', 'target' => '_blank'));?>
     <?php echo input_hidden_tag('hash', $md5hash); ?>
     <?php echo input_hidden_tag('template_id', $template_id); ?>
+    <?php echo input_hidden_tag('pdf_template_id', isset($pdf_template_id) ? $pdf_template_id : null); ?>
     <div style="display:none;">
       <?php
         foreach ($nietVerstuurden as $index => $nt)

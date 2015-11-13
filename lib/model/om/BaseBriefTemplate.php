@@ -1632,41 +1632,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 
 	
-	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinOrganisatieType($criteria = null, $con = null)
-	{
-				include_once 'lib/model/om/BaseActiviteitPeer.php';
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collActiviteitsRelatedByConfiguredBriefTemplateId === null) {
-			if ($this->isNew()) {
-				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = array();
-			} else {
-
-				$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
-
-				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
-			}
-		} else {
-									
-			$criteria->add(ActiviteitPeer::CONFIGURED_BRIEF_TEMPLATE_ID, $this->getId());
-
-			if (!isset($this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria->equals($criteria)) {
-				$this->collActiviteitsRelatedByConfiguredBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
-			}
-		}
-		$this->lastActiviteitRelatedByConfiguredBriefTemplateIdCriteria = $criteria;
-
-		return $this->collActiviteitsRelatedByConfiguredBriefTemplateId;
-	}
-
-
-	
 	public function getActiviteitsRelatedByConfiguredBriefTemplateIdJoinActiviteitCategorie($criteria = null, $con = null)
 	{
 				include_once 'lib/model/om/BaseActiviteitPeer.php';
@@ -2192,41 +2157,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 
 	
-	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinOrganisatieType($criteria = null, $con = null)
-	{
-				include_once 'lib/model/om/BaseActiviteitPeer.php';
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId === null) {
-			if ($this->isNew()) {
-				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = array();
-			} else {
-
-				$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
-
-				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
-			}
-		} else {
-									
-			$criteria->add(ActiviteitPeer::CONFIGURED_PERSOON_BRIEF_TEMPLATE_ID, $this->getId());
-
-			if (!isset($this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria->equals($criteria)) {
-				$this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
-			}
-		}
-		$this->lastActiviteitRelatedByConfiguredPersoonBriefTemplateIdCriteria = $criteria;
-
-		return $this->collActiviteitsRelatedByConfiguredPersoonBriefTemplateId;
-	}
-
-
-	
 	public function getActiviteitsRelatedByConfiguredPersoonBriefTemplateIdJoinActiviteitCategorie($criteria = null, $con = null)
 	{
 				include_once 'lib/model/om/BaseActiviteitPeer.php';
@@ -2743,41 +2673,6 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
 				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinLocatie($criteria, $con);
-			}
-		}
-		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;
-
-		return $this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId;
-	}
-
-
-	
-	public function getActiviteitsRelatedByConfiguredOrganisatieBriefTemplateIdJoinOrganisatieType($criteria = null, $con = null)
-	{
-				include_once 'lib/model/om/BaseActiviteitPeer.php';
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId === null) {
-			if ($this->isNew()) {
-				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = array();
-			} else {
-
-				$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
-
-				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
-			}
-		} else {
-									
-			$criteria->add(ActiviteitPeer::CONFIGURED_ORGANISATIE_BRIEF_TEMPLATE_ID, $this->getId());
-
-			if (!isset($this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria) || !$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria->equals($criteria)) {
-				$this->collActiviteitsRelatedByConfiguredOrganisatieBriefTemplateId = ActiviteitPeer::doSelectJoinOrganisatieType($criteria, $con);
 			}
 		}
 		$this->lastActiviteitRelatedByConfiguredOrganisatieBriefTemplateIdCriteria = $criteria;

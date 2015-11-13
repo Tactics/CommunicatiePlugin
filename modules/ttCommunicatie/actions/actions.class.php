@@ -695,6 +695,11 @@ class ttCommunicatieActions extends sfActions
         $pdfTemplate = BriefTemplatePeer::retrieveByPK($this->brief_template->getPdfTemplateId());
         $pdfHtmls = $pdfTemplate->getHtmlCultureArr();
       }
+      elseif ($this->pdf_template_id = $this->getRequestParameter('pdf_template_id'))
+      {
+        $pdfTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('pdf_template_id'));
+        $pdfHtmls = $pdfTemplate->getHtmlCultureArr();
+      }
 
       $this->cultureBrieven = array();
       foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
