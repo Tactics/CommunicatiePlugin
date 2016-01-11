@@ -704,7 +704,7 @@ class ttCommunicatieActions extends sfActions
       $this->cultureBrieven = array();
       foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
       {
-        if (isset($pdfHtmls))
+        if (isset($pdfHtmls) && !$emailverzenden)
         {
           $htmls[$culture] .= "\n\n<div STYLE=\"page-break-before: always\"></div>\n\n";
           $htmls[$culture] .= $pdfHtmls[$culture];
@@ -889,7 +889,7 @@ class ttCommunicatieActions extends sfActions
 
             $briefAttachments = $brief_template->getAttachments($this->getRequest());
 
-            $attachments = array_merge($tmpAttachments, $briefAttachments);
+            $attachments = $briefAttachments;
 
             // object-eigen attachements
             if (method_exists($object, 'getBriefAttachments'))
