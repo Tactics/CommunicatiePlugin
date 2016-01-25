@@ -109,7 +109,7 @@ class ttCommunicatieActions extends sfActions
     $this->forward('ttCommunicatie', 'list');
   }
 
-   /**
+  /**
    * lijst van zelf gemaakte brief templates in de db
    */
   public function executeList()
@@ -486,7 +486,7 @@ class ttCommunicatieActions extends sfActions
         $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
         break;
       }
-      // load Peerclasses when not yet autoloaded
+        // load Peerclasses when not yet autoloaded
       catch(Exception $e)
       {
         $m = $e->getMessage();
@@ -543,11 +543,11 @@ class ttCommunicatieActions extends sfActions
   {
     if (is_file($filename))
     {
-        ob_start();
-        include $filename;
-        $contents = ob_get_contents();
-        ob_end_clean();
-        return $contents;
+      ob_start();
+      include $filename;
+      $contents = ob_get_contents();
+      ob_end_clean();
+      return $contents;
     }
 
     return false;
@@ -610,6 +610,9 @@ class ttCommunicatieActions extends sfActions
       // onderwerp en tekst ophalen
       $onderwerpen = $this->edit_template ? $this->getRequestParameter('onderwerp') : ($this->brief_template ? $this->brief_template->getOnderwerpCultureArr() : null);
       $htmls = $this->edit_template ? $this->getRequestParameter('html') : ($this->brief_template ? $this->brief_template->getHtmlCultureArr() : null);
+
+      // Indien niet in edit mode mogelijk, ook placeholders wijzigen indien nodig
+      if($this->brief_template->isSysteemTemplate())  $this->replaceSysteemPlaceholders($htmls);
 
       $this->cultureBrieven = array();
       foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
@@ -682,6 +685,9 @@ class ttCommunicatieActions extends sfActions
           $onderwerpen = $brief_template->getOnderwerpCultureArr();
           $htmls = $brief_template->getHtmlCultureArr();
 
+          // Indien niet in edit mode mogelijk, ook placeholders wijzigen indien nodig
+          if($this->brief_template->isSysteemTemplate())  $this->replaceSysteemPlaceholders($htmls);
+
           $this->cultureBrieven = array();
           foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
           {
@@ -713,7 +719,7 @@ class ttCommunicatieActions extends sfActions
 
           // Adres ophalen als placeholder
           $defaultPlaceholders = array_merge($defaultPlaceholders, array(
-              'bestemmeling_adres' => nl2br($object->getAdres())
+            'bestemmeling_adres' => nl2br($object->getAdres())
           ));
 
           // work with copy of culturebrieven
@@ -880,6 +886,23 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
+   * @param $htmls
+   */
+  private function replaceSysteemPlaceholders(&$htmls)
+  {
+    if(is_array($htmls))
+    {
+      $systeemplaceholders = $this->getUser()->getAttribute('systeemplaceholders', array(), $this->md5hash);
+      foreach($htmls as $key => $html)
+      {
+        $search  = array_keys($systeemplaceholders);
+        $replace = array_values($systeemplaceholders);
+        $htmls[$key] = str_replace($search, $replace, $html);
+      }
+    }
+  }
+
+  /**
    * Bevestigen van afdruk
    */
   public function executeBevestigAfdrukken()
@@ -887,8 +910,8 @@ class ttCommunicatieActions extends sfActions
     $this->preExecuteVersturen();
 
     $brief_verzonden_ids = strpos($this->getRequestParameter('brief_verzonden_ids'), ',') !== false ?
-                            explode(',', $this->getRequestParameter('brief_verzonden_ids')) :
-                            array($this->getRequestParameter('brief_verzonden_ids'));
+      explode(',', $this->getRequestParameter('brief_verzonden_ids')) :
+      array($this->getRequestParameter('brief_verzonden_ids'));
 
     $c = new Criteria();
     $c->add(BriefVerzondenPeer::ID, $brief_verzonden_ids, Criteria::IN);
@@ -917,7 +940,7 @@ class ttCommunicatieActions extends sfActions
       }
     }
 
- 		return sfView::NONE;
+    return sfView::NONE;
   }
 
   /**
@@ -1127,18 +1150,18 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-	 * (De)Archiveert een sjabloon
-	 */
-	public function executeArchiveer()
+   * (De)Archiveert een sjabloon
+   */
+  public function executeArchiveer()
   {
-	  $template = BriefTemplatePeer::retrieveByPk($this->getRequestParameter('id'));
+    $template = BriefTemplatePeer::retrieveByPk($this->getRequestParameter('id'));
     $this->forward404Unless($template);
 
     $template->setGearchiveerd($this->hasRequestParameter('archiveer') ? $this->getRequestParameter('archiveer') : ! $template->getGearchiveerd());
     $template->save();
 
     return $this->redirect('ttCommunicatie/list');
-	}
+  }
 
   /**
    * uitvoeren van de object communicatielog
