@@ -889,7 +889,7 @@ class ttCommunicatieActions extends sfActions
 
             $briefAttachments = $brief_template->getAttachments($this->getRequest());
 
-            $attachments = $briefAttachments;
+            $attachments = array_merge($tmpAttachments, $briefAttachments);
 
             // object-eigen attachements
             if (method_exists($object, 'getBriefAttachments'))
