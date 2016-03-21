@@ -48,8 +48,11 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       $c = new Criteria();
     }
 
-    // templates met systeemnaam zijn nooit uit de dropdown te kiezen
-    $c->add(self::SYSTEEMNAAM, null, Criteria::ISNULL);
+    // templates met systeemnaam afhankelijk van setting of deze te kiezen zijn
+    if (!sfConfig::get('sf_communicatie_incl_systeemnamen', false))
+    {
+      $c->add(self::SYSTEEMNAAM, null, Criteria::ISNULL);
+    }
 
     // categories enabled?
     if (sfConfig::get('sf_communicatie_enable_categories', false))
