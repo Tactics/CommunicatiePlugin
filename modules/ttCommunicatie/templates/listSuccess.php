@@ -95,17 +95,24 @@ end_slot();
   );
 
   $results = $pager->getResults();
+  $oClasses = sfConfig::get('sf_communicatie_targets');
 
   foreach($results as $briefTemplate)
   {
     $options = array();
     if ($briefTemplate->getGearchiveerd()) $options["rowClass"] = "gearchiveerd";
 
+    $classes = array();
+    $classesArray = $briefTemplate->getBestemmelingArray();
+    foreach ($oClasses as $oClass) {
+      if (in_array($oClass['class'], $classesArray)) {$classes[] = $oClass['label'];}
+    }
+
     $table->addRow(array(
       //link_to($briefTemplate->getId(),  "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
       link_to_unless_empty($briefTemplate->getNaam(), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
       link_to_unless_empty($briefTemplate->getOnderwerp(), "ttCommunicatie/edit?template_id=" . $briefTemplate->getId()),
-      trim($briefTemplate->getBestemmelingClasses(), '|'),
+      implode(', ', $classes),
       $briefTemplate->getBriefLayoutId() ? $briefTemplate->getBriefLayout()->getNaam() : '-',
       $briefTemplate->getEenmaligVersturen() ? 'eenmaal' : 'meermaals',
       $briefTemplate->getSysteemnaam() ? 'Ja' : 'Nee',
