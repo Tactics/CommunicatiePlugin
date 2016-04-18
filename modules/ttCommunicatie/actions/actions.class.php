@@ -686,7 +686,7 @@ class ttCommunicatieActions extends sfActions
           $htmls = $brief_template->getHtmlCultureArr();
 
           // Indien niet in edit mode mogelijk, ook placeholders wijzigen indien nodig
-          if($this->brief_template->isSysteemTemplate())  $this->replaceSysteemPlaceholders($htmls);
+          if($brief_template->isSysteemTemplate())  $this->replaceSysteemPlaceholders($htmls);
 
           $this->cultureBrieven = array();
           foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
