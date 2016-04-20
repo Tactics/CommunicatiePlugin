@@ -265,7 +265,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 
     // replace placeholders
     $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true, true, true);
-    $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, $defaultPlaceholders);
+    $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, array_merge($defaultPlaceholders, $systeemvalues));
     $head = $tmpCultureBrieven[$culture]['head'];
     $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
     $body = $tmpCultureBrieven[$culture]['body'];

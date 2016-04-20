@@ -109,7 +109,18 @@ class ttCommunicatieActions extends sfActions
       $this->show_bestemmelingen = false;
     }
 
-    $this->afzender = $this->getUser()->getAttribute('afzender', sfConfig::get("sf_mail_sender"), $this->md5hash);
+    $defaultSender = sfConfig::get("sf_mail_sender");
+
+    if (sfConfig::get('sf_mail_sender_prefer_user'))
+    {
+      if ($this->getUser()->getPersoon() && $this->getUser()->getPersoon()->getEmail())
+      {
+        $defaultSender = $this->getUser()->getPersoon()->getEmail();
+      }
+    }
+
+    $this->afzender = $this->getUser()->getAttribute('afzender', $defaultSender, $this->md5hash);
+
     $this->forceer_versturen = $this->getUser()->getAttribute('forceer_versturen', false, $this->md5hash);
 
     // indien object gegeven, wordt criteria en objectClass/Peer enzo niet gebruikt.
@@ -955,7 +966,7 @@ class ttCommunicatieActions extends sfActions
             else if (($verzenden_via == 'liefst') && !$prefersEmail)
             {
               $nietVerstuurdReden = 'communicatie via e-mail niet gewenst.';
-              $this->logs[] = '<span style="color:red">E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</span><br/>';
+              $this->logs[] = '<span style="color:red">E-mail werd niet verzonden naar '.$email.', reden: communicatie via e-mail niet gewenst.</span><br/>';
               $counter['wenstgeenmail']++;
             }
             else
