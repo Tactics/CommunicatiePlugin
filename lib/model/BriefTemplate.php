@@ -280,15 +280,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       'bcc' => $bestemmeling->getEmailBcc()
     );
 
-    if(isset($options['img_path']))
-    {
-      $mailOptions['img_path'] = $options['img_path'];
-    }
-    if(isset($options['attachements']))
-    {
-      $mailOptions['attachements'] = $options['attachements'];
-    }
-        
+    $mailOptions = array_merge($mailOptions, $options);
+
     // Mail versturen
     $mailSent = BerichtPeer::verstuurEmail($email, $brief, $mailOptions);
 
