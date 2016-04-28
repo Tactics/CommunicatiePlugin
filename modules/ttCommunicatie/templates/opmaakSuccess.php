@@ -96,7 +96,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
         <?php echo select_tag('verzenden_via', options_for_select(array(
             'liefst' => 'Ja, indien gewenst',
             'altijd' => 'Ja, altijd',
-            'nee' => 'Nee, alles afdrukkken op papier'
+            'nee' => 'Nee, alles afdrukken op papier'
           ), 'liefst'), array('onchange' => 'changeButtons(this.value)'))?>
       </td>
     </tr>
