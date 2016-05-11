@@ -16,6 +16,7 @@
     <column name="systeemplaceholders" type="VARCHAR" size="1000"/>
     <column name="gearchiveerd" type="INTEGER" required="true" default="0"/>
     <column name="pdf_template_id" type="INTEGER"/>
+    <column name="afzender_id" type="INTEGER"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>
@@ -31,6 +32,12 @@
     </foreign-key>
     <index>
       <index-column name="pdf_template_id"/>
+    </index>
+    <foreign-key name="fk_brief_template_afzender1" foreignTable="persoon">
+      <reference local="afzender_id" foreign="id"/>
+    </foreign-key>
+    <index>
+      <index-column name="afzender_id"/>
     </index>
   </table>
 
