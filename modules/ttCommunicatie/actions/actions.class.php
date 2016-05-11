@@ -390,7 +390,8 @@ class ttCommunicatieActions extends sfActions
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
     $brief_template->setIsPubliciteit($this->getRequestParameter('is_publiciteit', 0));
     $brief_template->setPdfTemplateId($this->getRequestParameter('pdf_template_id'));
-    
+    $brief_template->setAfzenderId($this->getRequestParameter('afzender_id'));
+
     $brief_template->save();
       
     $cultures = BriefTemplatePeer::getCultureLabelArray();
