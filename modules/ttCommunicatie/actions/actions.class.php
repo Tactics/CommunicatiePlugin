@@ -164,14 +164,14 @@ class ttCommunicatieActions extends sfActions
     // Of is er een afzender meegegeven vanaf het opmaak scherm
     // Of hangt er één aan de brieftemplate
     // Anders gebruik de default sf_mail_sender
-    if ($this->getUser()->getAttribute('afzender', null, $this->md5hash))
-    {
-      $this->afzender = $this->getUser()->getAttribute('afzender', null, $this->md5hash);
-    }
-    elseif ($this->getRequestParameter('afzender_id'))
+    if ($this->getRequestParameter('afzender_id'))
     {
       $persoon = PersoonPeer::retrieveByPK($this ->getRequestParameter('afzender_id'));
       $this->afzender = $persoon && $persoon->getEmail() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
+    }
+    elseif ($this->getUser()->getAttribute('afzender', null, $this->md5hash))
+    {
+      $this->afzender = $this->getUser()->getAttribute('afzender', null, $this->md5hash);
     }
     elseif ($this->brief_template && $this->brief_template->getAfzenderId())
     {

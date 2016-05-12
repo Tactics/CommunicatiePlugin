@@ -100,6 +100,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           'class' => 'Persoon',
           'show_detail' => false
         )); ?>
+        Indien er geen afzender is gekozen zal deze mail verstuurd worden vanaf '<b><?php echo $afzender ?></b>'
       </td>
     </tr>
 
