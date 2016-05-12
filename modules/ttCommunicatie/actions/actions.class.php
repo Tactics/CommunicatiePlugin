@@ -173,9 +173,9 @@ class ttCommunicatieActions extends sfActions
       $persoon = PersoonPeer::retrieveByPK($this ->getRequestParameter('afzender_id'));
       $this->afzender = $persoon && $persoon->getEmail() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
     }
-    elseif ($this->brief_template && $this->brieftemplate->getAfzenderId())
+    elseif ($this->brief_template && $this->brief_template->getAfzenderId())
     {
-      $persoon = PersoonPeer::retrieveByPK($this->brieftemplate->getAfzenderId());
+      $persoon = PersoonPeer::retrieveByPK($this->brief_template->getAfzenderId());
       $this->afzender = $persoon && $persoon->getEmail() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
     }
     else
