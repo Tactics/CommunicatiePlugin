@@ -183,8 +183,7 @@ function showPlaceholders($placeholders)
         include_component('ttAutocomplete', 'autocomplete', array(
           'id' => 'afzender_id',
           'object' => PersoonPeer::retrieveByPK($brief_template->getAfzenderId()),
-          'class' => 'Persoon',
-          'params_callback' => 'getSelectedClasses'
+          'class' => 'Persoon'
         )); ?>
       </td>
     </tr>

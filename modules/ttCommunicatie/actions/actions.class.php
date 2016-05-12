@@ -557,13 +557,25 @@ class ttCommunicatieActions extends sfActions
       $pdfBijlage['naam'] = $bijlage->getNaam();
     }
     $pdfBijlage['classes'] = $briefTemplate->getBestemmelingArray();
+    
+    $afzender = array();
+    if ($briefTemplate->getAfzenderId())
+    {
+      $persoon = PersoonPeer::retrieveByPK($briefTemplate->getAfzenderId());
+      if ($persoon)
+      {
+        $afzender['id'] = $briefTemplate->getAfzenderId();
+        $afzender['naam'] = $persoon->getNaam();  
+      }
+    }
 
     echo json_encode(array(
       'html'       => $html,
       'eenmalig'   => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
       'onderwerp'  => $onderwerp,
       'cultures'   => $culture_arr,
-      'pdfBijlage' => $pdfBijlage
+      'pdfBijlage' => $pdfBijlage,
+      'afzender'   => $afzender
     ));
 
     exit();
