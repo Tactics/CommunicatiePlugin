@@ -183,7 +183,8 @@ function showPlaceholders($placeholders)
         include_component('ttAutocomplete', 'autocomplete', array(
           'id' => 'afzender_id',
           'object' => PersoonPeer::retrieveByPK($brief_template->getAfzenderId()),
-          'class' => 'Persoon'
+          'class' => 'Persoon',
+          'params_callback' => 'getAfzendersEmail'
         )); ?>
       </td>
     </tr>
@@ -365,5 +366,10 @@ function showPlaceholders($placeholders)
       selectedClasses.push(jQuery(this).val());
     });
     return {bestemmelingClass: selectedClasses};
+  }
+
+  function getAfzendersEmail()
+  {
+    return {afzenderEmail: true};
   }
 </script>

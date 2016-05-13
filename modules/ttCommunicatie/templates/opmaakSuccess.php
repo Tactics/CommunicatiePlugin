@@ -98,7 +98,8 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           'id' => 'afzender_id',
           'object' => $brief_template ? PersoonPeer::retrieveByPK($brief_template->getAfzenderId()) : null,
           'class' => 'Persoon',
-          'show_detail' => false
+          'show_detail' => false,
+          'params_callback' => 'getAfzendersEmail'
         )); ?>
         Indien er geen afzender is gekozen zal deze mail verstuurd worden vanaf '<b><?php echo $afzender ?></b>'
       </td>
@@ -275,6 +276,11 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     jQuery('#record-count').html(aantal);
 
     return aantal;
+  }
+
+  function getAfzendersEmail()
+  {
+    return {afzenderEmail: true};
   }
   
   <?php endif; ?>
