@@ -109,7 +109,6 @@ class ttCommunicatieActions extends sfActions
       $this->show_bestemmelingen = false;
     }
 
-    $this->afzender = $this->getUser()->getAttribute('afzender', sfConfig::get("sf_mail_sender"), $this->md5hash);
     $this->forceer_versturen = $this->getUser()->getAttribute('forceer_versturen', false, $this->md5hash);
 
     // indien object gegeven, wordt criteria en objectClass/Peer enzo niet gebruikt.
@@ -160,7 +159,30 @@ class ttCommunicatieActions extends sfActions
     {
       $this->edit_template = false;
     }
-    
+
+    // Is er een afzender meegegeven in de options
+    // Of is er een afzender meegegeven vanaf het opmaak scherm
+    // Of hangt er één aan de brieftemplate
+    // Anders gebruik de default sf_mail_sender
+    if ($this->getRequestParameter('afzender_id'))
+    {
+      $persoon = PersoonPeer::retrieveByPK($this ->getRequestParameter('afzender_id'));
+      $this->afzender = $persoon && $persoon->getEmail() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
+    }
+    elseif ($this->getUser()->getAttribute('afzender', null, $this->md5hash))
+    {
+      $this->afzender = $this->getUser()->getAttribute('afzender', null, $this->md5hash);
+    }
+    elseif ($this->brief_template && $this->brief_template->getAfzenderId())
+    {
+      $persoon = PersoonPeer::retrieveByPK($this->brief_template->getAfzenderId());
+      $this->afzender = $persoon && $persoon->getEmail() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
+    }
+    else
+    {
+      $this->afzender = sfConfig::get("sf_mail_sender");
+    }
+
     // check of bestemmeling class een communicatie target is volgend de config
     // indien geen target, worden invoegvelden e.d. niet weergegeven.
     $targets = array();
@@ -390,7 +412,8 @@ class ttCommunicatieActions extends sfActions
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
     $brief_template->setIsPubliciteit($this->getRequestParameter('is_publiciteit', 0));
     $brief_template->setPdfTemplateId($this->getRequestParameter('pdf_template_id'));
-    
+    $brief_template->setAfzenderId($this->getRequestParameter('afzender_id'));
+
     $brief_template->save();
       
     $cultures = BriefTemplatePeer::getCultureLabelArray();
@@ -534,13 +557,25 @@ class ttCommunicatieActions extends sfActions
       $pdfBijlage['naam'] = $bijlage->getNaam();
     }
     $pdfBijlage['classes'] = $briefTemplate->getBestemmelingArray();
+    
+    $afzender = array();
+    if ($briefTemplate->getAfzenderId())
+    {
+      $persoon = PersoonPeer::retrieveByPK($briefTemplate->getAfzenderId());
+      if ($persoon)
+      {
+        $afzender['id'] = $briefTemplate->getAfzenderId();
+        $afzender['naam'] = $persoon->getNaam();  
+      }
+    }
 
     echo json_encode(array(
       'html'       => $html,
       'eenmalig'   => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
       'onderwerp'  => $onderwerp,
       'cultures'   => $culture_arr,
-      'pdfBijlage' => $pdfBijlage
+      'pdfBijlage' => $pdfBijlage,
+      'afzender'   => $afzender
     ));
 
     exit();

@@ -176,6 +176,18 @@ function showPlaceholders($placeholders)
       <td><?php echo $brief_template->getSysteemnaam() ?></td>
     </tr>
     <?php endif; ?>
+    <tr <?php if ($sf_request->hasError('afzender')) {echo 'class="error"';} ?>>
+      <th>Afzender:</th>
+      <td>
+        <?php
+        include_component('ttAutocomplete', 'autocomplete', array(
+          'id' => 'afzender_id',
+          'object' => PersoonPeer::retrieveByPK($brief_template->getAfzenderId()),
+          'class' => 'Persoon',
+          'params_callback' => 'getAfzendersEmail'
+        )); ?>
+      </td>
+    </tr>
     <tr>
       <th>&nbsp;</th>
       <td>&nbsp;</td>
@@ -354,5 +366,10 @@ function showPlaceholders($placeholders)
       selectedClasses.push(jQuery(this).val());
     });
     return {bestemmelingClass: selectedClasses};
+  }
+
+  function getAfzendersEmail()
+  {
+    return {afzenderEmail: true};
   }
 </script>

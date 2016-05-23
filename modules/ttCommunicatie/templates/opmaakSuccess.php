@@ -91,6 +91,21 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     <?php endif; ?>
 
     <tr>
+      <th>Afzender:</th>
+      <td>
+        <?php
+        include_component('ttAutocomplete', 'autocomplete', array(
+          'id' => 'afzender_id',
+          'object' => $brief_template ? PersoonPeer::retrieveByPK($brief_template->getAfzenderId()) : null,
+          'class' => 'Persoon',
+          'show_detail' => false,
+          'params_callback' => 'getAfzendersEmail'
+        )); ?>
+        Indien er geen afzender is gekozen zal deze mail verstuurd worden vanaf '<b><?php echo $afzender ?></b>'
+      </td>
+    </tr>
+
+    <tr>
       <th>Verzenden via e-mail:</th>
       <td>
         <?php echo select_tag('verzenden_via', options_for_select(array(
@@ -262,6 +277,11 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 
     return aantal;
   }
+
+  function getAfzendersEmail()
+  {
+    return {afzenderEmail: true};
+  }
   
   <?php endif; ?>
 
@@ -332,6 +352,12 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
             });
             $('.pdfBijlages').html('').html(data.pdfBijlage['naam']);
             $('.pdfSelect').toggle(!data.pdfBijlage['id']);
+          }
+
+          if (data.afzender)
+          {
+            $('#afzender_id').val(data.afzender['id']);
+            $('#afzender_id_name').val(data.afzender['naam']);
           }
         });
       }

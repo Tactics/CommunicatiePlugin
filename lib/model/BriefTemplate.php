@@ -219,6 +219,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   public function sendMailToObject($object, ttCommunicatieBestemmeling $bestemmeling, $options = array())
   {
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
+    $afzender = isset($options['afzender']) ? $options['afzender'] : null;
     
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
     if ($this->getEenmaligVersturen() && $this->reedsVerstuurdNaar($cName, $object->getId()))
@@ -289,7 +290,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
           'prefix' => '/images/brief_templates/',
           'dir' => sfConfig::get('sf_web_dir') . '/images/brief_templates/'
         )
-      )
+      ),
+      'afzender' => $afzender
     ));
 
     // Is er een pdf gegenereerd? Verwijder deze dan na het sturen van de mail.
