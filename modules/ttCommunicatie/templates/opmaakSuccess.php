@@ -277,13 +277,12 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 
     return aantal;
   }
+  <?php endif; ?>
 
   function getAfzendersEmail()
   {
     return {afzenderEmail: true};
   }
-  
-  <?php endif; ?>
 
   jQuery(function($){
     // language tabs initialiseren
