@@ -167,7 +167,7 @@ class ttCommunicatieActions extends sfActions
     if ($this->getRequestParameter('afzender_id'))
     {
       $persoon = PersoonPeer::retrieveByPK($this ->getRequestParameter('afzender_id'));
-      $this->afzender = $persoon && $persoon->getEmail() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
+      $this->afzender = $persoon && $persoon->isAfzenderEmailSafe() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
     }
     elseif ($this->getUser()->getAttribute('afzender', null, $this->md5hash))
     {
@@ -176,7 +176,7 @@ class ttCommunicatieActions extends sfActions
     elseif ($this->brief_template && $this->brief_template->getAfzenderId())
     {
       $persoon = PersoonPeer::retrieveByPK($this->brief_template->getAfzenderId());
-      $this->afzender = $persoon && $persoon->getEmail() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
+      $this->afzender = $persoon && $persoon->isAfzenderEmailSafe() ? $persoon->getEmail() : sfConfig::get("sf_mail_sender");
     }
     else
     {
@@ -562,7 +562,7 @@ class ttCommunicatieActions extends sfActions
     if ($briefTemplate->getAfzenderId())
     {
       $persoon = PersoonPeer::retrieveByPK($briefTemplate->getAfzenderId());
-      if ($persoon)
+      if ($persoon && $persoon->isAfzenderEmailSafe())
       {
         $afzender['id'] = $briefTemplate->getAfzenderId();
         $afzender['naam'] = $persoon->getNaam();  

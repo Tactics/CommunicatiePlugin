@@ -94,9 +94,13 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       <th>Afzender:</th>
       <td>
         <?php
+        if ($brief_template)
+        {
+          $persoon = PersoonPeer::retrieveByPK($brief_template->getAfzenderId());
+        }
         include_component('ttAutocomplete', 'autocomplete', array(
           'id' => 'afzender_id',
-          'object' => $brief_template ? PersoonPeer::retrieveByPK($brief_template->getAfzenderId()) : null,
+          'object' => ($brief_template && $persoon && $persoon->isAfzenderEmailSafe()) ? $persoon : null,
           'class' => 'Persoon',
           'show_detail' => false,
           'params_callback' => 'getAfzendersEmail'
