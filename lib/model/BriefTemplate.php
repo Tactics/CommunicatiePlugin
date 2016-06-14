@@ -273,11 +273,14 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     
     $email = $bestemmeling->getEmailTo();
 
+    $attachments = $this->getAttachments();
+
     $mailOptions = array(
       'onderwerp' => $onderwerp,
       'skip_template' => true,
       'cc' => $bestemmeling->getEmailCc(),
-      'bcc' => $bestemmeling->getEmailBcc()
+      'bcc' => $bestemmeling->getEmailBcc(),
+      'attachements' => $attachments
     );
 
     $mailOptions = array_merge($mailOptions, $options);
