@@ -255,29 +255,32 @@
     function voerPrintenUit()
     {
       window.print();
+      // We zetten dit in een timout niet vanwege de timing maar zodat de confirm na window.print in de queue
+      // komt te staan zodat ja eerst het print kadertje te zien krijgt en dan pas de confirm.
+      setTimeout(function () {
+        <?php if (! $voorbeeld): ?>
 
-      <?php if (! $voorbeeld): ?>
+        if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)"))
+        {
+          jQuery.ajax({
+            url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",
+            type: 'POST',
+            data: {
+              'hash': '<?php echo $md5hash; ?>',
+              'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',
+              'brief_verzonden_ids': jQuery('#brief_verzonden_ids').val()
+            },
+            cache: false,
+            success: function(l)
+            {
+              alert('De documenten werden gemarkeerd als afgedrukt.');
+              //window.close();
+            }
+          });
+        }
 
-      if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
-      {
-        jQuery.ajax({
-          url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",
-          type: 'POST',
-          data: {
-            'hash': '<?php echo $md5hash; ?>',            
-            'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',            
-            'brief_verzonden_ids': jQuery('#brief_verzonden_ids').val()            
-          },
-          cache: false,
-          success: function(l)
-          {
-             alert('De documenten werden gemarkeerd als afgedrukt.');
-             //window.close();
-          }
-        });
-      }
-
-      <?php endif; ?>
+        <?php endif; ?>
+      }, 1000);
     }
 
     function voerEmailUit(aantal)
