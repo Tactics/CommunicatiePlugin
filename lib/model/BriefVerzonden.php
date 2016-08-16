@@ -36,8 +36,11 @@ class BriefVerzonden extends BaseBriefVerzonden
     {
       $attachements = $object->getBriefAttachments();
     }
+
+    $verzondenBestemmeling = Misc::getObject($this->getObjectClassBestemmeling(), $this->getObjectIdBestemmeling());
+
     try{
-      $template->sendMailToObject($object, $object->getTtCommunicatieBestemmeling(), array(
+      $template->sendMailToObject($object, $verzondenBestemmeling ? $verzondenBestemmeling->getTtCommunicatieBestemmeling() : $object->getTtCommunicatieBestemmeling(), array(
         'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR,
         'attachements' => $attachements,
         'forceer_versturen' => true,
