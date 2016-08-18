@@ -34,11 +34,7 @@ function showPlaceholders($placeholders)
       ?>
     </span><br /><br />
     <span>
-      <?php 
-        echo checkbox_tag('select_all', 1, 1); 
-        echo '&nbsp;';
-        echo label_for('select_all', 'Selecteer / deselecteer alle');
-      ?>
+      <a href="#" style="display: inline-block;" id="selecteer-alle">selecteer</a> / <a href="#" style="display: inline-block;" id="deselecteer-alle">deselecteer</a>
     </span>
     <hr />
     <div style="height: 170px; overflow: auto;">
@@ -136,12 +132,9 @@ function showPlaceholders($placeholders)
           <th>Aantal bestemmelingen:</th>
           <td>
             <span id="record-count"><?php echo $aantalBestemmelingen; ?></span>
-            <?php           
-              if ($show_bestemmelingen)
-              {
-                echo '(' . link_to_function('Toon lijst', 'showDialog("#dialog-bestemmelingen");') . ')';
-              }
-            ?>
+            <?php if ($show_bestemmelingen): ?>
+              (<a href="#" id="toggle-bestemmelingen">Toon lijst</a>)
+            <?php endif ?>
           </td>
         </tr>
       <?php endif; ?>
@@ -246,10 +239,33 @@ function showPlaceholders($placeholders)
     var aantal = jQuery('input[name="bestemmeling_id"]:checked').length;
     jQuery('#record-count').html(aantal);
   }
+
+  (function() {
+    var toggled = false;
+
+    jQuery('#toggle-bestemmelingen').click(function() {
+      showDialog('#dialog-bestemmelingen');
+
+      if (toggled === false) {
+        toggleBestemmelingen(false)();
+      }
+
+      toggled = true;
+    });
+
+    jQuery('#selecteer-alle').click(toggleBestemmelingen(true));
+    jQuery('#deselecteer-alle').click(toggleBestemmelingen(false));
+
+    function toggleBestemmelingen(bool) {
+      return function() {
+        jQuery('input[name="bestemmeling_id"]:visible').attr('checked', bool);
+      };
+    }
+  })();
   
   <?php endif; ?>
 
-  jQuery(function($){    
+  jQuery(function($){
     // language tabs initialiseren
     $('#tabs').tt_tabs();
     
@@ -272,11 +288,6 @@ function showPlaceholders($placeholders)
       return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0; 
     };
 
-    
-    $('#select_all').change(function(){
-      $('input[name="bestemmeling_id"]').attr('checked', $(this).is(':checked')).change();
-    }).change();        
-        
     $('input[name="bestemmeling_id"]').change(function(){
       var checked = $(this).is(':checked');
       if (checked)
@@ -294,8 +305,6 @@ function showPlaceholders($placeholders)
         var input = '<input id="niet_verzenden_naar_' + $(this).val() + '" type="hidden" value="' + $(this).val() + '" name="niet_verzenden_naar[]">';
         $('form[name="print"]').prepend(input);
       }
-      
-      $('#select_all').attr('checked', checked);
     }).change();
     
     $('#search').keyup(function(){
