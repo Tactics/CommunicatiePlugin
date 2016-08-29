@@ -56,7 +56,7 @@ function showPlaceholders($placeholders)
       </ul>
     </div>
     <hr />
-    <?php echo button_to_function('Opslaan', 'jQuery("#dialog-bestemmelingen").tt_window().close(); countBestemmelingen();');?>
+    <?php echo submit_tag('Opslaan') ?>
   </form>
 </div>
 <?php endif; ?>
@@ -232,12 +232,6 @@ function showPlaceholders($placeholders)
   {
     jQuery(dialog).tt_window();
     jQuery('div.close').remove();
-  }    
-    
-  function countBestemmelingen()
-  {
-    var aantal = jQuery('input[name="bestemmeling_id"]:checked').length;
-    jQuery('#record-count').html(aantal);
   }
 
   (function() {
@@ -262,6 +256,30 @@ function showPlaceholders($placeholders)
       };
     }
   })();
+
+  jQuery('form[name="select_bestemmelingen"]').submit(function() {
+    jQuery("#dialog-bestemmelingen").tt_window().close();
+    saveBestemmelingen();
+    countBestemmelingen();
+    return false;
+  });
+
+  function countBestemmelingen()
+  {
+    var aantal = jQuery('input[name="bestemmeling_id"]:checked').length;
+    jQuery('#record-count').html(aantal);
+  }
+
+  function saveBestemmelingen() {
+    jQuery('input[name="bestemmeling_id"]').each(function() {
+      var checked = $(this).is(':checked');
+      var bestemmelingId = $(this).val();
+
+      checked
+        ? $('#niet_verzenden_naar_' + bestemmelingId).remove()
+        : $('form[name="print"]').prepend('<input id="niet_verzenden_naar_' + bestemmelingId + '" type="hidden" value="' + bestemmelingId + '" name="niet_verzenden_naar[]">');
+    });
+  }
   
   <?php endif; ?>
 
@@ -287,25 +305,6 @@ function showPlaceholders($placeholders)
     $.expr[':'].icontains = function(a, i, m) {            
       return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0; 
     };
-
-    $('input[name="bestemmeling_id"]').change(function(){
-      var checked = $(this).is(':checked');
-      if (checked)
-      {
-        $('input#niet_verzenden_naar_' + $(this).val()).remove();
-        
-        $('input[name="bestemmeling_id"]').each(function()
-        {
-          checked = (checked && $(this).is(':checked'));
-          return checked;
-        }); 
-      }
-      else
-      {
-        var input = '<input id="niet_verzenden_naar_' + $(this).val() + '" type="hidden" value="' + $(this).val() + '" name="niet_verzenden_naar[]">';
-        $('form[name="print"]').prepend(input);
-      }
-    }).change();
     
     $('#search').keyup(function(){
       var search = $(this).val();
