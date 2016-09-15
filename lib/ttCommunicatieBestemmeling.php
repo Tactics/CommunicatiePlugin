@@ -13,7 +13,16 @@ class ttCommunicatieBestemmeling
   protected $wants_publicity = true;
   protected $culture = '';
   protected $object = null; //  te verzenden object
-
+  
+  
+  public function __sleep()
+  {
+    $properties = get_class_vars(__CLASS__);
+    unset($properties['object']);
+    
+    return array_keys($properties);
+  }
+  
   /**
    * Geeft e-mail adres van de bestemmeling terug
    */
@@ -89,6 +98,11 @@ class ttCommunicatieBestemmeling
    */
   public function getObject()
   {
+    if ($this->object === null && $this->object_class && $this->object_id)
+    {
+      $this->object = call_user_func_array($this->object_class . 'Peer::retrieveByPk', is_array($this->object_id) ? $this->object_id : array($this->object_id));
+    }
+    
     return $this->object;
   }
 
@@ -230,6 +244,8 @@ class ttCommunicatieBestemmeling
    */
   public function setObject($object)
   {
+    $this->object_class = get_class($object);
+    $this->object_id = $object->getPrimaryKey();
     $this->object = $object;
   }
 }
