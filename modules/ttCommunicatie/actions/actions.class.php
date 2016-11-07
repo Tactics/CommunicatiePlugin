@@ -850,8 +850,9 @@ class ttCommunicatieActions extends sfActions
           echo 'Reeds verstuurd.<br/>';
           $counter['reedsverstuurd']++;
           continue;
-        }        
-
+        }
+        
+        /** @var ttCommunicatieBestemmeling $bestemmeling */
         foreach ($bestemmelingen as $index => $bestemmeling)
         {
           $bestemmeling->setObject($object);
@@ -879,8 +880,7 @@ class ttCommunicatieActions extends sfActions
               // emailto is overschreven, dus bestemmelingen class wijzigen naar object zelf
               // zodat de email daar wordt gelogd + naam en adres wissen
               $bestemmeling->setPrefersEmail(true);
-              $bestemmeling->setObjectClass($this->objectClass);
-              $bestemmeling->setObjectId($object->getId());
+              $bestemmeling->setBestemmeling($object);
               $bestemmeling->setNaam('');
               $bestemmeling->setAdres('');
             }            
@@ -1018,11 +1018,9 @@ class ttCommunicatieActions extends sfActions
               // Log de brief
               $briefVerzonden = new BriefVerzonden();
               // object dat verzonden wordt bv factuur
-              $briefVerzonden->setObjectClass($this->objectClass);
-              $briefVerzonden->setObjectId($object->getId());
+              $briefVerzonden->setObject($object);
               // eindbestemmeling naar waar effectief verzonden wordt bv debituer
-              $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
-              $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());
+              $briefVerzonden->setBestemmeling($bestemmeling->getBestemmeling());
               $briefVerzonden->setBriefTemplate($brief_template);
               $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
               $briefVerzonden->setAdres($email);
@@ -1069,8 +1067,8 @@ class ttCommunicatieActions extends sfActions
               $counter['wenstgeenpubliciteit']++;
             }
             
-            $nietverstuurden[$bestemmeling->getObject()->getId()]['index'] = $index;
-            $nietverstuurden[$bestemmeling->getObject()->getId()]['bestemmeling'] = $bestemmeling;
+            $nietverstuurden[$bestemmeling->getObjectId()]['index'] = $index;
+            $nietverstuurden[$bestemmeling->getObjectId()]['bestemmeling'] = $bestemmeling;
           }
 
           if (method_exists($object, 'addLog'))

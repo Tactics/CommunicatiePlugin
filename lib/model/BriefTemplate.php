@@ -299,10 +299,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 
     // Mail loggen
     $briefVerzonden = new BriefVerzonden();
-    $briefVerzonden->setObjectClass(get_class($object));
-    $briefVerzonden->setObjectId($object->getId());
-    $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
-    $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());    
+    $briefVerzonden->setObject($object);
+    $briefVerzonden->setBestemmeling($bestemmeling->getBestemmeling());
     $briefVerzonden->setBriefTemplateId($this->getId());
     $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
     $briefVerzonden->setAdres($email);
@@ -310,6 +308,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $briefVerzonden->setCulture($culture);
     $briefVerzonden->setHtml($brief);
     $briefVerzonden->save();
+    
+    Misc::pre_print_r($briefVerzonden);
     
     return $mailSent;
   }

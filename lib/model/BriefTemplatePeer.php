@@ -552,7 +552,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * @param array $otherPlaceholders For example systeemplaceholders
    * @return string The html with parsed if statements
    */
-  public static function parseForeachStatements($html, $bestemmeling, $email = false, $otherPlaceholders = array())
+  public static function parseForeachStatements($html, ttCommunicatieBestemmeling $bestemmeling, $email = false, $otherPlaceholders = array())
   {
     $object = $bestemmeling->getObject();
     $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($bestemmeling, $email), $otherPlaceholders);
@@ -644,7 +644,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    * @param ttCommunicatieBestemmeling $bestemmeling
    * @return array[placeholder] => placeholder_value
    */
-  private static function getObjectPlaceholderValues($html, $bestemmeling)
+  private static function getObjectPlaceholderValues($html, ttCommunicatieBestemmeling $bestemmeling)
   {
     $object = $bestemmeling->getObject();
     if (! self::isTarget($object))
@@ -661,22 +661,22 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
 
     return $object->fillPlaceholders($usedPlaceholders, $culture);
   }
-
+  
   /**
    * Geeft de default placeholers terug
-   *
-   * @param ttCommunicatieBestemmeling $bestemmeling
-   * @param ttCommunicatiebestemmeling $bestemmeling
-   * @param bool $generalPlaceholders met bv handtekeningen placeholders
-   * @return array default placeholders
+   * @param ttCommunicatieBestemmeling|null $bestemmeling
+   * @param bool $email_verzenden
+   * @param bool $via_email
+   * @param bool $generalPlaceholders
+   * @return string[string]
    */
-  public static function getDefaultPlaceholders($bestemmeling = null, $email_verzenden = false, $via_email = false, $generalPlaceholders = false)
+  public static function getDefaultPlaceholders(ttCommunicatieBestemmeling $bestemmeling = null, $email_verzenden = false, $via_email = false, $generalPlaceholders = false)
   {
-    if (($via_email && $bestemmeling && ($bestemmeling->getObjectClass() == 'Persoon'))
+    if (($via_email && $bestemmeling && ($bestemmeling->getBestemmelingClass() == 'Persoon'))
         && ($uitschrijvenInfo = sfConfig::get('sf_communicatie_uitschrijven', null))
        )
     {
-      $persoon = $bestemmeling->getBestemmeling();      
+      $persoon = $bestemmeling->getBestemmeling();
       $url = str_replace(array('%uuid%', '%email%'), array($persoon->getUuid(), urlencode($persoon->getEmail())), $uitschrijvenInfo['url']);
       if (false !== preg_match('/(?P<begin>.*)(?P<placeholder>%.+%)(?P<einde>.*)/', $uitschrijvenInfo['tekst'], $result))
       {

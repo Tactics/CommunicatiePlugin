@@ -7,18 +7,22 @@ class ttCommunicatieBestemmeling
   protected $email_cc = array();
   protected $email_bcc = array();
   protected $adres = '';
-  protected $object_id = null; // object_id van de bestemmeling
-  protected $object_class = null; // object_class van de bestemmeling
+  protected $bestemmeling; // bestemmeling object
+  protected $bestemmeling_id = null; // object_id van de bestemmeling
+  protected $bestemmeling_class = null; // object_class van de bestemmeling
   protected $prefers_email = true;
   protected $wants_publicity = true;
   protected $culture = '';
   protected $object = null; //  te verzenden object
+  protected $object_id = null; // object_id van het object
+  protected $object_class = null; // object_class van het object
   
   
   public function __sleep()
   {
     $properties = get_class_vars(__CLASS__);
     unset($properties['object']);
+    unset($properties['bestemmeling']);
     
     return array_keys($properties);
   }
@@ -76,9 +80,28 @@ class ttCommunicatieBestemmeling
   {
     return $this->culture;
   }
+  
+  /**
+   * Geeft de id van de bestemmeling terug
+   * @return int
+   */
+  public function getBestemmelingId()
+  {
+    return $this->bestemmeling_id;
+  }
+  
+  /**
+   * Geeft de class van de bestemmeling terug
+   * @return string
+   */
+  public function getBestemmelingClass()
+  {
+    return $this->bestemmeling_class;
+  }
 
   /**
-   * Geeft id van de bestemmeling terug
+   * Geeft id van het te verzenden object terug
+   * @retrun int
    */
   public function getObjectId()
   {
@@ -86,7 +109,8 @@ class ttCommunicatieBestemmeling
   }
 
   /**
-   * Geeft class van de bestemmeling terug
+   * Geeft class van het te verzenden object terug
+   * @return string
    */
   public function getObjectClass()
   {
@@ -95,6 +119,7 @@ class ttCommunicatieBestemmeling
 
   /**
    * Geeft te verzenden object terug
+   * @return mixed|null
    */
   public function getObject()
   {
@@ -105,9 +130,24 @@ class ttCommunicatieBestemmeling
     
     return $this->object;
   }
+  
+  /**
+   * Geeft de bestemmeling terug
+   * @return mixed|null
+   */
+  public function getBestemmeling()
+  {
+    if ($this->bestemmeling === null && $this->bestemmeling_class && $this->bestemmeling_id)
+    {
+      $this->bestemmeling = call_user_func_array($this->bestemmeling_class . 'Peer::retrieveByPk', is_array($this->bestemmeling_id) ? $this->bestemmeling_id : array($this->bestemmeling_id));
+    }
+    
+    return $this->bestemmeling;
+  }
 
   /**
    * Geeft terug of de bestemmeling e-mail verkiest
+   * @return bool
    */
   public function getPrefersEmail()
   {
@@ -116,27 +156,13 @@ class ttCommunicatieBestemmeling
 
   /**
    * Geeft terug of de bestemmeling publiciteit wil ontvangen
+   * @return bool
    */
   public function getWantsPublicity()
   {
     return $this->wants_publicity;
   }
-
-  /**
-   * Geeft de bestemmeling terug
-   * 
-   * @return mixed Het object dat de communicatie gaat ontvangen
-   */
-  public function getBestemmeling()
-  {
-    if (!($this->object_class && $this->object_id) || !method_exists($this->object_class . 'Peer', 'retrieveByPK'))
-    {
-      return null;
-    }
-
-    return call_user_func($this->object_class . 'Peer::retrieveByPK', $this->object_id);
-  }
-
+  
   /**
    * Zet naam van de bestemmeling
    *
@@ -247,5 +273,12 @@ class ttCommunicatieBestemmeling
     $this->object_class = get_class($object);
     $this->object_id = $object->getPrimaryKey();
     $this->object = $object;
+  }
+  
+  public function setBestemmeling($bestemmeling)
+  {
+    $this->bestemmeling_class = get_class($bestemmeling);
+    $this->bestemmeling_id = $bestemmeling->getPrimaryKey();
+    $this->bestemmeling = $bestemmeling;
   }
 }

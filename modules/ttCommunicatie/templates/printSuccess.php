@@ -35,7 +35,9 @@
       {
         continue;
       }
-
+  
+      
+       /** @var ttCommunicatieBestemmeling $bestemmeling */
       foreach ($objectBestemmelingen as $index => $bestemmeling)
       {
         $bestemmeling->setObject($object);
@@ -174,10 +176,8 @@
         if (! $voorbeeld)
         {
           $briefVerzonden = new BriefVerzonden();
-          $briefVerzonden->setObjectClass(get_class($object));
-          $briefVerzonden->setObjectId($object->getId());
-          $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
-          $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());
+          $briefVerzonden->setObject($object);
+          $briefVerzonden->setBestemmeling($bestemmeling->getBestemmeling());
           $briefVerzonden->setBriefTemplate($object_brief_template);
           $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_PRINT);
           $briefVerzonden->setAdres($bestemmeling->getAdres());
