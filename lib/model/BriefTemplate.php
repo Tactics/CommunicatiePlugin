@@ -3,10 +3,10 @@
 /**
  * Subclass for representing a row from the 'brief_template' table.
  *
- * 
+ *
  *
  * @package plugins.ttCommunicatiePlugin.lib.model
- */ 
+ */
 class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 {
   /**
@@ -22,7 +22,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   
   /**
    * Een BriefTemplate is een systeemtemplate wanneer parameter systeemnaam not null is
-   * 
+   *
    * @return bool
    */
   public function isSysteemtemplate()
@@ -101,29 +101,29 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   
   /**
    * Html source ophalen
-   * 
+   *
    * @param $language
    * @return string Source
    */
   public function getHtmlSource($culture)
-  {   
-    return 'brieftemplate_' . $this->getId() . '_html_' . $culture;    
+  {
+    return 'brieftemplate_' . $this->getId() . '_html_' . $culture;
   }
   
   /**
    * Onderwerp source ophalen
-   * 
+   *
    * @param $language
    * @return string Source
    */
   public function getOnderwerpSource($culture)
   {
-    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . $culture;    
+    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . $culture;
   }
   
   /**
    * Vertaling ophalen a.d.h.v source en taal
-   * 
+   *
    * @param  string source
    * @return string vertaling
    */
@@ -138,7 +138,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   
   /**
    * Onderwerp ophalen a.d.h.v culture.
-   * 
+   *
    * @param string $culture
    */
   public function getTranslatedOnderwerp($culture)
@@ -166,14 +166,14 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       }
       
       $onderwerp = $transUnit->getTarget();
-    }  
+    }
     
     return $onderwerp;
   }
   
   /**
    * Html ophalen a.d.h.v culture.
-   * 
+   *
    * @param string $culture
    */
   public function getTranslatedHtml($culture)
@@ -201,7 +201,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       }
       
       $html = $transUnit->getTarget();
-    }  
+    }
     
     return $html;
   }
@@ -309,8 +309,6 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $briefVerzonden->setHtml($brief);
     $briefVerzonden->save();
     
-    Misc::pre_print_r($briefVerzonden);
-    
     return $mailSent;
   }
 
@@ -356,7 +354,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   
   /**
    * geeft een array terug van htmls, geindexeerd op culture
-   * 
+   *
    * @return array[culture] = html
    */
   public function getHtmlCultureArr()
@@ -364,16 +362,16 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     $defaultCulture = BriefTemplatePeer::getDefaultCulture();
     
-    $html = array();    
+    $html = array();
     foreach ($cultures as $culture => $label)
-    {     
+    {
       if ($culture === $defaultCulture)
       {
-        $html[$culture] = $this->getHtml();        
+        $html[$culture] = $this->getHtml();
       }
       else
       {
-        $html[$culture] = $this->getVertaling($this->getHtmlSource($culture));        
+        $html[$culture] = $this->getVertaling($this->getHtmlSource($culture));
       }
     }
     
@@ -382,7 +380,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   
   /**
    * geeft een array terug van htmls, geindexeerd op culture
-   * 
+   *
    * @return array[culture] = html
    */
   public function getOnderwerpCultureArr()
@@ -390,16 +388,16 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     $defaultCulture = BriefTemplatePeer::getDefaultCulture();
     
-    $onderwerp = array();    
+    $onderwerp = array();
     foreach ($cultures as $culture => $label)
-    {     
+    {
       if ($culture === $defaultCulture)
       {
-        $onderwerp[$culture] = $this->getOnderwerp();        
+        $onderwerp[$culture] = $this->getOnderwerp();
       }
       else
       {
-        $onderwerp[$culture] = $this->getVertaling($this->getOnderwerpSource($culture));        
+        $onderwerp[$culture] = $this->getVertaling($this->getOnderwerpSource($culture));
       }
     }
     
@@ -408,9 +406,9 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   
   /**
    * Een briefTemplate is verwijderbaar wanneer:
-   * - er geen BriefVerzonden objecten aan gekoppeld zijn. 
+   * - er geen BriefVerzonden objecten aan gekoppeld zijn.
    * - het geen systeemtemplate is
-   * 
+   *
    * @return boolean
    */
   public function isVerwijderbaar()
@@ -422,9 +420,9 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
    * geeft een array terug met attachments uit
    * a) de template
    * b) on-the-fly toegevoegd
-   * 
+   *
    * @param sfWebRequest $request
-   * 
+   *
    * @return array
    */
   public function getAttachments($request = null)
