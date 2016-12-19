@@ -57,11 +57,13 @@ class BriefVerzonden extends BaseBriefVerzonden
    * Zet object_class_bestemmeling en object_id_bestemmeling
    * @param Persistent $object
    */
-  public function setBestemmeling(Persistent $bestemmeling)
+  public function setBestemmeling(Persistent $bestemmeling = null)
   {
-    $this->bestemmeling = $bestemmeling;
-    $this->setObjectClassBestemmeling($bestemmeling ? get_class($bestemmeling) : null);
-    $this->setObjectIdBestemmeling($bestemmeling ? $bestemmeling->getPrimaryKey() : null);
+      if (!$bestemmeling) { return; }
+      
+      $this->bestemmeling = $bestemmeling;
+      $this->setObjectClassBestemmeling($bestemmeling ? get_class($bestemmeling) : null);
+      $this->setObjectIdBestemmeling($bestemmeling ? $bestemmeling->getPrimaryKey() : null);
   }
 
   /**
