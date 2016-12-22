@@ -97,11 +97,11 @@
                           format_date($briefVerzonden->getCreatedAt(), 'f'),
                           $briefVerzonden->getOnderwerp(),
                           (sfConfig::get('sf_style_smartadmin') ?
-                            link_to_function('<i class="fa fa-search"></i>', 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' :
+                            link_to_function('<i class="fa fa-search" title="Communicatie bekijken"></i>', 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' :
                             link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;') .
                           ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ?
                               (sfConfig::get('sf_style_smartadmin') ?
-                                link_to_function('<i class="fa fa-envelope"></i>', "herzendEmail({$briefVerzonden->getId()});") :
+                                link_to_function('<i class="fa fa-envelope" title="Mail herzenden"></i>', "herzendEmail({$briefVerzonden->getId()});") :
                                 link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});")) :
                             ''
                           )
@@ -119,7 +119,7 @@
                   </div>
                   <div class="col-xs-12 col-sm-6">
                     <div class="dataTables_paginate paging_simple_numbers" style="text-align:center">
-                      <?php echo pager_navigation($pager, 'ttCommunicatie/objectCommunicatieLog?object_class=' . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type, 'eventlist', sfConfig::get('sf_style_smartadmin')) ?>
+                      <?php echo pager_navigation($pager, 'ttCommunicatie/objectCommunicatieLog?object_class=' . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type, 'zoekresultaten', sfConfig::get('sf_style_smartadmin')) ?>
                     </div>
                   </div>
                 </div>

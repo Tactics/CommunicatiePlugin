@@ -252,32 +252,39 @@
   </div>
   
   <script type="text/javascript">
-    function voerPrintenUit()
-    {
-      window.print();
-
+    var printCompleteCallback = function () {
       <?php if (! $voorbeeld): ?>
 
-      if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
+      if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)"))
       {
         jQuery.ajax({
           url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",
           type: 'POST',
           data: {
-            'hash': '<?php echo $md5hash; ?>',            
-            'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',            
-            'brief_verzonden_ids': jQuery('#brief_verzonden_ids').val()            
+            'hash': '<?php echo $md5hash; ?>',
+            'template_id': '<?php echo $brief_template ? $brief_template->getId() : ""; ?>',
+            'brief_verzonden_ids': jQuery('#brief_verzonden_ids').val()
           },
           cache: false,
           success: function(l)
           {
-             alert('De documenten werden gemarkeerd als afgedrukt.');
-             //window.close();
+            alert('De documenten werden gemarkeerd als afgedrukt.');
           }
         });
       }
 
       <?php endif; ?>
+    };
+
+    function voerPrintenUit()
+    {
+      window.print();
+      if (window.onafterprint) { //check if browser supports window.onafterprint event handler (Firefox and IE)
+        $(window).one("afterprint", printCompleteCallback);
+      }
+      else { //Use setTimeout solution if onafterprint is not supported (Chrome)
+        setTimeout(printCompleteCallback, 0);
+      }
     }
 
     function voerEmailUit(aantal)
