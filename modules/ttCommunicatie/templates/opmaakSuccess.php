@@ -272,12 +272,12 @@ function showPlaceholders($placeholders)
 
   function saveBestemmelingen() {
     jQuery('input[name="bestemmeling_id"]').each(function() {
-      var checked = $(this).is(':checked');
-      var bestemmelingId = $(this).val();
+      var checked = jQuery(this).is(':checked');
+      var bestemmelingId = jQuery(this).val();
 
       checked
-        ? $('#niet_verzenden_naar_' + bestemmelingId).remove()
-        : $('form[name="print"]').prepend('<input id="niet_verzenden_naar_' + bestemmelingId + '" type="hidden" value="' + bestemmelingId + '" name="niet_verzenden_naar[]">');
+        ? jQuery('#niet_verzenden_naar_' + bestemmelingId).remove()
+        : jQuery('form[name="print"]').prepend('<input id="niet_verzenden_naar_' + bestemmelingId + '" type="hidden" value="' + bestemmelingId + '" name="niet_verzenden_naar[]">');
     });
   }
   
