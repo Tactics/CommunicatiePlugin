@@ -7,7 +7,7 @@ function showPlaceholders($placeholders)
   {
     if (is_array($placeholder))
     {
-      echo '<li>' . $id;                         
+      echo '<li>' . $id;
       showPlaceholders($placeholder);
       echo '</li>';
     }
