@@ -54,6 +54,8 @@
                           array("name" => "adres", "text" => "Adres", 'sortable' => true),
                           array("name" => "created_at", "text" => "Tijdstip", 'sortable' => true),
                           array("name" => "onderwerp", "text" => "Onderwerp", 'sortable' => true),
+                          array("name" => "cc", "text" => "CC", 'sortable' => true),
+                          array("name" => "afzender", "text" => "Afzender", 'sortable' => true),
                           array("name" => "acties", "text" => "Acties", "align" => "center", "width" => "40")
                         ), array(
                             'sorturi' => "ttCommunicatie/objectCommunicatieLog?object_class=" . get_class($object) . '&object_id=' . $object->getId() . '&type=' . $type,
@@ -66,13 +68,16 @@
 
     foreach($pager->getResults() as $briefVerzonden)
     {
+      /** @var BriefVerzonden $briefVerzonden */
       $table->addRow(
         array(
           $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
           $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
           format_date($briefVerzonden->getCreatedAt(), 'f'),
           $briefVerzonden->getOnderwerp(),
-          link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' . 
+          $briefVerzonden->getCc(),
+          $briefVerzonden->getAfzender(),
+          link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' .
           ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ? 
             link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});") : 
             ''
