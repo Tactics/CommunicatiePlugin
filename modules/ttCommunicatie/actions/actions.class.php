@@ -142,6 +142,37 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
+   * lijst van zelf gemaakte brief templates in de db
+   */
+  public function executeListBriefVerzonden()
+  {
+    $this->pager = new myFilteredPager('BriefVerzonden', 'ttCommunicatie/listBriefVerzonden');
+    $this->pager->add(BriefVerzondenPeer::OBJECT_CLASS);
+    $this->pager->add(BriefVerzondenPeer::STATUS);
+    $this->pager->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID);
+
+    $lastMonth = new myDate();
+    $lastMonth->beginOfMonth();
+    $lastMonth->subtractMonths(1);
+    $this->vanafDatum = $this->pager->add('verstuurd_vanaf', array('addToCriteria' => false, 'default' => $lastMonth->format()));
+    $this->totDatum = $this->pager->add('verstuurd_tot', array('addToCriteria' => false));
+
+    $cton1 = $this->pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->vanafDatum), Criteria::GREATER_EQUAL);
+    if($this->totDatum)
+      $cton1->addAnd($this->pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT,  myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::GREATER_EQUAL));
+    $this->pager->getCriteria()->addAnd($cton1);
+
+    $this->pager->init();
+
+    $this->mailClasses = array();
+    foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo)
+    {
+      $this->mailClasses[$targetInfo['class']] = $targetInfo['label'];
+    }
+
+  }
+
+  /**
    * maak manueel nieuwe html brief template
    */
   public function executeCreate()
