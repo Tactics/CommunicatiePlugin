@@ -236,7 +236,7 @@ class BriefTemplate extends BaseBriefTemplate
     // default placeholders die in layout gebruikt kunnen worden
     $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($object, true);
 
-    $culture    = $object->getMailerCulture();
+    $culture    = BriefTemplatePeer::calculateCulture($object);
     $values     = $object->fillPlaceholders(null, $culture);
     $values     = array_merge($defaultPlaceholders, $values, $systeemvalues);
     $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
