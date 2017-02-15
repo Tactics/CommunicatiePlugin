@@ -19,6 +19,26 @@
  */
 class ttCommunicatieActions extends sfActions
 {
+
+  /**
+   *
+   */
+  public function executeExportBriefVerzonden()
+  {
+    set_time_limit(0);
+    $this->pager = $this->getBriefVerzondenPager();
+    $this->pager->setMaxRecordLimit(0);
+    $this->pager->init();
+
+    $this->setLayout(false);
+    $response = $this->getResponse();
+    $response->setContentType('application/vnd-ms-excel; charset=utf-8');
+    $response->setHttpHeader('Content-Language', 'en');
+    $response->addVaryHttpHeader('Accept-Language');
+    $response->addCacheControlHttpHeader('no-cache');
+    $response->setHttpHeader('Content-Disposition', 'attachment; filename=exportBriefVerzonden.xls');
+  }
+
   /**
    * geeft de resultset van objecten weer afh van de gegeven class en object_ids
    *
@@ -142,25 +162,33 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-   * lijst van zelf gemaakte brief templates in de db
+   * @return myFilteredPager
    */
-  public function executeListBriefVerzonden()
+  private function getBriefVerzondenPager()
   {
-    $this->pager = new myFilteredPager('BriefVerzonden', 'ttCommunicatie/listBriefVerzonden');
-    $this->pager->add(BriefVerzondenPeer::OBJECT_CLASS);
-    $this->pager->add(BriefVerzondenPeer::STATUS);
-    $this->pager->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID);
+    $pager = new myFilteredPager('BriefVerzonden', 'ttCommunicatie/listBriefVerzonden');
+    $pager->add(BriefVerzondenPeer::OBJECT_CLASS);
+    $pager->add(BriefVerzondenPeer::STATUS);
+    $pager->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID);
 
     $lastMonth = new myDate();
     $lastMonth->beginOfMonth();
     $lastMonth->subtractMonths(1);
-    $this->vanafDatum = $this->pager->add('verstuurd_vanaf', array('addToCriteria' => false, 'default' => $lastMonth->format()));
-    $this->totDatum = $this->pager->add('verstuurd_tot', array('addToCriteria' => false));
+    $this->vanafDatum = $pager->add('verstuurd_vanaf', array('addToCriteria' => false, 'default' => $lastMonth->format()));
+    $this->totDatum = $pager->add('verstuurd_tot', array('addToCriteria' => false));
 
-    $cton1 = $this->pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->vanafDatum), Criteria::GREATER_EQUAL);
+    $cton1 = $pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->vanafDatum), Criteria::GREATER_EQUAL);
     if($this->totDatum)
-      $cton1->addAnd($this->pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT,  myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::GREATER_EQUAL));
-    $this->pager->getCriteria()->addAnd($cton1);
+      $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT,  myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::GREATER_EQUAL));
+    $pager->getCriteria()->addAnd($cton1);
+    return $pager;
+  }
+  /**
+   * lijst van zelf gemaakte brief templates in de db
+   */
+  public function executeListBriefVerzonden()
+  {
+    $this->pager = $this->getBriefVerzondenPager();
 
     $this->pager->init();
 

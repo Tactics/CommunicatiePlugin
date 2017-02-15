@@ -40,4 +40,5 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
       self::MEDIUM_TELEFOON => self::MEDIUM_TELEFOON
     );
   }
+
 }

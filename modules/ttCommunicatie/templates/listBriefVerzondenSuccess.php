@@ -92,6 +92,7 @@ $table = new myTable(
     array("name" => BriefVerzondenPeer::BRIEF_TEMPLATE_ID, "text" => "Template", "sortable" => true),
     array("name" => BriefVerzondenPeer::CLASS, "text" => "Object class", "sortable" => true),
     array("name" => BriefVerzondenPeer::OBJECT_ID, "text" => "Object id", "sortable" => true, 'width' => 70),
+    array("name" => BriefVerzondenPeer::MEDIUM, "text" => "Medium", "sortable" => true, 'width' => 50),
     array("name" => BriefVerzondenPeer::STATUS, "text" => "Status", "sortable" => true, 'width' => 50),
     array("name" => BriefVerzondenPeer::CREATED_AT, "text" => "Verzonden op", "sortable" => true, 'width' => 100),
   ),
@@ -107,11 +108,15 @@ $results = $pager->getResults();
 
 /** @var BriefVerzonden $briefVerzonden */
 foreach ($results as $briefVerzonden) {
+
+  $template = BriefTemplatePeer::retrieveCachedByPK($briefVerzonden->getBriefTemplateId());
+
   $table->addRow(array(
     $briefVerzonden->getId(),
-    $briefVerzonden->getBriefTemplate()->__toString(),
+    $template->__toString(),
     $briefVerzonden->getObjectClass(),
     $briefVerzonden->getObjectId(),
+    $briefVerzonden->getMedium(),
     $briefVerzonden->getStatus(),
     $briefVerzonden->getCreatedAt('d/m/Y'),
   ));
@@ -126,4 +131,7 @@ echo $table;
 <?php if (!$sf_request->isXmlHttpRequest()) : ?>
     </div>
     </div><!-- /.pageblock -->
+    <?php echo button_to('Exporteren', 'ttCommunicatie/exportBriefVerzonden');?>
 <?php endif; ?>
+
+
