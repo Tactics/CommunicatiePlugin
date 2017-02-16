@@ -307,6 +307,10 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $briefVerzonden->setOnderwerp($onderwerp);
     $briefVerzonden->setCulture($culture);
     $briefVerzonden->setHtml($brief);
+    $briefVerzonden->setCc($bestemmeling->getEmailCc(true));
+    if (isset($options['afzender'])) {
+      $briefVerzonden->setAfzender($options['afzender']);
+    }
     $briefVerzonden->save();
     
     return $mailSent;
