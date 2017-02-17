@@ -1026,6 +1026,9 @@ class ttCommunicatieActions extends sfActions
               $briefVerzonden->setAdres($email);
               $briefVerzonden->setCc(isset($options['cc']) ? implode(';', $options['cc']) : null);
               $briefVerzonden->setBcc(isset($options['bcc']) ? implode(';', $options['bcc']) : null);
+              
+              $briefVerzonden->setAfzender($this->afzender);
+              
               $briefVerzonden->setOnderwerp($onderwerp);
               $briefVerzonden->setCulture($culture);
               $briefVerzonden->setHtml($body);
@@ -1073,8 +1076,19 @@ class ttCommunicatieActions extends sfActions
 
           if (method_exists($object, 'addLog'))
           {
-            $log = "Brief '" . $brief_template->getNaam() . "' werd " . ($verstuurd ? "" : "<b>niet</b> ") . "verstuurd via mail naar " . $email . '.';
+            $log = "Brief '" . $brief_template->getNaam() . "' werd " . ($verstuurd ? "" : "<b>niet</b> ") . "verstuurd via mail naar " . $email;
+            if ($briefVerzonden->getCc()) {
+              $log .= " met " . $briefVerzonden->getCc() . " in CC";
+            }
+            if ($briefVerzonden->getCc() && $briefVerzonden->getBcc()) {
+              $log .= " en ";
+            }
+            if ($briefVerzonden->getBcc()) {
+              $log .= " met " . $briefVerzonden->getCc() . " in BCC";
+            }
+            $log .= '.';
             $log .= $verstuurd ? '' : '  Reden: ' . $nietVerstuurdReden;
+            
             $object->addLog($log, $verstuurd ? $body : null);
           }
         } // endforeach objectbestemmeling
