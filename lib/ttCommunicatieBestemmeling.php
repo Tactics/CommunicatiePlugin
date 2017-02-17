@@ -16,7 +16,7 @@ class ttCommunicatieBestemmeling
   protected $object = null; //  te verzenden object
   protected $object_id = null; // object_id van het object
   protected $object_class = null; // object_class van het object
-  
+  protected $placeholders = array(); // placeholders voor deze bestemmeling
   
   public function __sleep()
   {
@@ -25,6 +25,22 @@ class ttCommunicatieBestemmeling
     unset($properties['bestemmeling']);
     
     return array_keys($properties);
+  }
+  
+  /**
+   * @return array
+   */
+  public function getPlaceholders()
+  {
+    return $this->placeholders;
+  }
+  
+  /**
+   * @param array $placeholders
+   */
+  public function setPlaceholders($placeholders)
+  {
+    $this->placeholders = $placeholders;
   }
   
   /**

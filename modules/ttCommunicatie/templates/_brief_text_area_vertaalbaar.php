@@ -43,6 +43,13 @@
            $html    = str_replace($search, $replace, $html);
          }
          
+         if (isset($bestemmeling) && $bestemmeling->getPlaceholders())
+         {
+           $search  = array_keys($bestemmeling->getPlaceholders());
+           $replace = array_values($bestemmeling->getPlaceholders());
+           $html    = str_replace($search, $replace, $html);
+         }
+         
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
           'style' => 'width: 434px;', 'disabled' => !$edit_template
         ));
