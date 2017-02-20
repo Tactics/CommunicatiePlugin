@@ -88,9 +88,8 @@
 <?php
 $table = new myTable(
   array(
-    array("name" => BriefVerzondenPeer::ID, "text" => "Id", "sortable" => true),
     array("name" => BriefVerzondenPeer::BRIEF_TEMPLATE_ID, "text" => "Template", "sortable" => true),
-    array("name" => BriefVerzondenPeer::CLASS, "text" => "Object class", "sortable" => true),
+    array("name" => BriefVerzondenPeer::OBJECT_CLASS, "text" => "Object class", "sortable" => true),
     array("name" => BriefVerzondenPeer::OBJECT_ID, "text" => "Object id", "sortable" => true, 'width' => 70),
     array("name" => BriefVerzondenPeer::MEDIUM, "text" => "Medium", "sortable" => true, 'width' => 50),
     array("name" => BriefVerzondenPeer::STATUS, "text" => "Status", "sortable" => true, 'width' => 50),
@@ -99,7 +98,7 @@ $table = new myTable(
   array(
     "sortfield" => $pager->getOrderBy(),
     "sortorder" => $pager->getOrderAsc() ? "ASC" : "DESC",
-    "sorturi" => 'ttCommunicatie/list',
+    "sorturi" => 'ttCommunicatie/listBriefVerzonden',
     "sorttarget" => 'zoekresultaten',
   )
 );
@@ -111,11 +110,16 @@ foreach ($results as $briefVerzonden) {
 
   $template = BriefTemplatePeer::retrieveCachedByPK($briefVerzonden->getBriefTemplateId());
 
+  $object = eval('return ' . $briefVerzonden->getObjectClass() . 'Peer::retrieveByPK(' . $briefVerzonden->getObjectId() . ');');
+  $refObjectId = $object->getId();
+  $refObjectClass = get_class($object);
+  if ($object && method_exists($object, 'getMailerRefObjectId'))  $refObjectId = $object->getMailerRefObjectId();
+  if ($object && method_exists($object, 'getMailerRefObjectClass'))  $refObjectClass = $object->getMailerRefObjectClass();
+
   $table->addRow(array(
-    $briefVerzonden->getId(),
     $template->__toString(),
-    $briefVerzonden->getObjectClass(),
-    $briefVerzonden->getObjectId(),
+    $refObjectClass,
+    $refObjectId,
     $briefVerzonden->getMedium(),
     $briefVerzonden->getStatus(),
     $briefVerzonden->getCreatedAt('d/m/Y'),
