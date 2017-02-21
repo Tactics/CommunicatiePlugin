@@ -1,13 +1,12 @@
 <?php if (!$sf_request->isXmlHttpRequest()) : ?>
 
-  <?php include_partial('breadcrumb', array('identifier' => 'Briefsjablonen')) ?>
+  <?php include_partial('breadcrumb', array('identifier' => 'Brievenlog')) ?>
 
     <h2 class="pageblock">Filter</h2>
 
   <?php echo tt_form_remote_tag(array(
     'update' => 'zoekresultaten',
     'url' => 'ttCommunicatie/listBriefVerzonden',
-    'script'   => true,
   ),
     array(
       'id' => 'zoekform'
@@ -19,6 +18,11 @@
         <div class="smaller">
 
             <table width='100%'>
+                <tr>
+                    <td colspan="2">Overzicht van alle communicatie die verstuurd of afgedrukt is met vermelding van de objectclass naar waar deze is verstuurd en welk object (bv. Persoon / 5000), dwz dat de brief is verzonden naar persoon met nummer 5000. Bij objecten waar
+                        de nummer niet raadpleegbaar is, zal een referentie waarde worden gebruikt bv. dossiernummer.
+                    </td>
+                </tr>
                 <tr>
                     <td style="width: 50%">
                         <table class="formtable" width='100%'>
