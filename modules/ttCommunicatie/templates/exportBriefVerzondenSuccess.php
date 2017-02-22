@@ -15,8 +15,13 @@
   <tbody>
     <?php foreach($pager->getResults() as $briefVerzonden):
       $object = eval('return ' . $briefVerzonden->getObjectClass() . 'Peer::retrieveByPK(' . $briefVerzonden->getObjectId() . ');');
-      $refObjectId = $object->getId();
-      $refObjectClass = get_class($object);
+
+      $refObjectId = $refObjectClass = '';
+      if($object)
+      {
+        $refObjectId = $object->getId();
+        $refObjectClass = get_class($object);
+      }
       if ($object && method_exists($object, 'getMailerRefObjectId'))  $refObjectId = $object->getMailerRefObjectId();
       if ($object && method_exists($object, 'getMailerRefObjectClass'))  $refObjectClass = $object->getMailerRefObjectClass();
 
