@@ -179,12 +179,12 @@ class ttCommunicatieActions extends sfActions
 
     $cton1 = $pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::ID, 0, Criteria::GREATER_EQUAL);
 
-    if($this->totDatum) {
+    if($this->vanafDatum) {
       $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->vanafDatum), Criteria::GREATER_EQUAL));
     }
 
     if($this->totDatum)    {
-      $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT,  myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::GREATER_EQUAL));
+      $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT,  myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::LESS_EQUAL));
     }
 
     $pager->getCriteria()->addAnd($cton1);
