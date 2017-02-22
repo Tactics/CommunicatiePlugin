@@ -177,9 +177,16 @@ class ttCommunicatieActions extends sfActions
     $this->vanafDatum = $pager->add('verstuurd_vanaf', array('addToCriteria' => false, 'default' => $lastMonth->format()));
     $this->totDatum = $pager->add('verstuurd_tot', array('addToCriteria' => false));
 
-    $cton1 = $pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->vanafDatum), Criteria::GREATER_EQUAL);
-    if($this->totDatum)
+    $cton1 = $pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::ID, 0, Criteria::GREATER_EQUAL);
+
+    if($this->totDatum) {
+      $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->vanafDatum), Criteria::GREATER_EQUAL));
+    }
+
+    if($this->totDatum)    {
       $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT,  myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::GREATER_EQUAL));
+    }
+
     $pager->getCriteria()->addAnd($cton1);
     return $pager;
   }
