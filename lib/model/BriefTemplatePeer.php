@@ -64,6 +64,24 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     return self::doSelect($c);
   }
 
+
+  private static $cache = array();
+
+  /**
+   * Cached-versie van retrieveByPK
+   *
+   * @param integer $id
+   * @return Kinderdagverblijf
+   */
+  public static function retrieveCachedByPK($id)
+  {
+    if(! isset(self::$cache[$id]))
+    {
+      self::$cache[$id] = self::retrieveByPK($id);
+    }
+    return self::$cache[$id];
+  }
+
   /**
    * vervangt de placeholders in de html met de values
    *

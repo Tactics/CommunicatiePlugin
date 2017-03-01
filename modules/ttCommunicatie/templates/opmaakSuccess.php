@@ -46,7 +46,7 @@ function showPlaceholders($placeholders)
         ?>
         <li>
           <?php 
-            echo checkbox_tag('bestemmeling_id', $bestemmeling->getId(), 1, array('id' => 'bestemmelingen_id_' . $bestemmeling->getId()));
+            echo checkbox_tag('bestemmeling_id', $bestemmeling->getId(), true, array('id' => 'bestemmelingen_id_' . $bestemmeling->getId()));
             echo '&nbsp;';
             echo label_for('bestemmelingen_id_' . $bestemmeling->getId(), $bestemmeling->getMailerRecipientName());
           ?>
@@ -235,7 +235,7 @@ function showPlaceholders($placeholders)
   }
 
   (function() {
-    var toggled = false;
+    var toggled = true;
 
     jQuery('#toggle-bestemmelingen').click(function() {
       showDialog('#dialog-bestemmelingen');
@@ -272,12 +272,12 @@ function showPlaceholders($placeholders)
 
   function saveBestemmelingen() {
     jQuery('input[name="bestemmeling_id"]').each(function() {
-      var checked = $(this).is(':checked');
-      var bestemmelingId = $(this).val();
+      var checked = jQuery(this).is(':checked');
+      var bestemmelingId = jQuery(this).val();
 
       checked
-        ? $('#niet_verzenden_naar_' + bestemmelingId).remove()
-        : $('form[name="print"]').prepend('<input id="niet_verzenden_naar_' + bestemmelingId + '" type="hidden" value="' + bestemmelingId + '" name="niet_verzenden_naar[]">');
+        ? jQuery('#niet_verzenden_naar_' + bestemmelingId).remove()
+        : jQuery('form[name="print"]').prepend('<input id="niet_verzenden_naar_' + bestemmelingId + '" type="hidden" value="' + bestemmelingId + '" name="niet_verzenden_naar[]">');
     });
   }
   
@@ -328,7 +328,7 @@ function showPlaceholders($placeholders)
     $('#template_id').change(function(){
       if ($(this).val())
       {
-        $.getJSON('<?php echo url_for('ttCommunicatie/templateHtml?template_id=999');?>'.replace('999', $(this).val()), function(data) {
+        $.getJSON('<?php echo url_for('ttCommunicatie/templateHtml?template_id=999');?>'.replace('999', $(this).val()) + '&hash=' + $('#hash').val() , function(data) {
           var cultures  = data.cultures;
           var html      = data.html;
           var onderwerp = data.onderwerp;

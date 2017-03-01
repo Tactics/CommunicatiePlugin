@@ -18,6 +18,14 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
   const STATUS_NT_VERZONDEN = 'niet verzonden';
 
   /**
+   * @return array
+   */
+  public static function getStatussen()
+  {
+    return array(self::STATUS_VERZONDEN => self::STATUS_VERZONDEN, self::STATUS_NT_VERZONDEN => self::STATUS_NT_VERZONDEN);
+  }
+
+  /**
    * Geeft de verschillende media weer in een formaat voor
    * de options_for_select functie.
    *
@@ -32,4 +40,5 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
       self::MEDIUM_TELEFOON => self::MEDIUM_TELEFOON
     );
   }
+
 }
