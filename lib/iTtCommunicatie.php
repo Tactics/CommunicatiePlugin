@@ -72,13 +72,20 @@ interface iTtCommunicatie extends iMailer
    * attachments eigen aan het object die mee verzonden moeten worden
    * vb. afbeelding van google map waar activiteit van de factuur doorgaat
    */
-  
+
+  /**
+   * optional method printAttachments()
+   * Indien TRUE zullen de attachements mee afgedrukt worden in een aparte tab
+   * Een betere oplossing zou zijn deze volledig in PDF af te drukken maar dit is nog niet voorzien
+   */
+
   /**
    * optional method getBestemmeling()
    * geeft het object terug naarwaar deze brief/email verzonden werd
    * gebruikt om object_class/id_bestemmeling van brief_verzonden in te vullen
    */
-    
+
+
 }
 
 ?>

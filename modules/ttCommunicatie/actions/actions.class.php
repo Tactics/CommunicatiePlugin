@@ -637,7 +637,9 @@ class ttCommunicatieActions extends sfActions
         $object = new $this->bestemmelingenClass();
         $object->hydrate($rs);
 
-        // geen brief_template => controleren of er aan het object zelf een template_id gekoppeld is
+
+
+          // geen brief_template => controleren of er aan het object zelf een template_id gekoppeld is
         if (! $this->brief_template)
         {
           if (method_exists($object, 'getLayoutEnTemplateId'))
@@ -883,6 +885,56 @@ class ttCommunicatieActions extends sfActions
       $this->setLayout(false);
       $this->getResponse()->setTitle($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken');
     }
+  }
+
+  /**
+   * Enkel mogelijk voor PDF bestanden (momenteel)
+   */
+  public function executeAfdrukkenBijlagen()
+  {
+    // op bais van brief verzonden
+    $c = new Criteria();
+    $c->add(BriefVerzondenPeer::ID, explode(',', $this->getRequestParameter('brief_verzonden_ids')), Criteria::IN);
+    $rs = BriefVerzondenPeer::doSelectRS($c);
+    $attachments = array();
+    $i = 0;
+    while($rs->next())
+    {
+      $briefVerzonden = new BriefVerzonden();
+      $briefVerzonden->hydrate($rs);
+
+      $object = $briefVerzonden->getObject();
+
+      // object-eigen attachements
+      if (method_exists($object, 'getBriefAttachments'))
+      {
+        $objectAttachments = $object->getBriefAttachments();
+        $attachments = array_merge($attachments, $objectAttachments);
+      }
+    }
+    $merged = new \ZendPdf\PdfDocument();
+    foreach($attachments as $filename => $location)
+    {
+      $pdf = new \ZendPdf\PdfDocument($location, null, true);
+      foreach($pdf->pages as $page){
+        $cloned = clone $page;
+        $merged->pages[] = $cloned;
+      }
+    }
+
+    $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+
+    $filelocation = $tmp_dir . DIRECTORY_SEPARATOR . 'bijlagen.pdf';
+
+    $merged->save($filelocation);
+    $response = $this->getResponse();
+    $response->setContentType('application/pdf');
+    $response->setHttpHeader('Content-Disposition', "attachment; filename=bijlagen.pdf");
+    $response->setHttpHeader('Content-Length', filesize($filelocation));
+    $response->sendHttpHeaders();
+    $response->setContent(readfile($filelocation));
+    unlink($filelocation);
+    exit();
   }
 
   /**
