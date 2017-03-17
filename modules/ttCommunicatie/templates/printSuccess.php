@@ -30,8 +30,6 @@
       {
         $object = new $bestemmelingenClass();
         $object->hydrate($rs);
-        $printAttachments =  (method_exists($object, 'printAttachments')) ? $object->printAttachments() : false;
-
       }
       else if (isset($bestemmelingen_object))
       {
@@ -231,7 +229,7 @@
   </form>
 
   <script type="text/javascript">
-    <?php if($printAttachments):?>
+    <?php if(count($brief_verzonden_ids) && (method_exists($object, 'printAttachments')) ? $object->printAttachments() : false):?>
       window.open('', 'afdrukken_bijlagen');
       document.getElementById('afdrukkenBijlagen').submit();
     <?php endif;?>

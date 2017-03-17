@@ -962,6 +962,9 @@ class ttCommunicatieActions extends sfActions
     $c = new Criteria();
     $c->add(BriefVerzondenPeer::ID, explode(',', $this->getRequestParameter('brief_verzonden_ids')), Criteria::IN);
     $rs = BriefVerzondenPeer::doSelectRS($c);
+
+    // Indien leeg - niets afdrukken
+    if(! $rs->getRecordCount() ) exit();
     $attachments = array();
     $i = 0;
     while($rs->next())
