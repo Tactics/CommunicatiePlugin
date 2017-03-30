@@ -1077,14 +1077,17 @@ class ttCommunicatieActions extends sfActions
           if (method_exists($object, 'addLog'))
           {
             $log = "Brief '" . $brief_template->getNaam() . "' werd " . ($verstuurd ? "" : "<b>niet</b> ") . "verstuurd via mail naar " . $email;
-            if ($briefVerzonden->getCc()) {
-              $log .= " met " . $briefVerzonden->getCc() . " in CC";
-            }
-            if ($briefVerzonden->getCc() && $briefVerzonden->getBcc()) {
-              $log .= " en ";
-            }
-            if ($briefVerzonden->getBcc()) {
-              $log .= " met " . $briefVerzonden->getCc() . " in BCC";
+            if (isset($briefVerzonden))
+            {
+              if ($briefVerzonden->getCc()) {
+                $log .= " met " . $briefVerzonden->getCc() . " in CC";
+              }
+              if ($briefVerzonden->getCc() && $briefVerzonden->getBcc()) {
+                $log .= " en ";
+              }
+              if ($briefVerzonden->getBcc()) {
+                $log .= " met " . $briefVerzonden->getCc() . " in BCC";
+              }
             }
             $log .= '.';
             $log .= $verstuurd ? '' : '  Reden: ' . $nietVerstuurdReden;
