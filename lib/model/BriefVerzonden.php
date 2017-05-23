@@ -3,10 +3,10 @@
 /**
  * Subclass for representing a row from the 'brief_verzonden' table.
  *
- * 
+ *
  *
  * @package plugins.ttCommunicatiePlugin.lib.model
- */ 
+ */
 class BriefVerzonden extends BaseBriefVerzonden
 {
   /**
@@ -56,6 +56,23 @@ class BriefVerzonden extends BaseBriefVerzonden
 
 
   }
+
+  /**
+   * Geeft de parentfolder waarin dit dossier opgeslagen moet worden
+   */
+  public function getDmsStorageParentFolder($autoCreate = true)
+  {
+    return DmsStorePeer::retrieveByName('verzonden_bijlages');
+  }
+
+  /**
+   * Geeft de naam van de folder waarin dit dossier opgeslagen moet worden (onder de parent folder)
+   */
+  public function getDmsStorageFolderName()
+  {
+    return 'briefVerzonden_' . sprintf('%05u', $this->getId());
+  }
 }
 
 sfPropelBehavior::add('BriefVerzonden', array('updater_loggable'));
+sfPropelBehavior::add('BriefVerzonden', array('storage'));
