@@ -38,11 +38,14 @@
             <th><label class="label">Body:</label></th>
             <td><label class="label"><?php echo $briefVerzonden->getHtml() ?></label></td>
           </tr>
+          <?php
+          $bijlages = $briefVerzonden->getBriefVerzondenBijlages();
+          if (count($bijlages)):
+          ?>
           <tr>
             <th><label class="label">Bijlage(s):</label></th>
             <td><label class="label"><?php
                 /** @var BriefVerzondenBijlage[] $bijlages */
-                $bijlages = $briefVerzonden->getBriefVerzondenBijlages();
                 echo '<ul>';
                 foreach ($bijlages as $bijlage)
                 {
@@ -53,6 +56,7 @@
                 echo '</ul>';
                 ?></label></td>
           </tr>
+          <?php endif; ?>
         </table>
       </td>
     </tr>
