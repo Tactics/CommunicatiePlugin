@@ -2,7 +2,8 @@
   <header>
     <h2 class="pageblock">
       <?php echo link_to_function(image_tag('icons/close_16.gif'), "jQuery('div#log_event_detail').html('')"); ?>
-      Verzonden brief #<?php echo sprintf('%010u', $briefVerzonden->getId()); ?>
+      Verzonden brief #<?php /** @var BriefVerzonden $briefVerzonden */
+      echo sprintf('%010u', $briefVerzonden->getId()); ?>
     </h2>
   </header>
   <table style="width:100%;">
@@ -36,6 +37,21 @@
           <tr>
             <th><label class="label">Body:</label></th>
             <td><label class="label"><?php echo $briefVerzonden->getHtml() ?></label></td>
+          </tr>
+          <tr>
+            <th><label class="label">Bijlage(s):</label></th>
+            <td><label class="label"><?php
+                /** @var BriefVerzondenBijlage[] $bijlages */
+                $bijlages = $briefVerzonden->getBriefVerzondenBijlages();
+                echo '<ul>';
+                foreach ($bijlages as $bijlage)
+                {
+                  /** @var DmsNode $node */
+                  $node = $bijlage->getDmsNode();
+                  echo '<li>' . link_to($node->getName(), 'ttDmsBrowser/download?node_id=' . $node->getId()) . '</li>';
+                }
+                echo '</ul>';
+                ?></label></td>
           </tr>
         </table>
       </td>
