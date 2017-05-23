@@ -144,46 +144,103 @@ abstract class BaseBriefVerzondenPeer {
 	}
 
 	
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::ID);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::ID)
+		  : BriefVerzondenPeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_CLASS);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_CLASS)
+		  : BriefVerzondenPeer::OBJECT_CLASS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_ID);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_ID)
+		  : BriefVerzondenPeer::OBJECT_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING)
+		  : BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING)
+		  : BriefVerzondenPeer::OBJECT_ID_BESTEMMELING;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::BRIEF_TEMPLATE_ID);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::BRIEF_TEMPLATE_ID)
+		  : BriefVerzondenPeer::BRIEF_TEMPLATE_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::ONDERWERP);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::ONDERWERP)
+		  : BriefVerzondenPeer::ONDERWERP;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::HTML);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::HTML)
+		  : BriefVerzondenPeer::HTML;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::MEDIUM);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::MEDIUM)
+		  : BriefVerzondenPeer::MEDIUM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::ADRES);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::ADRES)
+		  : BriefVerzondenPeer::ADRES;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CC);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CC)
+		  : BriefVerzondenPeer::CC;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::BCC);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::BCC)
+		  : BriefVerzondenPeer::BCC;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CUSTOM);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CUSTOM)
+		  : BriefVerzondenPeer::CUSTOM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CULTURE);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CULTURE)
+		  : BriefVerzondenPeer::CULTURE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::STATUS);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::STATUS)
+		  : BriefVerzondenPeer::STATUS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CREATED_BY)
+		  : BriefVerzondenPeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::UPDATED_BY)
+		  : BriefVerzondenPeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CREATED_AT)
+		  : BriefVerzondenPeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::UPDATED_AT)
+		  : BriefVerzondenPeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -262,6 +319,7 @@ abstract class BaseBriefVerzondenPeer {
 		$cls = Propel::import($cls);
 				while($rs->next()) {
 		
+			
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -309,9 +367,10 @@ abstract class BaseBriefVerzondenPeer {
 
 		BriefVerzondenPeer::addSelectColumns($c);
 		$startcol = (BriefVerzondenPeer::NUM_COLUMNS - BriefVerzondenPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
 		BriefTemplatePeer::addSelectColumns($c);
 
-		$c->addJoin(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+		$c->addJoin(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID, Criteria::JOIN);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -319,17 +378,20 @@ abstract class BaseBriefVerzondenPeer {
 
 			$omClass = BriefVerzondenPeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol);
 
 			$newObject = true;
+			
 			foreach($results as $temp_obj1) {
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -397,7 +459,7 @@ abstract class BaseBriefVerzondenPeer {
 
 			$omClass = BriefVerzondenPeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
@@ -406,13 +468,14 @@ abstract class BaseBriefVerzondenPeer {
 					
 			$omClass = BriefTemplatePeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol2);
 
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+			    
 				$temp_obj1 = $results[$j];
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -575,7 +638,7 @@ abstract class BaseBriefVerzondenPeer {
 	}
 
 	
-	public static function doValidate(BriefVerzonden $obj, $cols = null)
+	public static function doValidate(BaseBriefVerzonden $obj, $cols = null)
 	{
 		$columns = array();
 

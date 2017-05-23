@@ -111,24 +111,48 @@ abstract class BaseBriefBijlagePeer {
 	}
 
 	
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefBijlagePeer::ID);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::ID)
+		  : BriefBijlagePeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::BRIEF_TEMPLATE_ID);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::BRIEF_TEMPLATE_ID)
+		  : BriefBijlagePeer::BRIEF_TEMPLATE_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::BIJLAGE_NODE_ID);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::BIJLAGE_NODE_ID)
+		  : BriefBijlagePeer::BIJLAGE_NODE_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::CULTURE);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::CULTURE)
+		  : BriefBijlagePeer::CULTURE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::CREATED_AT)
+		  : BriefBijlagePeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::UPDATED_AT)
+		  : BriefBijlagePeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::CREATED_BY)
+		  : BriefBijlagePeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::UPDATED_BY)
+		  : BriefBijlagePeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -207,6 +231,7 @@ abstract class BaseBriefBijlagePeer {
 		$cls = Propel::import($cls);
 				while($rs->next()) {
 		
+			
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -254,9 +279,10 @@ abstract class BaseBriefBijlagePeer {
 
 		BriefBijlagePeer::addSelectColumns($c);
 		$startcol = (BriefBijlagePeer::NUM_COLUMNS - BriefBijlagePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
 		BriefTemplatePeer::addSelectColumns($c);
 
-		$c->addJoin(BriefBijlagePeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+		$c->addJoin(BriefBijlagePeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID, Criteria::JOIN);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -264,17 +290,20 @@ abstract class BaseBriefBijlagePeer {
 
 			$omClass = BriefBijlagePeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol);
 
 			$newObject = true;
+			
 			foreach($results as $temp_obj1) {
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -342,7 +371,7 @@ abstract class BaseBriefBijlagePeer {
 
 			$omClass = BriefBijlagePeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
@@ -351,13 +380,14 @@ abstract class BaseBriefBijlagePeer {
 					
 			$omClass = BriefTemplatePeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol2);
 
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+			    
 				$temp_obj1 = $results[$j];
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -520,7 +550,7 @@ abstract class BaseBriefBijlagePeer {
 	}
 
 	
-	public static function doValidate(BriefBijlage $obj, $cols = null)
+	public static function doValidate(BaseBriefBijlage $obj, $cols = null)
 	{
 		$columns = array();
 

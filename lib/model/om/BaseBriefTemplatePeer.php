@@ -138,42 +138,93 @@ abstract class BaseBriefTemplatePeer {
 	}
 
 	
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefTemplatePeer::ID);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::ID)
+		  : BriefTemplatePeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CATEGORIE);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CATEGORIE)
+		  : BriefTemplatePeer::CATEGORIE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::BRIEF_LAYOUT_ID);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::BRIEF_LAYOUT_ID)
+		  : BriefTemplatePeer::BRIEF_LAYOUT_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::ONDERWERP);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::ONDERWERP)
+		  : BriefTemplatePeer::ONDERWERP;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::NAAM);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::NAAM)
+		  : BriefTemplatePeer::NAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::TYPE);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::TYPE)
+		  : BriefTemplatePeer::TYPE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::BESTEMMELING_CLASSES);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::BESTEMMELING_CLASSES)
+		  : BriefTemplatePeer::BESTEMMELING_CLASSES;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::HTML);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::HTML)
+		  : BriefTemplatePeer::HTML;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::EENMALIG_VERSTUREN);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::EENMALIG_VERSTUREN)
+		  : BriefTemplatePeer::EENMALIG_VERSTUREN;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::IS_PUBLICITEIT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::IS_PUBLICITEIT)
+		  : BriefTemplatePeer::IS_PUBLICITEIT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::SYSTEEMNAAM);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::SYSTEEMNAAM)
+		  : BriefTemplatePeer::SYSTEEMNAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::SYSTEEMPLACEHOLDERS);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::SYSTEEMPLACEHOLDERS)
+		  : BriefTemplatePeer::SYSTEEMPLACEHOLDERS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::GEARCHIVEERD);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::GEARCHIVEERD)
+		  : BriefTemplatePeer::GEARCHIVEERD;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CREATED_BY)
+		  : BriefTemplatePeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::UPDATED_BY)
+		  : BriefTemplatePeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CREATED_AT)
+		  : BriefTemplatePeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::UPDATED_AT)
+		  : BriefTemplatePeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -252,6 +303,7 @@ abstract class BaseBriefTemplatePeer {
 		$cls = Propel::import($cls);
 				while($rs->next()) {
 		
+			
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -299,9 +351,10 @@ abstract class BaseBriefTemplatePeer {
 
 		BriefTemplatePeer::addSelectColumns($c);
 		$startcol = (BriefTemplatePeer::NUM_COLUMNS - BriefTemplatePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
 		BriefLayoutPeer::addSelectColumns($c);
 
-		$c->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID);
+		$c->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID, Criteria::JOIN);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -309,17 +362,20 @@ abstract class BaseBriefTemplatePeer {
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
 			$omClass = BriefLayoutPeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol);
 
 			$newObject = true;
+			
 			foreach($results as $temp_obj1) {
 				$temp_obj2 = $temp_obj1->getBriefLayout(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -387,7 +443,7 @@ abstract class BaseBriefTemplatePeer {
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
@@ -396,13 +452,14 @@ abstract class BaseBriefTemplatePeer {
 					
 			$omClass = BriefLayoutPeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol2);
 
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+			    
 				$temp_obj1 = $results[$j];
 				$temp_obj2 = $temp_obj1->getBriefLayout(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -565,7 +622,7 @@ abstract class BaseBriefTemplatePeer {
 	}
 
 	
-	public static function doValidate(BriefTemplate $obj, $cols = null)
+	public static function doValidate(BaseBriefTemplate $obj, $cols = null)
 	{
 		$columns = array();
 

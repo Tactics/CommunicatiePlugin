@@ -123,32 +123,68 @@ abstract class BaseBriefLayoutPeer {
 	}
 
 	
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefLayoutPeer::ID);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::ID)
+		  : BriefLayoutPeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::CATEGORIE);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::CATEGORIE)
+		  : BriefLayoutPeer::CATEGORIE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::NAAM);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::NAAM)
+		  : BriefLayoutPeer::NAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::PRINT_BESTAND);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::PRINT_BESTAND)
+		  : BriefLayoutPeer::PRINT_BESTAND;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::MAIL_BESTAND);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::MAIL_BESTAND)
+		  : BriefLayoutPeer::MAIL_BESTAND;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::PRINT_STYLESHEETS);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::PRINT_STYLESHEETS)
+		  : BriefLayoutPeer::PRINT_STYLESHEETS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::MAIL_STYLESHEETS);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::MAIL_STYLESHEETS)
+		  : BriefLayoutPeer::MAIL_STYLESHEETS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::VERTAALD);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::VERTAALD)
+		  : BriefLayoutPeer::VERTAALD;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::CREATED_BY)
+		  : BriefLayoutPeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::UPDATED_BY)
+		  : BriefLayoutPeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::CREATED_AT)
+		  : BriefLayoutPeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::UPDATED_AT)
+		  : BriefLayoutPeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -227,6 +263,7 @@ abstract class BaseBriefLayoutPeer {
 		$cls = Propel::import($cls);
 				while($rs->next()) {
 		
+			
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -379,7 +416,7 @@ abstract class BaseBriefLayoutPeer {
 	}
 
 	
-	public static function doValidate(BriefLayout $obj, $cols = null)
+	public static function doValidate(BaseBriefLayout $obj, $cols = null)
 	{
 		$columns = array();
 

@@ -87,6 +87,12 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	protected $aBriefTemplate;
 
 	
+	protected $collBriefVerzondenBijlages;
+
+	
+	protected $lastBriefVerzondenBijlageCriteria = null;
+
+	
 	protected $alreadyInSave = false;
 
 	
@@ -274,7 +280,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->object_class !== $v) {
@@ -302,7 +308,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->object_class_bestemmeling !== $v) {
@@ -348,7 +354,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->onderwerp !== $v) {
@@ -362,7 +368,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->html !== $v) {
@@ -376,7 +382,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->medium !== $v) {
@@ -390,7 +396,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->adres !== $v) {
@@ -404,7 +410,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->cc !== $v) {
@@ -418,7 +424,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->bcc !== $v) {
@@ -442,7 +448,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->culture !== $v) {
@@ -456,7 +462,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->status !== $v) {
@@ -574,7 +580,8 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 
 			$this->setNew(false);
 
-						return $startcol + 19; 
+			return $startcol + BriefVerzondenPeer::NUM_COLUMNS - BriefVerzondenPeer::NUM_LAZY_LOAD_COLUMNS;
+
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefVerzonden object", $e);
 		}
@@ -694,6 +701,14 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				}
 				$this->resetModified(); 			}
 
+			if ($this->collBriefVerzondenBijlages !== null) {
+				foreach($this->collBriefVerzondenBijlages as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -742,6 +757,14 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collBriefVerzondenBijlages !== null) {
+					foreach($this->collBriefVerzondenBijlages as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -855,7 +878,7 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = BriefVerzondenPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->setByPosition($pos, $value);
+		$this->setByPosition($pos, $value);
 	}
 
 	
@@ -1038,6 +1061,15 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 		$copyObj->setUpdatedAt($this->updated_at);
 
 
+		if ($deepCopy) {
+									$copyObj->setNew(false);
+
+			foreach($this->getBriefVerzondenBijlages() as $relObj) {
+				$copyObj->addBriefVerzondenBijlage($relObj->copy($deepCopy));
+			}
+
+		} 
+
 		$copyObj->setNew(true);
 
 		$copyObj->setId(NULL); 
@@ -1088,6 +1120,111 @@ abstract class BaseBriefVerzonden extends BaseObject  implements Persistent {
 			
 		}
 		return $this->aBriefTemplate;
+	}
+
+	
+	public function initBriefVerzondenBijlages()
+	{
+		if ($this->collBriefVerzondenBijlages === null) {
+			$this->collBriefVerzondenBijlages = array();
+		}
+	}
+
+	
+	public function getBriefVerzondenBijlages($criteria = null, $con = null)
+	{
+				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefVerzondenBijlagePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collBriefVerzondenBijlages === null) {
+			if ($this->isNew()) {
+			   $this->collBriefVerzondenBijlages = array();
+			} else {
+
+				$criteria->add(BriefVerzondenBijlagePeer::BRIEF_VERZONDEN_ID, $this->getId());
+
+				BriefVerzondenBijlagePeer::addSelectColumns($criteria);
+				$this->collBriefVerzondenBijlages = BriefVerzondenBijlagePeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(BriefVerzondenBijlagePeer::BRIEF_VERZONDEN_ID, $this->getId());
+
+				BriefVerzondenBijlagePeer::addSelectColumns($criteria);
+				if (!isset($this->lastBriefVerzondenBijlageCriteria) || !$this->lastBriefVerzondenBijlageCriteria->equals($criteria)) {
+					$this->collBriefVerzondenBijlages = BriefVerzondenBijlagePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastBriefVerzondenBijlageCriteria = $criteria;
+		return $this->collBriefVerzondenBijlages;
+	}
+
+	
+	public function countBriefVerzondenBijlages($criteria = null, $distinct = false, $con = null)
+	{
+				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefVerzondenBijlagePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(BriefVerzondenBijlagePeer::BRIEF_VERZONDEN_ID, $this->getId());
+
+		return BriefVerzondenBijlagePeer::doCount($criteria, $distinct, $con);
+	}
+
+	
+	public function addBriefVerzondenBijlage(BriefVerzondenBijlage $l)
+	{
+		$this->collBriefVerzondenBijlages[] = $l;
+		$l->setBriefVerzonden($this);
+	}
+
+
+	
+	public function getBriefVerzondenBijlagesJoinDmsNode(Criteria $criteria = null, Connection $con = null)
+	{
+				include_once 'plugins/ttCommunicatiePlugin/lib/model/om/BaseBriefVerzondenBijlagePeer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collBriefVerzondenBijlages === null) {
+			if ($this->isNew()) {
+				$this->collBriefVerzondenBijlages = array();
+			} else {
+
+				$criteria->add(BriefVerzondenBijlagePeer::BRIEF_VERZONDEN_ID, $this->getId());
+
+				$this->collBriefVerzondenBijlages = BriefVerzondenBijlagePeer::doSelectJoinDmsNode($criteria, $con);
+			}
+		} else {
+									
+			$criteria->add(BriefVerzondenBijlagePeer::BRIEF_VERZONDEN_ID, $this->getId());
+
+			if (!isset($this->lastBriefVerzondenBijlageCriteria) || !$this->lastBriefVerzondenBijlageCriteria->equals($criteria)) {
+				$this->collBriefVerzondenBijlages = BriefVerzondenBijlagePeer::doSelectJoinDmsNode($criteria, $con);
+			}
+		}
+		$this->lastBriefVerzondenBijlageCriteria = $criteria;
+
+		return $this->collBriefVerzondenBijlages;
 	}
 
 

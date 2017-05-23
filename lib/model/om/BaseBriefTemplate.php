@@ -296,7 +296,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->onderwerp !== $v) {
@@ -310,7 +310,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->naam !== $v) {
@@ -324,7 +324,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->type !== $v) {
@@ -338,7 +338,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->bestemmeling_classes !== $v) {
@@ -352,7 +352,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->html !== $v) {
@@ -386,7 +386,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->systeemnaam !== $v) {
@@ -400,7 +400,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->systeemplaceholders !== $v) {
@@ -528,7 +528,8 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			$this->setNew(false);
 
-						return $startcol + 17; 
+			return $startcol + BriefTemplatePeer::NUM_COLUMNS - BriefTemplatePeer::NUM_LAZY_LOAD_COLUMNS;
+
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefTemplate object", $e);
 		}
@@ -833,7 +834,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = BriefTemplatePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->setByPosition($pos, $value);
+		$this->setByPosition($pos, $value);
 	}
 
 	
