@@ -708,6 +708,7 @@ class ttCommunicatieActions extends sfActions
     if ($emailverzenden)
     {
       $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'wenstgeenpubliciteit' => 0);
+      $verzondenEmails = array();
 
       $tmpAttachments = $this->getRequestAttachments();
 
@@ -805,6 +806,19 @@ class ttCommunicatieActions extends sfActions
 
         foreach ($bestemmelingen as $index => $bestemmeling)
         {
+          if ($brief_template->getUniekeBestemmeling())
+          {
+            if (in_array($bestemmeling->getEmailTo(), $verzondenEmails))
+            {
+              $this->logs[] = '<span style="color:red">E-mail kon niet verzonden worden naar ' . $bestemmeling->getEmailTo() . '<br />Reden: Deze mail mag slechts één keer naar hetzelfde email gestuurd worden.</span><br/>';
+              continue;
+            }
+            else
+            {
+              array_push($verzondenEmails, $bestemmeling->getEmailTo());
+            }
+          }
+
           $bestemmeling->setObject($object);
 
           // indien $this->bestemmelingen_aantal = 1,
