@@ -61,6 +61,10 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 
 	
+	protected $unieke_bestemmeling = 0;
+
+
+	
 	protected $created_by;
 
 
@@ -185,6 +189,13 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	{
 
 		return $this->gearchiveerd;
+	}
+
+	
+	public function getUniekeBestemmeling()
+	{
+
+		return $this->unieke_bestemmeling;
 	}
 
 	
@@ -424,6 +435,20 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 	} 
 	
+	public function setUniekeBestemmeling($v)
+	{
+
+						if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->unieke_bestemmeling !== $v || $v === 0) {
+			$this->unieke_bestemmeling = $v;
+			$this->modifiedColumns[] = BriefTemplatePeer::UNIEKE_BESTEMMELING;
+		}
+
+	} 
+	
 	public function setCreatedBy($v)
 	{
 
@@ -516,13 +541,15 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			$this->gearchiveerd = $rs->getInt($startcol + 12);
 
-			$this->created_by = $rs->getInt($startcol + 13);
+			$this->unieke_bestemmeling = $rs->getInt($startcol + 13);
 
-			$this->updated_by = $rs->getInt($startcol + 14);
+			$this->created_by = $rs->getInt($startcol + 14);
 
-			$this->created_at = $rs->getTimestamp($startcol + 15, null);
+			$this->updated_by = $rs->getInt($startcol + 15);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 16, null);
+			$this->created_at = $rs->getTimestamp($startcol + 16, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 17, null);
 
 			$this->resetModified();
 
@@ -788,15 +815,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				return $this->getGearchiveerd();
 				break;
 			case 13:
-				return $this->getCreatedBy();
+				return $this->getUniekeBestemmeling();
 				break;
 			case 14:
-				return $this->getUpdatedBy();
+				return $this->getCreatedBy();
 				break;
 			case 15:
-				return $this->getCreatedAt();
+				return $this->getUpdatedBy();
 				break;
 			case 16:
+				return $this->getCreatedAt();
+				break;
+			case 17:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -822,10 +852,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 			$keys[10] => $this->getSysteemnaam(),
 			$keys[11] => $this->getSysteemplaceholders(),
 			$keys[12] => $this->getGearchiveerd(),
-			$keys[13] => $this->getCreatedBy(),
-			$keys[14] => $this->getUpdatedBy(),
-			$keys[15] => $this->getCreatedAt(),
-			$keys[16] => $this->getUpdatedAt(),
+			$keys[13] => $this->getUniekeBestemmeling(),
+			$keys[14] => $this->getCreatedBy(),
+			$keys[15] => $this->getUpdatedBy(),
+			$keys[16] => $this->getCreatedAt(),
+			$keys[17] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -881,15 +912,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$this->setGearchiveerd($value);
 				break;
 			case 13:
-				$this->setCreatedBy($value);
+				$this->setUniekeBestemmeling($value);
 				break;
 			case 14:
-				$this->setUpdatedBy($value);
+				$this->setCreatedBy($value);
 				break;
 			case 15:
-				$this->setCreatedAt($value);
+				$this->setUpdatedBy($value);
 				break;
 			case 16:
+				$this->setCreatedAt($value);
+				break;
+			case 17:
 				$this->setUpdatedAt($value);
 				break;
 		} 	}
@@ -912,10 +946,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[10], $arr)) $this->setSysteemnaam($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setSysteemplaceholders($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setGearchiveerd($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCreatedBy($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setUpdatedBy($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCreatedAt($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setUpdatedAt($arr[$keys[16]]);
+		if (array_key_exists($keys[13], $arr)) $this->setUniekeBestemmeling($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCreatedBy($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setUpdatedBy($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCreatedAt($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setUpdatedAt($arr[$keys[17]]);
 	}
 
 	
@@ -936,6 +971,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMNAAM)) $criteria->add(BriefTemplatePeer::SYSTEEMNAAM, $this->systeemnaam);
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMPLACEHOLDERS)) $criteria->add(BriefTemplatePeer::SYSTEEMPLACEHOLDERS, $this->systeemplaceholders);
 		if ($this->isColumnModified(BriefTemplatePeer::GEARCHIVEERD)) $criteria->add(BriefTemplatePeer::GEARCHIVEERD, $this->gearchiveerd);
+		if ($this->isColumnModified(BriefTemplatePeer::UNIEKE_BESTEMMELING)) $criteria->add(BriefTemplatePeer::UNIEKE_BESTEMMELING, $this->unieke_bestemmeling);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_BY)) $criteria->add(BriefTemplatePeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefTemplatePeer::UPDATED_BY)) $criteria->add(BriefTemplatePeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_AT)) $criteria->add(BriefTemplatePeer::CREATED_AT, $this->created_at);
@@ -993,6 +1029,8 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		$copyObj->setSysteemplaceholders($this->systeemplaceholders);
 
 		$copyObj->setGearchiveerd($this->gearchiveerd);
+
+		$copyObj->setUniekeBestemmeling($this->unieke_bestemmeling);
 
 		$copyObj->setCreatedBy($this->created_by);
 
