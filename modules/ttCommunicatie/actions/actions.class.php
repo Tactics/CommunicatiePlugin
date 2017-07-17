@@ -1239,7 +1239,7 @@ class ttCommunicatieActions extends sfActions
     $this->object = eval("return {$objectClass}Peer::retrieveByPK({$objectId});");
     $this->forward404Unless($this->object);
 
-    $this->type = $this->getRequestParameter('type');
+    $this->type = $this->getRequestParameter('type', 'object');
   }
 
   /**

@@ -56,7 +56,7 @@ class ttCommunicatieComponents extends sfComponents
       throw new sfException('object communicatie log component verwacht een parameter "object" .');
     }
     
-    $this->type = isset($this->type) ? $this->type : '';
+    $this->type = isset($this->type) ? $this->type : 'object';
     $this->metFilter = isset($this->metFilter) ? $this->metFilter : false;
     
     $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type);
