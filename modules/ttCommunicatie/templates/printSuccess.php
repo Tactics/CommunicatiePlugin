@@ -10,6 +10,8 @@
 
 <body>
   <?php
+    $printAttachements = false;
+
     $aantal_brieven = 0;
     $aantal_via_email = 0;        
     $brief_verzonden_ids = array();
@@ -209,20 +211,6 @@
     <div style="width: 210px;">
       <table style="width:100%">
         <tr>
-          <?php /*
-          <td style="text-align:center;">
-            <?php if ($aantal_via_email) : ?>
-              <span id="mailsversturen">
-                <?php echo link_to_function(image_tag("icons/mail_32.png") . '<br/>' . ($voorbeeld ? 'Voorbeeld e-mail versturen' : ($aantal_via_email . ' e-mail(s) versturen')), 'voerEmailUit(' . $aantal_via_email . ');');?>
-              </span>
-              <span id="geenmailsversturen" style="display:none;">
-                <?php echo image_tag('icons/mail_info_disabled_32.gif') . '<br/>Geen e-mails te verzenden.'; ?>
-              </span>
-            <?php else : ?>
-              <?php echo image_tag('icons/mail_info_disabled_32.gif') . '<br/>Geen e-mails te verzenden.'; ?>
-            <?php endif; ?>
-          </td>
-           */ ?>
           <?php if (count($aantal_brieven)) : ?>
             <td style="text-align:center;">
               <?php echo link_to_function(image_tag("/ttCommunicatie/images/icons/printer_32.gif") . '<br/>' . ($voorbeeld ? 'Voorbeeld afdrukken' : 'Afdrukken'), 'voerPrintenUit();');?>
@@ -235,8 +223,16 @@
       </table>
     </div>
   </div>
-  
+
+  <form id="afdrukkenBijlagen" method="post" action="<?php echo url_for('ttCommunicatie/afdrukkenBijlagen');?>" target="afdrukken_bijlagen">
+      <input type="hidden" name="brief_verzonden_ids" value="<?php echo implode(',', $brief_verzonden_ids);?>" />
+  </form>
+
   <script type="text/javascript">
+    <?php if(count($brief_verzonden_ids) && (method_exists($object, 'printAttachments')) ? $object->printAttachments() : false):?>
+      window.open('', 'afdrukken_bijlagen');
+      document.getElementById('afdrukkenBijlagen').submit();
+    <?php endif;?>
     function voerPrintenUit()
     {
       window.print();

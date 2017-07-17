@@ -691,7 +691,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
       'datum' => $vandaag->format(),
       'datum_d_MMMM_yyyy' => $vandaag->format('d MMMM yyyy'),
       'image_dir' => $email ? 'cid:' : url_for('ttCommunicatie/showImage') . '/image/',
-      'pagebreak' => '<div style="page-break-before: always; margin-top: 80px;"></div>'
+      'pagebreak' => '<div class="page-break" style="page-break-before: always; margin-top: 80px;"></div>'
     );
 
     if ($object)
