@@ -251,13 +251,18 @@ class BriefTemplate extends BaseBriefTemplate
     $brief = BriefTemplatePeer::parseIfStatements($brief, $object, true, $systeemvalues);
     $brief = BriefTemplatePeer::replacePlaceholders($brief, $values);
 
+    // Attachments van deze brieftemplate toevoegen
+    // PS: Ja, de spelling "attachements" is verkeerd, maar dat is ook zo in BerichtPeer, en het zou te costly  zijn om te gaan checken waar het overal fout is gebruikt
+    $attachments = isset($options['attachements']) && is_array($options['attachements']) ? $options['attachements'] : array();
+
     $options = array(
       'onderwerp' => $onderwerp,
       'skip_template' => true,
       'cc' => (method_exists($object, 'getMailerRecipientCC') ? $object->getMailerRecipientCC() : array()),
       'bcc' => (method_exists($object, 'getMailerRecipientBCC') ? $object->getMailerRecipientBCC() : array()),
       'reply-to' => (method_exists($object, 'getMailerRecipientReplyTo') ? $object->getMailerRecipientReplyTo() : array()),
-      'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
+      'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR,
+      'attachements' => array_merge($attachments, $this->getAttachments()),
     );
 
     // Enkel parameter meegeven indien gezet
