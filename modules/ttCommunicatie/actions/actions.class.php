@@ -1352,16 +1352,24 @@ class ttCommunicatieActions extends sfActions
     return $attachments;
   }
 
+  /**
+   * @return array
+   */
   private function getMogelijkeAfzenders()
   {
     $afzenders = array($this->afzender => $this->afzender);
 
-    $email = $this->getUser()->getPersoon()->getEmail();
-
-    if ($email)
+    if (method_exists(myUser::class, 'getMogelijkeAfzenders')
+        && count($this->getUser()->getMogelijkeAfzenders()))
     {
-      $afzenders[$email] = $email;
+      foreach ($this->getUser()->getMogelijkeAfzenders() as $email)
+      {
+        $afzenders[$email] = $email;
+      }
     }
+
+    if ( $email = $this->getUser()->getPersoon()->getEmail())
+      $afzenders[$email] = $email;
 
     return $afzenders;
   }
