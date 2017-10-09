@@ -520,14 +520,17 @@ class ttCommunicatieActions extends sfActions
     $onderwerp = $briefTemplate->getOnderwerpCultureArr();
     $culture_arr = array_keys($cultures);
 
-    $array = utf8::thisArray(array( 'html'      => $html,
-      'bewerkbaar' => $briefTemplate->getBewerkbaar(),
-      'eenmalig'  => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
-      'onderwerp' => $onderwerp,
-      'cultures'  => $culture_arr));
 
-    echo json_encode($array);
-
+    echo json_encode(
+      utf8::thisArray(
+        array(
+          'html'      => $html,
+          'bewerkbaar' => $briefTemplate->getBewerkbaar(),
+          'eenmalig'  => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
+          'onderwerp' => $onderwerp,
+          'cultures'  => $culture_arr
+        )
+      ));
 
     exit();
   }
