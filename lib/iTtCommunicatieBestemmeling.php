@@ -3,9 +3,8 @@
 interface iTtCommunicatieBestemmeling
 {
   /**
-   * Geeft e-mail adres van de ttCommunicatieBestemmeling terug
-   *
-   * @return ttCommunicatieBestemmeling
+   * @param array $options
+   * @return mixed
    */
-  public function getTtCommunicatieBestemmeling();
+  public function getTtCommunicatieBestemmeling($options = []);
 }

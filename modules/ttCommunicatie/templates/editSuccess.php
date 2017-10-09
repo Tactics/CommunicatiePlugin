@@ -70,7 +70,7 @@ end_slot();
       toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
       relative_urls: false
     });
-    
+
     $('#bestemmelingen :checkbox').change(function()
     {
       // Geef placeholders van de verschillende targets weer
@@ -154,22 +154,22 @@ end_slot();
 <?php
 // recursieve functie om alle placeholders weer te geven
 function showPlaceholders($placeholders)
-{   
-  echo '<ul>';                            
+{
+  echo '<ul>';
   foreach($placeholders as $id => $placeholder)
   {
     if (is_array($placeholder))
     {
-      echo '<li>' . $id;                         
+      echo '<li>' . $id;
       showPlaceholders($placeholder);
       echo '</li>';
     }
     else
     {
       echo '<li class="placeholder">' . link_to_function($placeholder, 'insertPlaceholder("' . $placeholder . '");') . '</li>';
-    } 
-  }    
-  echo '</ul>';                            
+    }
+  }
+  echo '</ul>';
 }
 ?>
 <section id="widget-grid">
@@ -330,6 +330,14 @@ function showPlaceholders($placeholders)
                       </label>
                     </section>
                   <?php endif; ?>
+                  <div style="clear:both"></div>
+                  <section class="col col-2">
+                    <label class="label">Unieke bestemmeling:</label>
+                    <label class="select">
+                      <?php echo select_tag('unieke_bestemmeling', options_for_select(array(0 => 'nee', 1 => 'ja'), $brief_template->getUniekeBestemmeling())); ?>
+                      <i style="left: 268px !important;"></i>
+                    </label>
+                  </section>
                 </div>
               </fieldset>
             <footer>
@@ -360,7 +368,7 @@ function showPlaceholders($placeholders)
     // Afhankelijk van op welke submit tag gebruiker klikt is target _blank.
     $('input[name="commit"]').click(function(){
       var form = $(this).closest('form');
-      
+
       if ($(this).hasClass('button-target-blank'))
       {
         form.attr('target', '_blank');

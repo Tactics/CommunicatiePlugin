@@ -265,6 +265,10 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 
     // replace placeholders
     $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders($bestemmeling, true, true, true);
+    if (!$this->getIsPubliciteit() && isset($defaultPlaceholders['uitschrijven']))
+    {
+      unset($defaultPlaceholders['uitschrijven']);
+    }
     $tmpCultureBrieven = BriefTemplatePeer::replacePlaceholdersFromCultureBrieven($tmpCultureBrieven, $bestemmeling, array_merge($defaultPlaceholders, $systeemvalues));
     $head = $tmpCultureBrieven[$culture]['head'];
     $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
@@ -286,7 +290,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $mailOptions = array_merge($mailOptions, $options);
 
     // Mail versturen
-    $mailSent = BerichtPeer::verstuurEmail($email, $brief, $mailOptions);
+    $mailSent = BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $mailOptions);
 
     // Mail loggen
     $briefVerzonden = new BriefVerzonden();

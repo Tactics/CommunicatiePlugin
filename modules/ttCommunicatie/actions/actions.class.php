@@ -179,9 +179,7 @@ class ttCommunicatieActions extends sfActions
     {
       $targets[] = $targetInfo['class'];
     }
-    $this->is_target = in_array($this->objectClass, $targets);
-
-    $this->returnUrl = $this->getUser()->getAttribute('return_url', null, $this->md5hash);
+    $this->is_target = in_array($this->objectClass, $targets);    $this->returnUrl = $this->getUser()->getAttribute('return_url', null, $this->md5hash);
   }
 
   /**
@@ -402,7 +400,7 @@ class ttCommunicatieActions extends sfActions
     $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
     $brief_template->setIsPubliciteit($this->getRequestParameter('is_publiciteit', 0));
-
+    $brief_template->setUniekeBestemmeling($this->getRequestParameter('unieke_bestemmeling', 0));
     $brief_template->save();
 
     $cultures = BriefTemplatePeer::getCultureLabelArray();
@@ -709,7 +707,7 @@ class ttCommunicatieActions extends sfActions
     if ($emailverzenden)
     {
       $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0, 'niettoegestaan' => 0, 'wenstgeenpubliciteit' => 0);
-
+      $verzondenEmails = array();
       $tmpAttachments = $this->getRequestAttachments();
 
       $rs = $this->getRs();
@@ -806,6 +804,19 @@ class ttCommunicatieActions extends sfActions
 
         foreach ($bestemmelingen as $index => $bestemmeling)
         {
+          if ($brief_template->getUniekeBestemmeling())
+          {
+            if (in_array($bestemmeling->getEmailTo(), $verzondenEmails))
+            {
+              $this->logs[] = '<span style="color:red">E-mail kon niet verzonden worden naar ' . $bestemmeling->getEmailTo() . '<br />Reden: Deze mail mag slechts één keer naar hetzelfde email gestuurd worden.</span><br/>';
+              continue;
+            }
+            else
+            {
+              array_push($verzondenEmails, $bestemmeling->getEmailTo());
+            }
+          }
+
           $bestemmeling->setObject($object);
 
           // indien $this->bestemmelingen_aantal = 1,
@@ -944,6 +955,19 @@ class ttCommunicatieActions extends sfActions
               $briefVerzonden->setHtml($body);
               $briefVerzonden->setStatus(BriefVerzondenPeer::STATUS_VERZONDEN);
               $briefVerzonden->save();
+
+              // Indien er bijlages mee zij verstuurd bewaar deze ook in de log
+              /** @var DmsNode $node */
+              $node = $briefVerzonden->getDmsStorageFolder();
+              foreach ($attachments as $filename => $attachment)
+              {
+                $newNode = $node->createNodeFromFile($attachment, $filename, true);
+
+                $briefVerzondenBijlage = new BriefVerzondenBijlage();
+                $briefVerzondenBijlage->setBriefVerzonden($briefVerzonden);
+                $briefVerzondenBijlage->setDmsNode($newNode);
+                $briefVerzondenBijlage->save();
+              }
 
               // notify object dat er een brief naar het object verzonden is
               if (method_exists($object, 'notifyBriefVerzonden'))
