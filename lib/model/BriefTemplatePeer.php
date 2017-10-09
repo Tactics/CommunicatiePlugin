@@ -209,7 +209,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
     $layout = $briefLayout ? $briefLayout : $briefTemplate->getBriefLayout();
 
     if ($emailLayout)
-    {
+
       $layout_bestand = $layout->getMailBestand();
       $layout_stylesheets = $layout->getMailStylesheets();
     }

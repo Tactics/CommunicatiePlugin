@@ -528,6 +528,7 @@ class ttCommunicatieActions extends sfActions
 
     echo json_encode($array);
 
+
     exit();
   }
 
