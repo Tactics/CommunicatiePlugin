@@ -186,8 +186,14 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                   </div>
                 </fieldset>
               <footer>
-              <?php echo button_to_function('Voorbeeld brief', 'postForm("Voorbeeld brief")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
-              <?php echo button_to_function('Voorbeeld e-mail', 'postForm("Voorbeeld e-mail")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
+                <?php
+                if ($returnUrl)
+                {
+                  echo button_to('Terug', $returnUrl, array('class' => 'btn btn-default pull-left'));
+                }
+                ?>
+                <?php echo button_to_function('Voorbeeld brief', 'postForm("Voorbeeld brief")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
+                <?php echo button_to_function('Voorbeeld e-mail', 'postForm("Voorbeeld e-mail")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
 
                 <?php echo button_to_function('Brieven afdrukken', 'postForm("brieven afdrukken")', array('class' => 'btn btn-primary briefonly', 'data-type' => 'brieven')); ?>
                 <?php echo button_to_function('E-mails verzenden', 'postForm("E-mails verzenden")', array('class' => 'btn btn-primary emailonly', 'data-type' => 'e-mails')); ?>

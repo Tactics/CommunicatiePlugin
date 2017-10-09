@@ -179,7 +179,9 @@ class ttCommunicatieActions extends sfActions
     {
       $targets[] = $targetInfo['class'];
     }
-    $this->is_target = in_array($this->objectClass, $targets);    
+    $this->is_target = in_array($this->objectClass, $targets);
+
+    $this->returnUrl = $this->getUser()->getAttribute('return_url', null, $this->md5hash);
   }
 
   /**
