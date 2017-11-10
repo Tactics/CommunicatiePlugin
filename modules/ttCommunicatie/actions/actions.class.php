@@ -520,13 +520,17 @@ class ttCommunicatieActions extends sfActions
     $onderwerp = $briefTemplate->getOnderwerpCultureArr();
     $culture_arr = array_keys($cultures);
 
-    echo json_encode(array(
-      'html'      => $html,
-      'bewerkbaar' => $briefTemplate->getBewerkbaar(),
-      'eenmalig'  => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
-      'onderwerp' => $onderwerp,
-      'cultures'  => $culture_arr
-    ));
+
+    echo json_encode(
+      utf8::thisArray(
+        array(
+          'html'      => $html,
+          'bewerkbaar' => $briefTemplate->getBewerkbaar(),
+          'eenmalig'  => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
+          'onderwerp' => $onderwerp,
+          'cultures'  => $culture_arr
+        )
+      ));
 
     exit();
   }
@@ -1352,16 +1356,24 @@ class ttCommunicatieActions extends sfActions
     return $attachments;
   }
 
+  /**
+   * @return array
+   */
   private function getMogelijkeAfzenders()
   {
     $afzenders = array($this->afzender => $this->afzender);
 
-    $email = $this->getUser()->getPersoon()->getEmail();
-
-    if ($email)
+    if (method_exists(myUser::class, 'getMogelijkeAfzenders')
+        && count($this->getUser()->getMogelijkeAfzenders()))
     {
-      $afzenders[$email] = $email;
+      foreach ($this->getUser()->getMogelijkeAfzenders() as $email)
+      {
+        $afzenders[$email] = $email;
+      }
     }
+
+    if ( $email = $this->getUser()->getPersoon()->getEmail())
+      $afzenders[$email] = $email;
 
     return $afzenders;
   }
