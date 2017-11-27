@@ -65,17 +65,13 @@ class ttCommunicatieActions extends sfActions
     // indien object gegeven, wordt criteria en bestemmelingenClass/Peer enzo niet gebruikt.
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
 
-    if ($this->bestemmelingen_object)
-    {
+    if ($this->bestemmelingen_object) {
       // voorbeelden hebben nog geen id
-      if (!$this->bestemmelingen_object->getId())
-      {
+      if (!$this->bestemmelingen_object->getId()) {
         $this->bestemmelingenClass = null;
         $this->bestemmelingenPeer = null;
         $this->criteria = null;
-      }
-      else
-      {
+      } else {
         $this->bestemmelingenClass = get_class($this->bestemmelingen_object);
         $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
         $this->criteria = new Criteria();
@@ -89,33 +85,28 @@ class ttCommunicatieActions extends sfActions
     // init van default waarden
     $this->brief_template = null;
     $this->systeemplaceholders = array();
-    if ($this->getUser()->getAttribute('template_id', null, $this->md5hash))
-    {
+    if ($this->getUser()->getAttribute('template_id', null, $this->md5hash)) {
       $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getUser()->getAttribute('template_id', null, $this->md5hash));
-      if (! $this->brief_template)
-      {
+      if (!$this->brief_template) {
         throw new sfException('Brieftemplate (id: ' . $this->getRequestParameter('template_id') . ') niet gevonden.');
       }
 
       $this->choose_template = false;
 
-      if ($this->brief_template->isSysteemTemplate())
-      {
+      if ($this->brief_template->isSysteemTemplate()) {
         $this->systeemplaceholders = $this->getUser()->getAttribute('systeemplaceholders', array(), $this->md5hash);
       }
     }
 
     // indien geem template_id opgegeven en je er geen kan kiezen, dan kan edit niet
-    if (( $this->brief_template && ! $this->brief_template->getBewerkbaar()) || (! $this->brief_template && ! $this->choose_template))
-    {
+    if (($this->brief_template && !$this->brief_template->getBewerkbaar()) || (!$this->brief_template && !$this->choose_template)) {
       $this->edit_template = false;
     }
 
     // check of bestemmeling class een communicatie target is volgend de config
     // indien geen target, worden invoegvelden e.d. niet weergegeven.
     $targets = array();
-    foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo)
-    {
+    foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo) {
       $targets[] = $targetInfo['class'];
     }
     $this->is_target = in_array($this->bestemmelingenClass, $targets);
@@ -137,14 +128,12 @@ class ttCommunicatieActions extends sfActions
     $this->pager = new myFilteredPager('BriefTemplate', 'ttCommunicatie/list');
 
     // archief bekijken?
-    if (!$this->getUser()->getAttribute('bekijk_archief', false))
-    {
+    if (!$this->getUser()->getAttribute('bekijk_archief', false)) {
       $this->pager->getCriteria()->add(BriefTemplatePeer::GEARCHIVEERD, 0);
     }
 
     // indien enable_categories = true: alleen templates waartoe de user access heeft
-    if (sfConfig::get('sf_communicatie_enable_categories', false))
-    {
+    if (sfConfig::get('sf_communicatie_enable_categories', false)) {
       $this->pager->add(BriefTemplatePeer::CATEGORIE, array('value' => $this->getUser()->getTtCommunicatieCategory()));
     }
 
@@ -153,8 +142,7 @@ class ttCommunicatieActions extends sfActions
     $this->pager->add(BriefTemplatePeer::NAAM, array('comparison' => Criteria::LIKE));
     $this->pager->add(BriefTemplatePeer::ONDERWERP, array('comparison' => Criteria::LIKE));
 
-    if ($this->pager->add(BriefLayoutPeer::NAAM, array('comparison' => Criteria::LIKE)))
-    {
+    if ($this->pager->add(BriefLayoutPeer::NAAM, array('comparison' => Criteria::LIKE))) {
       $this->pager->getCriteria()->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID);
     }
 
@@ -179,17 +167,18 @@ class ttCommunicatieActions extends sfActions
 
     $cton1 = $pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::ID, 0, Criteria::GREATER_EQUAL);
 
-    if($this->vanafDatum) {
+    if ($this->vanafDatum) {
       $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->vanafDatum), Criteria::GREATER_EQUAL));
     }
 
-    if($this->totDatum)    {
-      $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT,  myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::LESS_EQUAL));
+    if ($this->totDatum) {
+      $cton1->addAnd($pager->getCriteria()->getNewCriterion(BriefVerzondenPeer::CREATED_AT, myDateTools::cultureDateToPropelDate($this->totDatum), Criteria::LESS_EQUAL));
     }
 
     $pager->getCriteria()->addAnd($cton1);
     return $pager;
   }
+
   /**
    * lijst van zelf gemaakte brief templates in de db
    */
@@ -200,8 +189,7 @@ class ttCommunicatieActions extends sfActions
     $this->pager->init();
 
     $this->mailClasses = array();
-    foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo)
-    {
+    foreach (sfConfig::get('sf_communicatie_targets') as $targetInfo) {
       $this->mailClasses[$targetInfo['class']] = $targetInfo['label'];
     }
 
@@ -214,8 +202,7 @@ class ttCommunicatieActions extends sfActions
   {
     $this->brief_template = new BriefTemplate();
 
-    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
-    {
+    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar()) {
       $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
     }
 
@@ -233,8 +220,7 @@ class ttCommunicatieActions extends sfActions
     $this->brief_template = $origineel->copy();
     $this->brief_template->setNaam("Kopie van " . $origineel->getNaam());
 
-    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar())
-    {
+    if ($this->is_vertaalbaar = BriefTemplatePeer::isVertaalbaar()) {
       $this->language_array = BriefTemplatePeer::getTranslationLanguageArray();
     }
 
@@ -259,33 +245,26 @@ class ttCommunicatieActions extends sfActions
    */
   public function validateUpdate()
   {
-    if ($this->getRequestParameter('template_id'))
-    {
+    if ($this->getRequestParameter('template_id')) {
       $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
       $this->forward404Unless($briefTemplate);
 
       $systeem = $briefTemplate->getSysteemnaam() ? true : false;
-    }
-    else
-    {
+    } else {
       $systeem = false;
     }
 
-    if (! $systeem)
-    {
-      if (! $this->getRequestParameter('classes'))
-      {
+    if (!$systeem) {
+      if (!$this->getRequestParameter('classes')) {
         $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
       }
 
-      if (! $this->getRequestParameter('naam'))
-      {
+      if (!$this->getRequestParameter('naam')) {
         $this->getRequest()->setError('naam', 'Gelieve een naam in te geven.');
       }
     }
 
-    if (! $this->getRequestParameter('brief_layout_id'))
-    {
+    if (!$this->getRequestParameter('brief_layout_id')) {
       $this->getRequest()->setError('brief_layout_id', 'Gelieve een layout te selecteren.');
     }
 
@@ -316,22 +295,19 @@ class ttCommunicatieActions extends sfActions
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     // Array met body en onderwerp per culture.
     $onderwerpen = $this->getRequestParameter('onderwerp');
-    $htmls       = $this->getRequestParameter('html');
+    $htmls = $this->getRequestParameter('html');
 
-    foreach ($cultures as $culture => $label)
-    {
-      if (! $onderwerpen[$culture])
-      {
+    foreach ($cultures as $culture => $label) {
+      if (!$onderwerpen[$culture]) {
         $this->getRequest()->setError('onderwerp[' . $culture . ']', 'Gelieve een ' . $label . ' onderwerp in te geven.');
       }
 
-      if (! $htmls[$culture])
-      {
+      if (!$htmls[$culture]) {
         $this->getRequest()->setError('html[' . $culture . ']', 'Gelieve een ' . $label . ' e-mail bericht in te geven.');
       }
     }
 
-    return ! $this->getRequest()->hasErrors();
+    return !$this->getRequest()->hasErrors();
   }
 
   /**
@@ -339,8 +315,7 @@ class ttCommunicatieActions extends sfActions
    */
   private function validateUpdateNietVertaalbaar()
   {
-    if (! $this->getRequestParameter('onderwerp'))
-    {
+    if (!$this->getRequestParameter('onderwerp')) {
       $this->getRequest()->setError('onderwerp', 'Gelieve een onderwerp in te geven.');
     }
   }
@@ -350,34 +325,28 @@ class ttCommunicatieActions extends sfActions
    */
   public function executeUpdate()
   {
-    if (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false)
-    {
+    if (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false) {
       $this->forward('ttCommunicatie', 'voorbeeld');
     }
 
-    if ($this->getRequestParameter('template_id'))
-    {
+    if ($this->getRequestParameter('template_id')) {
       $brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
       $this->forward404Unless($brief_template);
 
       $systeem = $brief_template->getSysteemnaam() ? true : false;
-    }
-    else
-    {
+    } else {
       $brief_template = new BriefTemplate();
       $brief_template->setType(BriefTemplatePeer::TYPE_DB);
 
       // category goed zetten indien enabled
-      if (sfConfig::get('sf_communicatie_enable_categories', false))
-      {
+      if (sfConfig::get('sf_communicatie_enable_categories', false)) {
         $brief_template->setCategorie($this->getUser()->getTtCommunicatieCategory());
       }
 
       $systeem = false;
     }
 
-    if (! $systeem)
-    {
+    if (!$systeem) {
       $brief_template->setNaam($this->getRequestParameter('naam'));
       $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));
     }
@@ -392,21 +361,18 @@ class ttCommunicatieActions extends sfActions
 
     // Array met body en onderwerp per culture.
     $onderwerpen = $this->getRequestParameter('onderwerp');
-    $htmls       = $this->getRequestParameter('html');
+    $htmls = $this->getRequestParameter('html');
 
-    foreach ($cultures as $culture => $label)
-    {
+    foreach ($cultures as $culture => $label) {
       // Default culture opslaan in brief_template object
-      if ($culture === $defaultCulture)
-      {
+      if ($culture === $defaultCulture) {
         $brief_template->setOnderwerp($onderwerpen[$culture]);
         $brief_template->setHtml($htmls[$culture]);
         $brief_template->save();
-      }
-      else // Vertalingen opslaan in TransUnit object
+      } else // Vertalingen opslaan in TransUnit object
       {
         // @todo getCatalogueName method.
-        $catalogueName = 'brieven.'.$culture;
+        $catalogueName = 'brieven.' . $culture;
         $htmlSource = $brief_template->getHtmlSource($culture);
         $onderwerpSource = $brief_template->getOnderwerpSource($culture);
 
@@ -415,16 +381,13 @@ class ttCommunicatieActions extends sfActions
       }
     }
 
-    foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo)
-    {
-      if (! $this->getRequest()->hasFile($fileId))
-      {
+    foreach ($this->getRequest()->getFiles() as $fileId => $fileInfo) {
+      if (!$this->getRequest()->hasFile($fileId)) {
         continue;
       }
 
       // Controleren of bestand correct werd opgehaald.
-      if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK)
-      {
+      if ($this->getRequest()->getFileError($fileId) != UPLOAD_ERR_OK) {
         continue;
       }
 
@@ -446,12 +409,9 @@ class ttCommunicatieActions extends sfActions
    */
   public function handleErrorUpdate()
   {
-    if (!$this->getRequestParameter('template_id'))
-    {
+    if (!$this->getRequestParameter('template_id')) {
       $this->forward('ttCommunicatie', 'create');
-    }
-    else
-    {
+    } else {
       $this->forward('ttCommunicatie', 'edit');
     }
   }
@@ -467,8 +427,7 @@ class ttCommunicatieActions extends sfActions
   private function updateOrCreateTransUnit($source, $target, $comments, $catalogueName)
   {
     $catalogue = CataloguePeer::retrieveByName($catalogueName);
-    if (! $catalogue)
-    {
+    if (!$catalogue) {
       throw new sfException('Catalogue not found.');
     }
 
@@ -477,12 +436,9 @@ class ttCommunicatieActions extends sfActions
     $c->add(TransUnitPeer::SOURCE, $source);
     $transUnit = TransUnitPeer::doSelectOne($c);
 
-    if ($transUnit)
-    {
+    if ($transUnit) {
       $transUnit->setTarget($target);
-    }
-    else
-    {
+    } else {
       $transUnit = new TransUnit();
       $transUnit->setCatalogueId($catalogue->getId());
       $transUnit->setSource($source);
@@ -503,8 +459,7 @@ class ttCommunicatieActions extends sfActions
     $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
     $this->forward404Unless($briefTemplate);
 
-    if ($briefTemplate->getEenmaligVersturen())
-    {
+    if ($briefTemplate->getEenmaligVersturen()) {
       // Aantal dat de brief reeds kreeg
       $this->criteria->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, $briefTemplate->getId());
       $this->criteria->addJoin(BriefVerzondenPeer::OBJECT_ID, eval('return ' . $this->bestemmelingenPeer . '::ID;'));
@@ -524,11 +479,11 @@ class ttCommunicatieActions extends sfActions
     echo json_encode(
       utf8::thisArray(
         array(
-          'html'      => $html,
+          'html' => $html,
           'bewerkbaar' => $briefTemplate->getBewerkbaar(),
-          'eenmalig'  => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')')  : 'nee',
+          'eenmalig' => $briefTemplate->getEenmaligVersturen() ? ('ja (reeds ontvangen: ' . $rs->getRecordCount() . ')') : 'nee',
           'onderwerp' => $onderwerp,
-          'cultures'  => $culture_arr
+          'cultures' => $culture_arr
         )
       ));
 
@@ -543,25 +498,19 @@ class ttCommunicatieActions extends sfActions
    */
   private function getRs()
   {
-    foreach ($this->autoloadClasses as $class)
-    {
+    foreach ($this->autoloadClasses as $class) {
       $classPeer = sfInflector::camelize($class) . 'Peer';
       eval($classPeer . '::TABLE_NAME;'); // autoloaden van de peer gebeurt hier
     }
 
-    while(true)
-    {
-      try
-      {
+    while (true) {
+      try {
         $rs = eval('return ' . $this->bestemmelingenPeer . '::doSelectRs($this->criteria);');
         break;
-      }
-        // load Peerclasses when not yet autoloaded
-      catch(Exception $e)
-      {
+      } // load Peerclasses when not yet autoloaded
+      catch (Exception $e) {
         $m = $e->getMessage();
-        if (strpos($m, 'Cannot fetch TableMap for undefined table') === false)
-        {
+        if (strpos($m, 'Cannot fetch TableMap for undefined table') === false) {
           throw($e);
         }
         $table = substr($m, strpos($m, 'table:') + 7, -1);
@@ -583,17 +532,13 @@ class ttCommunicatieActions extends sfActions
 
     $this->rs = $this->getRs();
 
-    if ($this->choose_template)
-    {
+    if ($this->choose_template) {
       // indien bestemmeling een communicatie target is (zie settings.yml)
-      if ($this->is_target)
-      {
+      if ($this->is_target) {
         $c = new Criteria();
         $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);
         $this->brief_templates = BriefTemplatePeer::getSorted($c);
-      }
-      else
-      {
+      } else {
         $c = new Criteria();
         $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|Algemeen|%', Criteria::LIKE);
         $this->brief_templates = BriefTemplatePeer::getSorted($c);
@@ -611,8 +556,7 @@ class ttCommunicatieActions extends sfActions
    */
   private function get_include_contents($filename)
   {
-    if (is_file($filename))
-    {
+    if (is_file($filename)) {
       ob_start();
       include $filename;
       $contents = ob_get_contents();
@@ -633,47 +577,39 @@ class ttCommunicatieActions extends sfActions
 
     $this->preExecuteVersturen();
 
-    if ($this->show_bestemmelingen)
-    {
+    if ($this->show_bestemmelingen) {
       $this->criteria->addAnd(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $this->getRequestParameter('niet_verzenden_naar', array()), Criteria::NOT_IN);
     }
 
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
     // moeten er effectief e-mails verzonden worden?
-    $emailverzenden = (! $voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);
+    $emailverzenden = (!$voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);
     // verzenden via email: liefst, altijd of nooit (nee)
     $verzenden_via = $this->getRequestParameter('verzenden_via', false);
     // ophalen van de brieftemplate met de correcte layout (email of brief)
     $emailLayout = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
 
     // Voorbeeld is altijd op papier?not
-    if ($voorbeeld)
-    {
+    if ($voorbeeld) {
       $viaemail = (stripos($this->getRequestParameter('commit'), 'e-mail') !== false);
-    }
-    else
-    {
+    } else {
       $viaemail = (($verzenden_via == 'liefst') || ($verzenden_via == 'altijd'));
 
     }
 
-    if ($voorbeeld && $this->criteria)
-    {
+    if ($voorbeeld && $this->criteria) {
       $this->criteria->setLimit(1);
     }
 
     // template_id ?
-    if ($this->getRequestParameter('template_id'))
-    {
+    if ($this->getRequestParameter('template_id')) {
       $this->brief_template = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('template_id'));
-      if (! $this->brief_template)
-      {
+      if (!$this->brief_template) {
         throw new sfException('Brieftemplate (id: ' . $this->getRequestParameter('template_id') . ') niet gevonden.');
       }
     }
 
-    if ($this->brief_template)
-    {
+    if ($this->brief_template) {
       // brief layout ophalen
       $this->brief_layout = $this->brief_template->getBriefLayout();
 
@@ -682,11 +618,10 @@ class ttCommunicatieActions extends sfActions
       $htmls = $this->edit_template ? $this->getRequestParameter('html') : ($this->brief_template ? $this->brief_template->getHtmlCultureArr() : null);
 
       // Indien niet in edit mode mogelijk, ook placeholders wijzigen indien nodig
-      if($this->brief_template->isSysteemTemplate())  $this->replaceSysteemPlaceholders($htmls);
+      if ($this->brief_template->isSysteemTemplate()) $this->replaceSysteemPlaceholders($htmls);
 
       $this->cultureBrieven = array();
-      foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
-      {
+      foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label) {
         $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
         $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
       }
@@ -695,60 +630,45 @@ class ttCommunicatieActions extends sfActions
     // default placeholders die in layout gebruikt kunnen worden
     $defaultPlaceholders = BriefTemplatePeer::getDefaultPlaceholders(null, $emailverzenden, true);
 
-    if ($emailverzenden)
-    {
+    if ($emailverzenden) {
       $counter = array('reedsverstuurd' => 0, 'verstuurd' => 0, 'error' => 0, 'wenstgeenmail' => 0);
 
       $tmpAttachments = $this->getRequestAttachments();
 
       $rs = $this->getRs();
-      while ($rs->next())
-      {
+      while ($rs->next()) {
         $object = new $this->bestemmelingenClass();
         $object->hydrate($rs);
 
 
-
-          // geen brief_template => controleren of er aan het object zelf een template_id gekoppeld is
-        if (! $this->brief_template)
-        {
-          if (method_exists($object, 'getLayoutEnTemplateId'))
-          {
+        // geen brief_template => controleren of er aan het object zelf een template_id gekoppeld is
+        if (!$this->brief_template) {
+          if (method_exists($object, 'getLayoutEnTemplateId')) {
             // template ophalen
             $layoutEnTemplateId = $object->getLayoutEnTemplateId();
-            if (isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id'])
-            {
+            if (isset($layoutEnTemplateId['brief_template_id']) && $layoutEnTemplateId['brief_template_id']) {
               $brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);
-              if (! $brief_template)
-              {
+              if (!$brief_template) {
                 echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
                 continue;
               }
-            }
-            else
-            {
+            } else {
               echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id niet opgegeven.</font><br/>';
               continue;
             }
 
             // layout ophalen
-            if (isset($layoutEnTemplateId['brief_layout_id']) && $layoutEnTemplateId['brief_layout_id'])
-            {
+            if (isset($layoutEnTemplateId['brief_layout_id']) && $layoutEnTemplateId['brief_layout_id']) {
               $this->brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
-              if (! $this->brief_layout)
-              {
+              if (!$this->brief_layout) {
                 echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
                 continue;
               }
-            }
-            else
-            {
+            } else {
               echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id niet opgegeven.</font><br/>';
               continue;
             }
-          }
-          else
-          {
+          } else {
             echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): method niet gevonden.</font><br/>';
             continue;
           }
@@ -758,25 +678,21 @@ class ttCommunicatieActions extends sfActions
           $htmls = $brief_template->getHtmlCultureArr();
 
           // Indien niet in edit mode mogelijk, ook placeholders wijzigen indien nodig
-          if($brief_template->isSysteemTemplate())  $this->replaceSysteemPlaceholders($htmls);
+          if ($brief_template->isSysteemTemplate()) $this->replaceSysteemPlaceholders($htmls);
 
           $this->cultureBrieven = array();
-          foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label)
-          {
+          foreach (BriefTemplatePeer::getCultureLabelArray() as $culture => $label) {
             $this->cultureBrieven[$culture] = $this->brief_layout->getHeadAndBody($emailLayout ? 'mail' : 'brief', $culture, $htmls[$culture], $emailverzenden);
             $this->cultureBrieven[$culture]['onderwerp'] = $onderwerpen[$culture];
           }
-        }
-        else
-        {
+        } else {
           $brief_template = $this->brief_template;
         }
 
         echo get_class($object) . ' (id ' . $object->getId() . '): ';
 
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
-        if ($brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId()))
-        {
+        if ($brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId())) {
           echo 'Reeds verstuurd.<br/>';
           $counter['reedsverstuurd']++;
           continue;
@@ -785,8 +701,7 @@ class ttCommunicatieActions extends sfActions
         $verstuurd = false;
         $email = $this->getRequestParameter('email_to', '') ? $this->getRequestParameter('email_to') : $object->getMailerRecipientMail();
 
-        if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email)
-        {
+        if (((($verzenden_via == 'liefst') && $object->getMailerPrefersEmail()) || ($verzenden_via == 'altijd')) && $email) {
           $culture = BriefTemplatePeer::calculateCulture($object);
 
           // Adres ophalen als placeholder
@@ -813,8 +728,7 @@ class ttCommunicatieActions extends sfActions
           $attachments = array_merge($tmpAttachments, $briefAttachments);
 
           // object-eigen attachements
-          if (method_exists($object, 'getBriefAttachments'))
-          {
+          if (method_exists($object, 'getBriefAttachments')) {
             $objectAttachments = $object->getBriefAttachments();
             $attachments = array_merge($attachments, $objectAttachments);
           }
@@ -829,27 +743,19 @@ class ttCommunicatieActions extends sfActions
               'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
             );
 
-            if ($this->hasRequestParameter('email_cc'))
-            {
-              if ($emailCc = trim($this->getRequestParameter('email_cc')))
-              {
+            if ($this->hasRequestParameter('email_cc')) {
+              if ($emailCc = trim($this->getRequestParameter('email_cc'))) {
                 $options['cc'] = explode(';', str_replace(',', ';', $emailCc));
               }
-            }
-            else if (method_exists($object, 'getMailerRecipientCC') && ($emailCc = $object->getMailerRecipientCC()))
-            {
+            } else if (method_exists($object, 'getMailerRecipientCC') && ($emailCc = $object->getMailerRecipientCC())) {
               $options['cc'] = explode(';', str_replace(',', ';', $emailCc));
             }
 
-            if ($this->hasRequestParameter('email_bcc'))
-            {
-              if ($emailBcc = trim($this->getRequestParameter('email_bcc')))
-              {
+            if ($this->hasRequestParameter('email_bcc')) {
+              if ($emailBcc = trim($this->getRequestParameter('email_bcc'))) {
                 $options['bcc'] = explode(';', str_replace(',', ';', $emailBcc));
               }
-            }
-            else if (method_exists($object, 'getMailerRecipientBCC') && ($emailBcc = $object->getMailerRecipientBCC()))
-            {
+            } else if (method_exists($object, 'getMailerRecipientBCC') && ($emailBcc = $object->getMailerRecipientBCC())) {
               $options['bcc'] = explode(';', str_replace(',', ';', $emailBcc));
             }
 
@@ -863,12 +769,10 @@ class ttCommunicatieActions extends sfActions
             $counter['verstuurd']++;
 
             $bestemmeling = null;
-            if (method_exists($object, 'getBestemmeling'))
-            {
+            if (method_exists($object, 'getBestemmeling')) {
               $bestemmeling = $object->getBestemmeling();
               // indien email_to overschreven werd naar een ander email, mag de bestemmeling niet gezet worden
-              if ($bestemmeling && method_exists($bestemmeling, 'getEmail') && ($bestemmeling->getEmail() != $email))
-              {
+              if ($bestemmeling && method_exists($bestemmeling, 'getEmail') && ($bestemmeling->getEmail() != $email)) {
                 $bestemmeling = null;
               }
             }
@@ -891,26 +795,18 @@ class ttCommunicatieActions extends sfActions
             $briefVerzonden->save();
 
             // notify object dat er een brief naar het object verzonden is
-            if (method_exists($object, 'notifyBriefVerzonden'))
-            {
+            if (method_exists($object, 'notifyBriefVerzonden')) {
               $object->notifyBriefVerzonden($briefVerzonden);
             }
-          }
-          catch(Exception $e)
-          {
+          } catch (Exception $e) {
             $nietVerstuurdReden = '<font color=red>E-mail kon niet verzonden worden naar ' . $email . '<br />Reden: ' . nl2br($e->getMessage()) . '</font><br/>';
             echo $nietVerstuurdReden;
             $counter['error']++;
           }
-        }
-        else
-        {
-          if (! $email)
-          {
+        } else {
+          if (!$email) {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
-          }
-          else
-          {
+          } else {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
           }
 
@@ -918,16 +814,14 @@ class ttCommunicatieActions extends sfActions
           $counter['wenstgeenmail']++;
         }
 
-        if (method_exists($object, 'addLog'))
-        {
+        if (method_exists($object, 'addLog')) {
           $log = "Brief '" . $brief_template->getNaam() . "' werd " . ($verstuurd ? "" : "<b>niet</b> ") . "verstuurd via mail naar " . $email . '.';
           $log .= $verstuurd ? '' : '  Reden: ' . $nietVerstuurdReden;
           $object->addLog($log, $verstuurd ? $body : null);
         }
       }
 
-      foreach($tmpAttachments as $tmpFile)
-      {
+      foreach ($tmpAttachments as $tmpFile) {
         unlink($tmpFile);
       }
 
@@ -939,11 +833,8 @@ class ttCommunicatieActions extends sfActions
       echo 'Wensen geen mail: ' . $counter['wenstgeenmail'] . '<br />';
       echo '<a href="#" onclick="window.close();">Klik hier om het venster te sluiten</a>';
       exit();
-    }
-    else
-    {
-      if ($this->criteria)
-      {
+    } else {
+      if ($this->criteria) {
         $this->rs = $this->getRs();
       }
       $this->voorbeeld = $voorbeeld;
@@ -968,38 +859,24 @@ class ttCommunicatieActions extends sfActions
     $rs = BriefVerzondenPeer::doSelectRS($c);
 
     // Indien leeg - niets afdrukken
-    if(! $rs->getRecordCount() ) exit();
+    if (!$rs->getRecordCount()) exit();
     $attachments = array();
     $i = 0;
-    while($rs->next())
-    {
+    while ($rs->next()) {
       $briefVerzonden = new BriefVerzonden();
       $briefVerzonden->hydrate($rs);
 
       $object = $briefVerzonden->getObject();
 
       // object-eigen attachements
-      if (method_exists($object, 'getBriefAttachments'))
-      {
+      if (method_exists($object, 'getBriefAttachments')) {
         $objectAttachments = $object->getBriefAttachments();
         $attachments = array_merge($attachments, $objectAttachments);
       }
     }
-    $merged = new \ZendPdf\PdfDocument();
-    foreach($attachments as $filename => $location)
-    {
-      $pdf = new \ZendPdf\PdfDocument($location, null, true);
-      foreach($pdf->pages as $page){
-        $cloned = clone $page;
-        $merged->pages[] = $cloned;
-      }
-    }
 
-    $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+    $filelocation = $this->mergeAttachements($attachments);
 
-    $filelocation = $tmp_dir . DIRECTORY_SEPARATOR . 'bijlagen.pdf';
-
-    $merged->save($filelocation);
     $response = $this->getResponse();
     $response->setContentType('application/pdf');
     $response->setHttpHeader('Content-Disposition', "attachment; filename=bijlagen.pdf");
@@ -1007,7 +884,30 @@ class ttCommunicatieActions extends sfActions
     $response->sendHttpHeaders();
     $response->setContent(readfile($filelocation));
     unlink($filelocation);
+
+    foreach($attachments as $filename => $filePath)
+    {
+      unlink($filePath);
+    }
     exit();
+  }
+
+  /**
+   * @param array $attachements
+   * @return string
+   */
+  private function mergeAttachements($attachements)
+  {
+    $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+    $filelocation = $tmp_dir . DIRECTORY_SEPARATOR . 'bijlagen.pdf';
+
+    $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+    foreach($attachements as $filename => $filePath)
+    {
+      $pdf->addPDF($filePath, 'all');
+    }
+    $pdf->merge('file',$filelocation, 'P');
+    return $filelocation;
   }
 
   /**
