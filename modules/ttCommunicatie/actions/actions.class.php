@@ -536,6 +536,7 @@ class ttCommunicatieActions extends sfActions
       // indien bestemmeling een communicatie target is (zie settings.yml)
       if ($this->is_target) {
         $c = new Criteria();
+        $c->add(BriefTemplatePeer::GEARCHIVEERD, 0);
         $c->add(BriefTemplatePeer::BESTEMMELING_CLASSES, '%|' . $this->bestemmelingenClass . '|%', Criteria::LIKE);
         $this->brief_templates = BriefTemplatePeer::getSorted($c);
       } else {
