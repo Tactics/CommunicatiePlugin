@@ -898,6 +898,8 @@ class ttCommunicatieActions extends sfActions
    */
   private function mergeAttachements($attachements)
   {
+    ini_set('memory_limit','2000M');
+
     $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
     $filelocation = $tmp_dir . DIRECTORY_SEPARATOR . 'bijlagen.pdf';
 
