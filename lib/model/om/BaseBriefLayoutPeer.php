@@ -130,6 +130,7 @@ abstract class BaseBriefLayoutPeer {
 	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -142,12 +143,13 @@ abstract class BaseBriefLayoutPeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
 	 *                      One of the class type constants TYPE_PHPNAME,
 	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @return     array A list of field names
+	 * @return     mixed[string] A list of field names
+	 * @throws     PropelException
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
@@ -182,36 +184,73 @@ abstract class BaseBriefLayoutPeer {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      criteria object containing the columns to add.
+	 * @param      Criteria $criteria object containing the columns to add.
+	 * @param      string $alias
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefLayoutPeer::ID);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::ID)
+		  : BriefLayoutPeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::CATEGORIE);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::CATEGORIE)
+		  : BriefLayoutPeer::CATEGORIE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::NAAM);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::NAAM)
+		  : BriefLayoutPeer::NAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::PRINT_BESTAND);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::PRINT_BESTAND)
+		  : BriefLayoutPeer::PRINT_BESTAND;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::MAIL_BESTAND);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::MAIL_BESTAND)
+		  : BriefLayoutPeer::MAIL_BESTAND;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::PRINT_STYLESHEETS);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::PRINT_STYLESHEETS)
+		  : BriefLayoutPeer::PRINT_STYLESHEETS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::MAIL_STYLESHEETS);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::MAIL_STYLESHEETS)
+		  : BriefLayoutPeer::MAIL_STYLESHEETS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::VERTAALD);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::VERTAALD)
+		  : BriefLayoutPeer::VERTAALD;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::CREATED_BY)
+		  : BriefLayoutPeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::UPDATED_BY)
+		  : BriefLayoutPeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::CREATED_AT)
+		  : BriefLayoutPeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefLayoutPeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefLayoutPeer::alias($alias, BriefLayoutPeer::UPDATED_AT)
+		  : BriefLayoutPeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -277,7 +316,7 @@ abstract class BaseBriefLayoutPeer {
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      Connection $con
-	 * @return     array Array of selected Objects
+	 * @return     BriefLayout[] Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -328,6 +367,8 @@ abstract class BaseBriefLayoutPeer {
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
 	 *
+	 * @param      Resultset $rs
+	 * @return     BriefLayout[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -341,6 +382,7 @@ abstract class BaseBriefLayoutPeer {
 		// populate the object(s)
 		while($rs->next()) {
 		
+			/** @var BriefLayout $obj */
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -488,7 +530,9 @@ abstract class BaseBriefLayoutPeer {
 	/**
 	 * Method to DELETE all rows from the brief_layout table.
 	 *
+	 * @param      Connection $con
 	 * @return     int The number of affected rows (if supported by underlying database driver).
+	 * @throws     PropelException
 	 */
 	public static function doDeleteAll($con = null)
 	{
@@ -563,12 +607,12 @@ abstract class BaseBriefLayoutPeer {
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      BriefLayout $obj The object to validate.
+	 * @param      BaseBriefLayout $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(BriefLayout $obj, $cols = null)
+	public static function doValidate(BaseBriefLayout $obj, $cols = null)
 	{
 		$columns = array();
 
@@ -621,6 +665,7 @@ abstract class BaseBriefLayoutPeer {
 	 *
 	 * @param      array $pks List of primary keys
 	 * @param      Connection $con the connection to use
+	 * @return     BriefLayout[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */

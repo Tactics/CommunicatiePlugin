@@ -145,6 +145,7 @@ abstract class BaseBriefVerzondenPeer {
 	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -157,12 +158,13 @@ abstract class BaseBriefVerzondenPeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
 	 *                      One of the class type constants TYPE_PHPNAME,
 	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @return     array A list of field names
+	 * @return     mixed[string] A list of field names
+	 * @throws     PropelException
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
@@ -197,46 +199,98 @@ abstract class BaseBriefVerzondenPeer {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      criteria object containing the columns to add.
+	 * @param      Criteria $criteria object containing the columns to add.
+	 * @param      string $alias
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::ID);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::ID)
+		  : BriefVerzondenPeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_CLASS);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_CLASS)
+		  : BriefVerzondenPeer::OBJECT_CLASS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_ID);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_ID)
+		  : BriefVerzondenPeer::OBJECT_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING)
+		  : BriefVerzondenPeer::OBJECT_CLASS_BESTEMMELING;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::OBJECT_ID_BESTEMMELING);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::OBJECT_ID_BESTEMMELING)
+		  : BriefVerzondenPeer::OBJECT_ID_BESTEMMELING;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::BRIEF_TEMPLATE_ID);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::BRIEF_TEMPLATE_ID)
+		  : BriefVerzondenPeer::BRIEF_TEMPLATE_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::ONDERWERP);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::ONDERWERP)
+		  : BriefVerzondenPeer::ONDERWERP;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::HTML);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::HTML)
+		  : BriefVerzondenPeer::HTML;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::MEDIUM);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::MEDIUM)
+		  : BriefVerzondenPeer::MEDIUM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::ADRES);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::ADRES)
+		  : BriefVerzondenPeer::ADRES;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CUSTOM);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CUSTOM)
+		  : BriefVerzondenPeer::CUSTOM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CULTURE);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CULTURE)
+		  : BriefVerzondenPeer::CULTURE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::STATUS);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::STATUS)
+		  : BriefVerzondenPeer::STATUS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CREATED_BY)
+		  : BriefVerzondenPeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::UPDATED_BY)
+		  : BriefVerzondenPeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::CREATED_AT)
+		  : BriefVerzondenPeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefVerzondenPeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefVerzondenPeer::alias($alias, BriefVerzondenPeer::UPDATED_AT)
+		  : BriefVerzondenPeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -302,7 +356,7 @@ abstract class BaseBriefVerzondenPeer {
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      Connection $con
-	 * @return     array Array of selected Objects
+	 * @return     BriefVerzonden[] Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -353,6 +407,8 @@ abstract class BaseBriefVerzondenPeer {
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
 	 *
+	 * @param      Resultset $rs
+	 * @return     BriefVerzonden[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -366,6 +422,7 @@ abstract class BaseBriefVerzondenPeer {
 		// populate the object(s)
 		while($rs->next()) {
 		
+			/** @var BriefVerzonden $obj */
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -377,7 +434,7 @@ abstract class BaseBriefVerzondenPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related BriefTemplate table
 	 *
-	 * @param      Criteria $c
+	 * @param      Criteria $criteria
 	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
 	 * @param      Connection $con
 	 * @return     int Number of matching rows.
@@ -416,7 +473,9 @@ abstract class BaseBriefVerzondenPeer {
 	/**
 	 * Selects a collection of BriefVerzonden objects pre-filled with their BriefTemplate objects.
 	 *
-	 * @return     array Array of BriefVerzonden objects.
+	 * @param      Criteria $c
+	 * @param      Connection $con
+	 * @return     BriefVerzonden[] array Array of BriefVerzonden objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -431,9 +490,10 @@ abstract class BaseBriefVerzondenPeer {
 
 		BriefVerzondenPeer::addSelectColumns($c);
 		$startcol = (BriefVerzondenPeer::NUM_COLUMNS - BriefVerzondenPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
 		BriefTemplatePeer::addSelectColumns($c);
 
-		$c->addJoin(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+		$c->addJoin(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID, Criteria::JOIN);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -441,17 +501,20 @@ abstract class BaseBriefVerzondenPeer {
 
 			$omClass = BriefVerzondenPeer::getOMClass();
 
+			/** @var BriefVerzonden $obj1 */
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
+			/** @var BriefTemplate $obj2 */
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol);
 
 			$newObject = true;
+			/** @var BriefVerzonden $temp_obj1 */
 			foreach($results as $temp_obj1) {
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); //CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
@@ -474,7 +537,7 @@ abstract class BaseBriefVerzondenPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param      Criteria $c
+	 * @param      Criteria $criteria
 	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
 	 * @param      Connection $con
 	 * @return     int Number of matching rows.
@@ -512,7 +575,9 @@ abstract class BaseBriefVerzondenPeer {
 	/**
 	 * Selects a collection of BriefVerzonden objects pre-filled with all related objects.
 	 *
-	 * @return     array Array of BriefVerzonden objects.
+	 * @param      Criteria $c
+	 * @param      Connection $con
+	 * @return     BriefVerzonden[] array Array of BriefVerzonden objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -540,7 +605,7 @@ abstract class BaseBriefVerzondenPeer {
 
 			$omClass = BriefVerzondenPeer::getOMClass();
 
-
+            /** @var BriefVerzonden $obj1 */
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
@@ -550,13 +615,14 @@ abstract class BaseBriefVerzondenPeer {
 	
 			$omClass = BriefTemplatePeer::getOMClass();
 
-
+            /** @var BriefTemplate $obj2 */
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol2);
 
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+			    /** @var BriefVerzonden $temp_obj1 */
 				$temp_obj1 = $results[$j];
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); // CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
@@ -716,7 +782,9 @@ abstract class BaseBriefVerzondenPeer {
 	/**
 	 * Method to DELETE all rows from the brief_verzonden table.
 	 *
+	 * @param      Connection $con
 	 * @return     int The number of affected rows (if supported by underlying database driver).
+	 * @throws     PropelException
 	 */
 	public static function doDeleteAll($con = null)
 	{
@@ -791,12 +859,12 @@ abstract class BaseBriefVerzondenPeer {
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      BriefVerzonden $obj The object to validate.
+	 * @param      BaseBriefVerzonden $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(BriefVerzonden $obj, $cols = null)
+	public static function doValidate(BaseBriefVerzonden $obj, $cols = null)
 	{
 		$columns = array();
 
@@ -849,6 +917,7 @@ abstract class BaseBriefVerzondenPeer {
 	 *
 	 * @param      array $pks List of primary keys
 	 * @param      Connection $con the connection to use
+	 * @return     BriefVerzonden[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */

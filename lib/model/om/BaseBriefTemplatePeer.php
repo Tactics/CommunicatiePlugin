@@ -19,7 +19,7 @@ abstract class BaseBriefTemplatePeer {
 	const CLASS_DEFAULT = 'plugins.ttCommunicatiePlugin.lib.model.BriefTemplate';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 17;
+	const NUM_COLUMNS = 18;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -64,6 +64,9 @@ abstract class BaseBriefTemplatePeer {
 	/** the column name for the BEWERKBAAR field */
 	const BEWERKBAAR = 'brief_template.BEWERKBAAR';
 
+	/** the column name for the WEERGAVE_BEVEILIGD field */
+	const WEERGAVE_BEVEILIGD = 'brief_template.WEERGAVE_BEVEILIGD';
+
 	/** the column name for the CREATED_BY field */
 	const CREATED_BY = 'brief_template.CREATED_BY';
 
@@ -87,10 +90,10 @@ abstract class BaseBriefTemplatePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'Categorie', 'BriefLayoutId', 'Onderwerp', 'Naam', 'Type', 'BestemmelingClasses', 'Html', 'EenmaligVersturen', 'Systeemnaam', 'Systeemplaceholders', 'Gearchiveerd', 'Bewerkbaar', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
-		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID, BriefTemplatePeer::CATEGORIE, BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefTemplatePeer::ONDERWERP, BriefTemplatePeer::NAAM, BriefTemplatePeer::TYPE, BriefTemplatePeer::BESTEMMELING_CLASSES, BriefTemplatePeer::HTML, BriefTemplatePeer::EENMALIG_VERSTUREN, BriefTemplatePeer::SYSTEEMNAAM, BriefTemplatePeer::SYSTEEMPLACEHOLDERS, BriefTemplatePeer::GEARCHIVEERD, BriefTemplatePeer::BEWERKBAAR, BriefTemplatePeer::CREATED_BY, BriefTemplatePeer::UPDATED_BY, BriefTemplatePeer::CREATED_AT, BriefTemplatePeer::UPDATED_AT, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'categorie', 'brief_layout_id', 'onderwerp', 'naam', 'type', 'bestemmeling_classes', 'html', 'eenmalig_versturen', 'systeemnaam', 'systeemplaceholders', 'gearchiveerd', 'bewerkbaar', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'Categorie', 'BriefLayoutId', 'Onderwerp', 'Naam', 'Type', 'BestemmelingClasses', 'Html', 'EenmaligVersturen', 'Systeemnaam', 'Systeemplaceholders', 'Gearchiveerd', 'Bewerkbaar', 'WeergaveBeveiligd', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
+		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID, BriefTemplatePeer::CATEGORIE, BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefTemplatePeer::ONDERWERP, BriefTemplatePeer::NAAM, BriefTemplatePeer::TYPE, BriefTemplatePeer::BESTEMMELING_CLASSES, BriefTemplatePeer::HTML, BriefTemplatePeer::EENMALIG_VERSTUREN, BriefTemplatePeer::SYSTEEMNAAM, BriefTemplatePeer::SYSTEEMPLACEHOLDERS, BriefTemplatePeer::GEARCHIVEERD, BriefTemplatePeer::BEWERKBAAR, BriefTemplatePeer::WEERGAVE_BEVEILIGD, BriefTemplatePeer::CREATED_BY, BriefTemplatePeer::UPDATED_BY, BriefTemplatePeer::CREATED_AT, BriefTemplatePeer::UPDATED_AT, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'categorie', 'brief_layout_id', 'onderwerp', 'naam', 'type', 'bestemmeling_classes', 'html', 'eenmalig_versturen', 'systeemnaam', 'systeemplaceholders', 'gearchiveerd', 'bewerkbaar', 'weergave_beveiligd', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -100,10 +103,10 @@ abstract class BaseBriefTemplatePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Categorie' => 1, 'BriefLayoutId' => 2, 'Onderwerp' => 3, 'Naam' => 4, 'Type' => 5, 'BestemmelingClasses' => 6, 'Html' => 7, 'EenmaligVersturen' => 8, 'Systeemnaam' => 9, 'Systeemplaceholders' => 10, 'Gearchiveerd' => 11, 'Bewerkbaar' => 12, 'CreatedBy' => 13, 'UpdatedBy' => 14, 'CreatedAt' => 15, 'UpdatedAt' => 16, ),
-		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID => 0, BriefTemplatePeer::CATEGORIE => 1, BriefTemplatePeer::BRIEF_LAYOUT_ID => 2, BriefTemplatePeer::ONDERWERP => 3, BriefTemplatePeer::NAAM => 4, BriefTemplatePeer::TYPE => 5, BriefTemplatePeer::BESTEMMELING_CLASSES => 6, BriefTemplatePeer::HTML => 7, BriefTemplatePeer::EENMALIG_VERSTUREN => 8, BriefTemplatePeer::SYSTEEMNAAM => 9, BriefTemplatePeer::SYSTEEMPLACEHOLDERS => 10, BriefTemplatePeer::GEARCHIVEERD => 11, BriefTemplatePeer::BEWERKBAAR => 12, BriefTemplatePeer::CREATED_BY => 13, BriefTemplatePeer::UPDATED_BY => 14, BriefTemplatePeer::CREATED_AT => 15, BriefTemplatePeer::UPDATED_AT => 16, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'categorie' => 1, 'brief_layout_id' => 2, 'onderwerp' => 3, 'naam' => 4, 'type' => 5, 'bestemmeling_classes' => 6, 'html' => 7, 'eenmalig_versturen' => 8, 'systeemnaam' => 9, 'systeemplaceholders' => 10, 'gearchiveerd' => 11, 'bewerkbaar' => 12, 'created_by' => 13, 'updated_by' => 14, 'created_at' => 15, 'updated_at' => 16, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Categorie' => 1, 'BriefLayoutId' => 2, 'Onderwerp' => 3, 'Naam' => 4, 'Type' => 5, 'BestemmelingClasses' => 6, 'Html' => 7, 'EenmaligVersturen' => 8, 'Systeemnaam' => 9, 'Systeemplaceholders' => 10, 'Gearchiveerd' => 11, 'Bewerkbaar' => 12, 'WeergaveBeveiligd' => 13, 'CreatedBy' => 14, 'UpdatedBy' => 15, 'CreatedAt' => 16, 'UpdatedAt' => 17, ),
+		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID => 0, BriefTemplatePeer::CATEGORIE => 1, BriefTemplatePeer::BRIEF_LAYOUT_ID => 2, BriefTemplatePeer::ONDERWERP => 3, BriefTemplatePeer::NAAM => 4, BriefTemplatePeer::TYPE => 5, BriefTemplatePeer::BESTEMMELING_CLASSES => 6, BriefTemplatePeer::HTML => 7, BriefTemplatePeer::EENMALIG_VERSTUREN => 8, BriefTemplatePeer::SYSTEEMNAAM => 9, BriefTemplatePeer::SYSTEEMPLACEHOLDERS => 10, BriefTemplatePeer::GEARCHIVEERD => 11, BriefTemplatePeer::BEWERKBAAR => 12, BriefTemplatePeer::WEERGAVE_BEVEILIGD => 13, BriefTemplatePeer::CREATED_BY => 14, BriefTemplatePeer::UPDATED_BY => 15, BriefTemplatePeer::CREATED_AT => 16, BriefTemplatePeer::UPDATED_AT => 17, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'categorie' => 1, 'brief_layout_id' => 2, 'onderwerp' => 3, 'naam' => 4, 'type' => 5, 'bestemmeling_classes' => 6, 'html' => 7, 'eenmalig_versturen' => 8, 'systeemnaam' => 9, 'systeemplaceholders' => 10, 'gearchiveerd' => 11, 'bewerkbaar' => 12, 'weergave_beveiligd' => 13, 'created_by' => 14, 'updated_by' => 15, 'created_at' => 16, 'updated_at' => 17, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -145,6 +148,7 @@ abstract class BaseBriefTemplatePeer {
 	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -157,12 +161,13 @@ abstract class BaseBriefTemplatePeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
 	 *                      One of the class type constants TYPE_PHPNAME,
 	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @return     array A list of field names
+	 * @return     mixed[string] A list of field names
+	 * @throws     PropelException
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
@@ -197,46 +202,103 @@ abstract class BaseBriefTemplatePeer {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      criteria object containing the columns to add.
+	 * @param      Criteria $criteria object containing the columns to add.
+	 * @param      string $alias
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefTemplatePeer::ID);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::ID)
+		  : BriefTemplatePeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CATEGORIE);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CATEGORIE)
+		  : BriefTemplatePeer::CATEGORIE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::BRIEF_LAYOUT_ID);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::BRIEF_LAYOUT_ID)
+		  : BriefTemplatePeer::BRIEF_LAYOUT_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::ONDERWERP);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::ONDERWERP)
+		  : BriefTemplatePeer::ONDERWERP;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::NAAM);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::NAAM)
+		  : BriefTemplatePeer::NAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::TYPE);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::TYPE)
+		  : BriefTemplatePeer::TYPE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::BESTEMMELING_CLASSES);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::BESTEMMELING_CLASSES)
+		  : BriefTemplatePeer::BESTEMMELING_CLASSES;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::HTML);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::HTML)
+		  : BriefTemplatePeer::HTML;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::EENMALIG_VERSTUREN);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::EENMALIG_VERSTUREN)
+		  : BriefTemplatePeer::EENMALIG_VERSTUREN;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::SYSTEEMNAAM);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::SYSTEEMNAAM)
+		  : BriefTemplatePeer::SYSTEEMNAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::SYSTEEMPLACEHOLDERS);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::SYSTEEMPLACEHOLDERS)
+		  : BriefTemplatePeer::SYSTEEMPLACEHOLDERS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::GEARCHIVEERD);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::GEARCHIVEERD)
+		  : BriefTemplatePeer::GEARCHIVEERD;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::BEWERKBAAR);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::BEWERKBAAR)
+		  : BriefTemplatePeer::BEWERKBAAR;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::WEERGAVE_BEVEILIGD)
+		  : BriefTemplatePeer::WEERGAVE_BEVEILIGD;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CREATED_BY)
+		  : BriefTemplatePeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::UPDATED_BY)
+		  : BriefTemplatePeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CREATED_AT)
+		  : BriefTemplatePeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
+
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::UPDATED_AT)
+		  : BriefTemplatePeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -302,7 +364,7 @@ abstract class BaseBriefTemplatePeer {
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      Connection $con
-	 * @return     array Array of selected Objects
+	 * @return     BriefTemplate[] Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -353,6 +415,8 @@ abstract class BaseBriefTemplatePeer {
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
 	 *
+	 * @param      Resultset $rs
+	 * @return     BriefTemplate[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -366,6 +430,7 @@ abstract class BaseBriefTemplatePeer {
 		// populate the object(s)
 		while($rs->next()) {
 		
+			/** @var BriefTemplate $obj */
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -377,7 +442,7 @@ abstract class BaseBriefTemplatePeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related BriefLayout table
 	 *
-	 * @param      Criteria $c
+	 * @param      Criteria $criteria
 	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
 	 * @param      Connection $con
 	 * @return     int Number of matching rows.
@@ -416,7 +481,9 @@ abstract class BaseBriefTemplatePeer {
 	/**
 	 * Selects a collection of BriefTemplate objects pre-filled with their BriefLayout objects.
 	 *
-	 * @return     array Array of BriefTemplate objects.
+	 * @param      Criteria $c
+	 * @param      Connection $con
+	 * @return     BriefTemplate[] array Array of BriefTemplate objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -431,9 +498,10 @@ abstract class BaseBriefTemplatePeer {
 
 		BriefTemplatePeer::addSelectColumns($c);
 		$startcol = (BriefTemplatePeer::NUM_COLUMNS - BriefTemplatePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
 		BriefLayoutPeer::addSelectColumns($c);
 
-		$c->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID);
+		$c->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID, Criteria::JOIN);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -441,17 +509,20 @@ abstract class BaseBriefTemplatePeer {
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
+			/** @var BriefTemplate $obj1 */
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
 			$omClass = BriefLayoutPeer::getOMClass();
 
+			/** @var BriefLayout $obj2 */
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol);
 
 			$newObject = true;
+			/** @var BriefTemplate $temp_obj1 */
 			foreach($results as $temp_obj1) {
 				$temp_obj2 = $temp_obj1->getBriefLayout(); //CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
@@ -474,7 +545,7 @@ abstract class BaseBriefTemplatePeer {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param      Criteria $c
+	 * @param      Criteria $criteria
 	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
 	 * @param      Connection $con
 	 * @return     int Number of matching rows.
@@ -512,7 +583,9 @@ abstract class BaseBriefTemplatePeer {
 	/**
 	 * Selects a collection of BriefTemplate objects pre-filled with all related objects.
 	 *
-	 * @return     array Array of BriefTemplate objects.
+	 * @param      Criteria $c
+	 * @param      Connection $con
+	 * @return     BriefTemplate[] array Array of BriefTemplate objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -540,7 +613,7 @@ abstract class BaseBriefTemplatePeer {
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
-
+            /** @var BriefTemplate $obj1 */
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
@@ -550,13 +623,14 @@ abstract class BaseBriefTemplatePeer {
 	
 			$omClass = BriefLayoutPeer::getOMClass();
 
-
+            /** @var BriefLayout $obj2 */
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol2);
 
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+			    /** @var BriefTemplate $temp_obj1 */
 				$temp_obj1 = $results[$j];
 				$temp_obj2 = $temp_obj1->getBriefLayout(); // CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
@@ -716,7 +790,9 @@ abstract class BaseBriefTemplatePeer {
 	/**
 	 * Method to DELETE all rows from the brief_template table.
 	 *
+	 * @param      Connection $con
 	 * @return     int The number of affected rows (if supported by underlying database driver).
+	 * @throws     PropelException
 	 */
 	public static function doDeleteAll($con = null)
 	{
@@ -791,12 +867,12 @@ abstract class BaseBriefTemplatePeer {
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      BriefTemplate $obj The object to validate.
+	 * @param      BaseBriefTemplate $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(BriefTemplate $obj, $cols = null)
+	public static function doValidate(BaseBriefTemplate $obj, $cols = null)
 	{
 		$columns = array();
 
@@ -849,6 +925,7 @@ abstract class BaseBriefTemplatePeer {
 	 *
 	 * @param      array $pks List of primary keys
 	 * @param      Connection $con the connection to use
+	 * @return     BriefTemplate[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */

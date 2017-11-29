@@ -111,6 +111,13 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the weergave_beveiligd field.
+	 * @var        int
+	 */
+	protected $weergave_beveiligd = 0;
+
+
+	/**
 	 * The value for the created_by field.
 	 * @var        int
 	 */
@@ -324,6 +331,17 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [weergave_beveiligd] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getWeergaveBeveiligd()
+	{
+
+		return $this->weergave_beveiligd;
+	}
+
+	/**
 	 * Get the [created_by] column value.
 	 * 
 	 * @return     int
@@ -489,7 +507,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->onderwerp !== $v) {
@@ -511,7 +529,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->naam !== $v) {
@@ -533,7 +551,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->type !== $v) {
@@ -555,7 +573,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->bestemmeling_classes !== $v) {
@@ -577,7 +595,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->html !== $v) {
@@ -615,7 +633,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->systeemnaam !== $v) {
@@ -637,7 +655,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->systeemplaceholders !== $v) {
@@ -692,6 +710,28 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	} // setBewerkbaar()
 
 	/**
+	 * Set the value of [weergave_beveiligd] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setWeergaveBeveiligd($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->weergave_beveiligd !== $v || $v === 0) {
+			$this->weergave_beveiligd = $v;
+			$this->modifiedColumns[] = BriefTemplatePeer::WEERGAVE_BEVEILIGD;
+		}
+
+	} // setWeergaveBeveiligd()
+
+	/**
 	 * Set the value of [created_by] column.
 	 * 
 	 * @param      int $v new value
@@ -740,6 +780,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	 * 
 	 * @param      int $v new value
 	 * @return     void
+     * @throws     PropelException
 	 */
 	public function setCreatedAt($v)
 	{
@@ -764,6 +805,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	 * 
 	 * @param      int $v new value
 	 * @return     void
+     * @throws     PropelException
 	 */
 	public function setUpdatedAt($v)
 	{
@@ -826,20 +868,21 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 			$this->bewerkbaar = $rs->getInt($startcol + 12);
 
-			$this->created_by = $rs->getInt($startcol + 13);
+			$this->weergave_beveiligd = $rs->getInt($startcol + 13);
 
-			$this->updated_by = $rs->getInt($startcol + 14);
+			$this->created_by = $rs->getInt($startcol + 14);
 
-			$this->created_at = $rs->getTimestamp($startcol + 15, null);
+			$this->updated_by = $rs->getInt($startcol + 15);
 
-			$this->updated_at = $rs->getTimestamp($startcol + 16, null);
+			$this->created_at = $rs->getTimestamp($startcol + 16, null);
+
+			$this->updated_at = $rs->getTimestamp($startcol + 17, null);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
-			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 17; // 17 = BriefTemplatePeer::NUM_COLUMNS - BriefTemplatePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + BriefTemplatePeer::NUM_COLUMNS - BriefTemplatePeer::NUM_LAZY_LOAD_COLUMNS;
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefTemplate object", $e);
@@ -1184,15 +1227,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				return $this->getBewerkbaar();
 				break;
 			case 13:
-				return $this->getCreatedBy();
+				return $this->getWeergaveBeveiligd();
 				break;
 			case 14:
-				return $this->getUpdatedBy();
+				return $this->getCreatedBy();
 				break;
 			case 15:
-				return $this->getCreatedAt();
+				return $this->getUpdatedBy();
 				break;
 			case 16:
+				return $this->getCreatedAt();
+				break;
+			case 17:
 				return $this->getUpdatedAt();
 				break;
 			default:
@@ -1209,7 +1255,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
 	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @return     an associative array containing the field names (as keys) and field values
+	 * @return     mixed[string] an associative array containing the field names (as keys) and field values
 	 */
 	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
 	{
@@ -1228,10 +1274,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 			$keys[10] => $this->getSysteemplaceholders(),
 			$keys[11] => $this->getGearchiveerd(),
 			$keys[12] => $this->getBewerkbaar(),
-			$keys[13] => $this->getCreatedBy(),
-			$keys[14] => $this->getUpdatedBy(),
-			$keys[15] => $this->getCreatedAt(),
-			$keys[16] => $this->getUpdatedAt(),
+			$keys[13] => $this->getWeergaveBeveiligd(),
+			$keys[14] => $this->getCreatedBy(),
+			$keys[15] => $this->getUpdatedBy(),
+			$keys[16] => $this->getCreatedAt(),
+			$keys[17] => $this->getUpdatedAt(),
 		);
 		return $result;
 	}
@@ -1249,7 +1296,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = BriefTemplatePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->setByPosition($pos, $value);
+		$this->setByPosition($pos, $value);
 	}
 
 	/**
@@ -1303,15 +1350,18 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 				$this->setBewerkbaar($value);
 				break;
 			case 13:
-				$this->setCreatedBy($value);
+				$this->setWeergaveBeveiligd($value);
 				break;
 			case 14:
-				$this->setUpdatedBy($value);
+				$this->setCreatedBy($value);
 				break;
 			case 15:
-				$this->setCreatedAt($value);
+				$this->setUpdatedBy($value);
 				break;
 			case 16:
+				$this->setCreatedAt($value);
+				break;
+			case 17:
 				$this->setUpdatedAt($value);
 				break;
 		} // switch()
@@ -1350,10 +1400,11 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[10], $arr)) $this->setSysteemplaceholders($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setGearchiveerd($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setBewerkbaar($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCreatedBy($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setUpdatedBy($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCreatedAt($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setUpdatedAt($arr[$keys[16]]);
+		if (array_key_exists($keys[13], $arr)) $this->setWeergaveBeveiligd($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCreatedBy($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setUpdatedBy($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCreatedAt($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setUpdatedAt($arr[$keys[17]]);
 	}
 
 	/**
@@ -1378,6 +1429,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(BriefTemplatePeer::SYSTEEMPLACEHOLDERS)) $criteria->add(BriefTemplatePeer::SYSTEEMPLACEHOLDERS, $this->systeemplaceholders);
 		if ($this->isColumnModified(BriefTemplatePeer::GEARCHIVEERD)) $criteria->add(BriefTemplatePeer::GEARCHIVEERD, $this->gearchiveerd);
 		if ($this->isColumnModified(BriefTemplatePeer::BEWERKBAAR)) $criteria->add(BriefTemplatePeer::BEWERKBAAR, $this->bewerkbaar);
+		if ($this->isColumnModified(BriefTemplatePeer::WEERGAVE_BEVEILIGD)) $criteria->add(BriefTemplatePeer::WEERGAVE_BEVEILIGD, $this->weergave_beveiligd);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_BY)) $criteria->add(BriefTemplatePeer::CREATED_BY, $this->created_by);
 		if ($this->isColumnModified(BriefTemplatePeer::UPDATED_BY)) $criteria->add(BriefTemplatePeer::UPDATED_BY, $this->updated_by);
 		if ($this->isColumnModified(BriefTemplatePeer::CREATED_AT)) $criteria->add(BriefTemplatePeer::CREATED_AT, $this->created_at);
@@ -1460,6 +1512,8 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 
 		$copyObj->setBewerkbaar($this->bewerkbaar);
 
+		$copyObj->setWeergaveBeveiligd($this->weergave_beveiligd);
+
 		$copyObj->setCreatedBy($this->created_by);
 
 		$copyObj->setUpdatedBy($this->updated_by);
@@ -1532,7 +1586,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	/**
 	 * Declares an association between this object and a BriefLayout object.
 	 *
-	 * @param      BriefLayout $v
+	 * @param      BaseBriefLayout $v
 	 * @return     void
 	 * @throws     PropelException
 	 */
@@ -1554,7 +1608,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	/**
 	 * Get the associated BriefLayout object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      Connection $con Optional Connection object.
 	 * @return     BriefLayout The associated BriefLayout object.
 	 * @throws     PropelException
 	 */
@@ -1604,6 +1658,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	 * @param      Connection $con
 	 * @param      Criteria $criteria
 	 * @throws     PropelException
+	 * @return     BriefVerzonden[] BriefVerzondens
 	 */
 	public function getBriefVerzondens($criteria = null, $con = null)
 	{
@@ -1653,6 +1708,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
 	 * @param      Connection $con
+	 * @return     int The number of BriefVerzondens
 	 * @throws     PropelException
 	 */
 	public function countBriefVerzondens($criteria = null, $distinct = false, $con = null)
@@ -1711,6 +1767,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	 * @param      Connection $con
 	 * @param      Criteria $criteria
 	 * @throws     PropelException
+	 * @return     BriefBijlage[] BriefBijlages
 	 */
 	public function getBriefBijlages($criteria = null, $con = null)
 	{
@@ -1760,6 +1817,7 @@ abstract class BaseBriefTemplate extends BaseObject  implements Persistent {
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
 	 * @param      Connection $con
+	 * @return     int The number of BriefBijlages
 	 * @throws     PropelException
 	 */
 	public function countBriefBijlages($criteria = null, $distinct = false, $con = null)

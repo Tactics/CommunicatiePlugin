@@ -27,3 +27,11 @@ ALTER TABLE brief_verzonden ADD object_id_bestemmeling INT NULL DEFAULT NULL AFT
 -- Toelaten dat sommige templates bewerkbaar zijn
 -- -----------------------------------------------------------------------------
 ALTER TABLE brief_template ADD COLUMN bewerkbaar INT NOT NULL DEFAULT 1;
+
+-- -----------------------------------------------------------------------------
+-- 29/11/2017
+-- Tom De Roo
+--
+-- Toelaten dat de weergave van sommige templates beveiligd kan zijn (= body niet weergeven in show detail, bijvoorbeeld)
+-- -----------------------------------------------------------------------------
+ALTER TABLE brief_template ADD weergave_beveiligd INT NOT NULL DEFAULT 0;

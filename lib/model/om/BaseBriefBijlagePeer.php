@@ -118,6 +118,7 @@ abstract class BaseBriefBijlagePeer {
 	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -130,12 +131,13 @@ abstract class BaseBriefBijlagePeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
 	 *                      One of the class type constants TYPE_PHPNAME,
 	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @return     array A list of field names
+	 * @return     mixed[string] A list of field names
+	 * @throws     PropelException
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
@@ -170,28 +172,53 @@ abstract class BaseBriefBijlagePeer {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      criteria object containing the columns to add.
+	 * @param      Criteria $criteria object containing the columns to add.
+	 * @param      string $alias
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefBijlagePeer::ID);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::ID)
+		  : BriefBijlagePeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::BRIEF_TEMPLATE_ID);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::BRIEF_TEMPLATE_ID)
+		  : BriefBijlagePeer::BRIEF_TEMPLATE_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::BIJLAGE_NODE_ID);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::BIJLAGE_NODE_ID)
+		  : BriefBijlagePeer::BIJLAGE_NODE_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::CULTURE);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::CULTURE)
+		  : BriefBijlagePeer::CULTURE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::CREATED_AT)
+		  : BriefBijlagePeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::UPDATED_AT)
+		  : BriefBijlagePeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::CREATED_BY)
+		  : BriefBijlagePeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefBijlagePeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefBijlagePeer::alias($alias, BriefBijlagePeer::UPDATED_BY)
+		  : BriefBijlagePeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -257,7 +284,7 @@ abstract class BaseBriefBijlagePeer {
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      Connection $con
-	 * @return     array Array of selected Objects
+	 * @return     BriefBijlage[] Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -308,6 +335,8 @@ abstract class BaseBriefBijlagePeer {
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
 	 *
+	 * @param      Resultset $rs
+	 * @return     BriefBijlage[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -321,6 +350,7 @@ abstract class BaseBriefBijlagePeer {
 		// populate the object(s)
 		while($rs->next()) {
 		
+			/** @var BriefBijlage $obj */
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -332,7 +362,7 @@ abstract class BaseBriefBijlagePeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related BriefTemplate table
 	 *
-	 * @param      Criteria $c
+	 * @param      Criteria $criteria
 	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
 	 * @param      Connection $con
 	 * @return     int Number of matching rows.
@@ -371,7 +401,9 @@ abstract class BaseBriefBijlagePeer {
 	/**
 	 * Selects a collection of BriefBijlage objects pre-filled with their BriefTemplate objects.
 	 *
-	 * @return     array Array of BriefBijlage objects.
+	 * @param      Criteria $c
+	 * @param      Connection $con
+	 * @return     BriefBijlage[] array Array of BriefBijlage objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -386,9 +418,10 @@ abstract class BaseBriefBijlagePeer {
 
 		BriefBijlagePeer::addSelectColumns($c);
 		$startcol = (BriefBijlagePeer::NUM_COLUMNS - BriefBijlagePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
 		BriefTemplatePeer::addSelectColumns($c);
 
-		$c->addJoin(BriefBijlagePeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID);
+		$c->addJoin(BriefBijlagePeer::BRIEF_TEMPLATE_ID, BriefTemplatePeer::ID, Criteria::JOIN);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -396,17 +429,20 @@ abstract class BaseBriefBijlagePeer {
 
 			$omClass = BriefBijlagePeer::getOMClass();
 
+			/** @var BriefBijlage $obj1 */
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
+			/** @var BriefTemplate $obj2 */
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol);
 
 			$newObject = true;
+			/** @var BriefBijlage $temp_obj1 */
 			foreach($results as $temp_obj1) {
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); //CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
@@ -429,7 +465,7 @@ abstract class BaseBriefBijlagePeer {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param      Criteria $c
+	 * @param      Criteria $criteria
 	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
 	 * @param      Connection $con
 	 * @return     int Number of matching rows.
@@ -467,7 +503,9 @@ abstract class BaseBriefBijlagePeer {
 	/**
 	 * Selects a collection of BriefBijlage objects pre-filled with all related objects.
 	 *
-	 * @return     array Array of BriefBijlage objects.
+	 * @param      Criteria $c
+	 * @param      Connection $con
+	 * @return     BriefBijlage[] array Array of BriefBijlage objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -495,7 +533,7 @@ abstract class BaseBriefBijlagePeer {
 
 			$omClass = BriefBijlagePeer::getOMClass();
 
-
+            /** @var BriefBijlage $obj1 */
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
@@ -505,13 +543,14 @@ abstract class BaseBriefBijlagePeer {
 	
 			$omClass = BriefTemplatePeer::getOMClass();
 
-
+            /** @var BriefTemplate $obj2 */
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol2);
 
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+			    /** @var BriefBijlage $temp_obj1 */
 				$temp_obj1 = $results[$j];
 				$temp_obj2 = $temp_obj1->getBriefTemplate(); // CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
@@ -671,7 +710,9 @@ abstract class BaseBriefBijlagePeer {
 	/**
 	 * Method to DELETE all rows from the brief_bijlage table.
 	 *
+	 * @param      Connection $con
 	 * @return     int The number of affected rows (if supported by underlying database driver).
+	 * @throws     PropelException
 	 */
 	public static function doDeleteAll($con = null)
 	{
@@ -746,12 +787,12 @@ abstract class BaseBriefBijlagePeer {
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      BriefBijlage $obj The object to validate.
+	 * @param      BaseBriefBijlage $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(BriefBijlage $obj, $cols = null)
+	public static function doValidate(BaseBriefBijlage $obj, $cols = null)
 	{
 		$columns = array();
 
@@ -804,6 +845,7 @@ abstract class BaseBriefBijlagePeer {
 	 *
 	 * @param      array $pks List of primary keys
 	 * @param      Connection $con the connection to use
+	 * @return     BriefBijlage[]
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */

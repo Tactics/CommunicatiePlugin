@@ -15,6 +15,7 @@
     <column name="systeemplaceholders" type="VARCHAR" size="1000"/>
     <column name="gearchiveerd" type="INTEGER" required="true" default="0"/>
     <column name="bewerkbaar" type="INTEGER" required="false" default="1"/>
+    <column name="weergave_beveiligd" type="INTEGER" requried="true" default="0"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>

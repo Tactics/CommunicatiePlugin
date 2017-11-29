@@ -45,6 +45,17 @@ class BriefVerzonden extends BaseBriefVerzonden
       return "Mail kon niet worden verzonden.";
     }
   }
+
+  /**
+   * @return bool
+   */
+  public function isWeergaveBeveiligd()
+  {
+    return $this->getBriefTemplateId()
+      ? (bool) $this->getBriefTemplate()->getWeergaveBeveiligd()
+      : false
+    ;
+  }
 }
 
 sfPropelBehavior::add('BriefVerzonden', array('updater_loggable'));
