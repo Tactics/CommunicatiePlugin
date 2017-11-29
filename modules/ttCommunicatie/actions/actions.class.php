@@ -356,6 +356,10 @@ class ttCommunicatieActions extends sfActions
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
 
     $brief_template->save();
+    // Als de brieftemplate beveiligde weergave heeft, clean alle briefVerzondens van die template
+    if ($brief_template->getWeergaveBeveiligd()) {
+      BriefVerzondenPeer::cleanHtmlForWeergaveBeveiligd($brief_template);
+    }
 
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     $defaultCulture = BriefTemplatePeer::getDefaultCulture();

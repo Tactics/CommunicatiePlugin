@@ -285,6 +285,7 @@ function showPlaceholders($placeholders)
       <th>Beveiligde weergave:</th>
       <td>
         <?php echo select_tag('weergave_beveiligd', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getWeergaveBeveiligd())); ?>
+        <span id="weergave_beveiligd_waarschuwing"><strong>Opgelet!</strong> Bij beveiligde weergave wordt de inhoud van deze brief niet opgeslaan in de logs. De inhoud van bestaande logs voor dit sjabloon zal worden leeggemaakt.</span>
       </td>
     </tr>
     <tr>
@@ -330,5 +331,14 @@ function showPlaceholders($placeholders)
     $('#tabs a').click(function(){
       $('#language_label').val($(this).attr('title'));
     }).click();
+
+    // Toggle de waarschuwing voor beveiligde weergave
+    $('#weergave_beveiligd').change(function(){
+      if ($(this).val() === '1') {
+        $('#weergave_beveiligd_waarschuwing').show();
+      } else {
+        $('#weergave_beveiligd_waarschuwing').hide();
+      }
+    }).change();
   });
 </script>

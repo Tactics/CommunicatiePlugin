@@ -17,6 +17,8 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
   const STATUS_VERZONDEN = 'verzonden';
   const STATUS_NT_VERZONDEN = 'niet verzonden';
 
+  const WEERGAVE_BEVEILIGD_TEKST = 'De inhoud van deze brief/mail bevat gevoelige informatie en wordt niet getoond';
+
   /**
    * @return array
    */
@@ -41,4 +43,15 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
     );
   }
 
+  /**
+   * @param BriefTemplate $briefTemplate
+   */
+  public static function cleanHtmlForWeergaveBeveiligd(BriefTemplate $briefTemplate)
+  {
+    set_time_limit(0);
+    $sql = "UPDATE " . self::TABLE_NAME . " SET " . self::HTML . " = '" . self::WEERGAVE_BEVEILIGD_TEKST
+      . "' WHERE " . self::BRIEF_TEMPLATE_ID . " = " . $briefTemplate->getId()
+    ;
+    myDbTools::executeSql($sql);
+  }
 }

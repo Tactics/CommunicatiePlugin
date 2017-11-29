@@ -63,20 +63,25 @@
                         )
                       );
 
-
-    foreach($pager->getResults() as $briefVerzonden)
+    /** @var BriefVerzonden $briefVerzonden */
+  foreach($pager->getResults() as $briefVerzonden)
     {
+      $actions = array(
+        'bekijken' => link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');'),
+      );
+      if ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false) {
+        $actions['herzenden'] = $briefVerzonden->isWeergaveBeveiligd()
+          ? image_tag('/ttCommunicatie/images/icons/email.verzenden.disabled.png', array('style' => 'height: 16px; width: 16px', 'title' => 'Mail met beveiligde inhoud kan niet worden herzonden'))
+          : link_to_function(image_tag('/ttCommunicatie/images/icons/email.verzenden.png', array('style' => 'height: 16px; width: 16px', 'title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});")
+        ;
+      }
       $table->addRow(
         array(
           $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
           $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
           format_date($briefVerzonden->getCreatedAt(), 'f'),
           $briefVerzonden->getOnderwerp(),
-          link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' . 
-          ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ? 
-            link_to_function(image_tag('/ttCommunicatie/images/icons/mail_16.gif', array('title' => 'Mail herzenden')), "herzendEmail({$briefVerzonden->getId()});") : 
-            ''
-          )
+          implode('&nbsp;', $actions),
         )
       );
     }
