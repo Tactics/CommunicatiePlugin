@@ -351,6 +351,7 @@ class ttCommunicatieActions extends sfActions
       $brief_template->setBestemmelingArray($this->getRequestParameter('classes'));
     }
     $brief_template->setBewerkbaar($this->getRequestParameter('bewerkbaar', 0));
+    $brief_template->setWeergaveBeveiligd($this->getRequestParameter('weergave_beveiligd', 0));
     $brief_template->setBriefLayoutId($this->getRequestParameter('brief_layout_id'));
     $brief_template->setEenmaligVersturen($this->getRequestParameter('eenmalig_versturen', 0));
 

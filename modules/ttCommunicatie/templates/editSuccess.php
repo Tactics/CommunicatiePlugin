@@ -282,6 +282,12 @@ function showPlaceholders($placeholders)
       </td>
     </tr>
     <tr>
+      <th>Beveiligde weergave:</th>
+      <td>
+        <?php echo select_tag('weergave_beveiligd', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getWeergaveBeveiligd())); ?>
+      </td>
+    </tr>
+    <tr>
       <th>Slechts eenmalig versturen:</th>
       <td>        
         <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getEenmaligVersturen())); ?>
