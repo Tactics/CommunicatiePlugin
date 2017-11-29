@@ -25,6 +25,10 @@ class BriefVerzonden extends BaseBriefVerzonden
    */
   public function herzendEmail()
   {
+    if ($this->isWeergaveBeveiligd()) {
+      return 'Mail met beveiligde inhoud kan niet opnieuw worden verzonden.';
+    }
+
     try {
       BerichtPeer::verstuurEmail($this->getAdres(), $this->getHtml(), array(
         'onderwerp' => $this->getOnderwerp(),
@@ -44,6 +48,27 @@ class BriefVerzonden extends BaseBriefVerzonden
     {
       return "Mail kon niet worden verzonden.";
     }
+  }
+
+  /**
+   * @param string $v
+   */
+  public function setHtml($v)
+  {
+    // Als de weergave van deze brief beveiligd is, gaan we de inhoud niet loggen
+    if ($this->isWeergaveBeveiligd()) $v = BriefVerzondenPeer::WEERGAVE_BEVEILIGD_TEKST;
+    parent::setHtml($v);
+  }
+
+  /**
+   * @return bool
+   */
+  public function isWeergaveBeveiligd()
+  {
+    return $this->getBriefTemplateId()
+      ? (bool) $this->getBriefTemplate()->getWeergaveBeveiligd()
+      : false
+    ;
   }
 }
 
