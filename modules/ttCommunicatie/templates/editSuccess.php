@@ -122,8 +122,8 @@
   function bijlageToevoegen()
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
-    var  str = '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '">';
-    
+    var  str = '<input id="new_brief_bijlage' + cnt + '" type="file" value="" class="new_brief_bijlages" name="new_brief_bijlage' + cnt + '">';
+
     jQuery('a.bijlage_toevoegen').before(str);
     jQuery('a.bijlage_toevoegen').before('<br />');
   }
