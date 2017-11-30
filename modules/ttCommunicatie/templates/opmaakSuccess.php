@@ -1,8 +1,8 @@
 <?php
 // recursieve functie om alle placeholders weer te geven
 function showPlaceholders($placeholders)
-{   
-  echo '<ul>';                            
+{
+  echo '<ul>';
   foreach($placeholders as $id => $placeholder)
   {
     if (is_array($placeholder))
@@ -14,9 +14,9 @@ function showPlaceholders($placeholders)
     else
     {
       echo '<li class="placeholder">' . link_to_function($placeholder, 'insertPlaceholder("' . $placeholder . '");') . '</li>';
-    } 
-  }    
-  echo '</ul>';                            
+    }
+  }
+  echo '</ul>';
 }
 ?>
 
@@ -51,11 +51,11 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     <?php if ($choose_template) : ?>
       <tr>
         <th>Sjabloon:</th>
-        <td><?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null)); ?></td>
-      </tr>      
+        <td><?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam', null, ['include_blank' => true])); ?></td>
+      </tr>
     <?php endif; ?>
 
-    <?php if ($bestemmelingen_aantal === 1) :      
+    <?php if ($bestemmelingen_aantal === 1) :
       $emailTo = $bestemmeling->getEmailTo();
       $emailCc = $bestemmeling->getEmailCc(true);
       $emailBcc = $bestemmeling->getEmailBcc(true);
@@ -75,12 +75,12 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
         <th>Bcc:</th>
         <td><?php echo input_tag('email_bcc', $emailBcc, array('size' => 80)); ?></td>
       </tr>
-    <?php else : ?>       
+    <?php else : ?>
       <tr>
         <th>Aantal bestemmelingen:</th>
         <td>
           <span id="record-count"><?php echo $bestemmelingen_aantal; ?></span>
-          <?php           
+          <?php
             if ($show_bestemmelingen)
             {
               echo '(' . link_to_function('Toon lijst', 'showDialog("#dialog-bestemmelingen");') . ')';
@@ -215,7 +215,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 
 <script type="text/javascript">
   var submitBtn = null;
-  
+
   function insertPlaceholder(placeholder)
   {
     tinyMCE.execCommand('mceInsertContent', null, '%' + placeholder + '%');
@@ -240,7 +240,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
       var input = $("<input>").attr("type", "hidden").attr("name", "commit").val(commit);
       jQuery(document.forms['print']).append($(input));
       tinyMCE.triggerSave(); //!important do not remove
-      
+
       // build "multipart/form-data".
       var formEl = document.getElementById("opmaakForm");
       var formData = new FormData(formEl);
@@ -250,7 +250,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
         type: 'POST',
         contentType: false,
         processData: false,
-        data: formData,        
+        data: formData,
         success: function(html)
         {
           jQuery("#mailWindow").tt_window({width:'700px'});
@@ -272,8 +272,8 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   {
     jQuery(dialog).tt_window();
     jQuery('div.close').remove();
-  }    
-    
+  }
+
   function countBestemmelingen()
   {
     var aantal = jQuery('input.bestemmeling:checked').length;
@@ -291,7 +291,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
   jQuery(function($){
     // language tabs initialiseren
     $('#tabs').tt_tabs();
-    
+
     tinyMCE.init({
       selector: "textarea",
       width : "600",
@@ -312,7 +312,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     $('form[name=print]').on('click', 'input[type=submit]', function(){
       submitBtn = this;
     });
-    
+
     $('form[name="print"]').on('submit', function(){
       var type = $(submitBtn).data('type');
       if (type) // voorbeelden hebben geen data-type attrib en worden sowieso gesubmit
@@ -323,10 +323,10 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           return false;
         }
       }
-    }); 
-    
+    });
+
     <?php if ($choose_template): ?>
-    // Laad template na selectie    
+    // Laad template na selectie
     $('#template_id').change(function(){
       if ($(this).val())
       {
@@ -334,7 +334,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           var cultures  = data.cultures;
           var html      = data.html;
           var onderwerp = data.onderwerp;
-          
+
           //console.info(cultures);
           $(cultures).each(function(i, culture){
             var h = html[culture];
@@ -364,7 +364,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           }
         });
       }
-    }).change();  
+    }).change();
     <?php endif; ?>
   });
 
