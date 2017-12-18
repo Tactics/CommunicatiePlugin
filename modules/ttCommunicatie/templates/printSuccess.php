@@ -23,7 +23,7 @@
     {
       if ($aantal_brieven > 0)
       {
-        echo "\n\n<div style=\"page-break-before: always\"></div>\n\n";
+        echo "\n\n<div class=\"page-break-before\" style=\"page-break-before: always\"></div>\n\n";
       }
 
       if (isset($rs))
