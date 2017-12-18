@@ -60,7 +60,7 @@ class ttCommunicatieActions extends sfActions
     $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
     $this->afzender = $this->getUser()->getAttribute('afzender', sfConfig::get("sf_mail_sender"), $this->md5hash);
     $this->choose_afzender = $this->getUser()->getAttribute('choose_afzender', false, $this->md5hash);
-    $this->mogelijke_afzenders = $this->getMogelijkeAfzenders();
+    $this->mogelijke_afzenders = $this->getMogelijkeAfzenders($this->getUser()->getAttribute('prio_eigen_afzender', false, $this->md5hash));
 
     // indien object gegeven, wordt criteria en bestemmelingenClass/Peer enzo niet gebruikt.
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
@@ -1267,9 +1267,13 @@ class ttCommunicatieActions extends sfActions
   /**
    * @return array
    */
-  private function getMogelijkeAfzenders()
+  private function getMogelijkeAfzenders($prioretiseerEigenAfzender = false)
   {
-    $afzenders = array($this->afzender => $this->afzender);
+    $afzenders = array();
+
+    if (! $prioretiseerEigenAfzender) {
+      $afzenders[$this->afzender] = $this->afzender;
+    }
 
     if (method_exists(myUser::class, 'getMogelijkeAfzenders')
         && count($this->getUser()->getMogelijkeAfzenders()))
@@ -1282,6 +1286,10 @@ class ttCommunicatieActions extends sfActions
 
     if ( $email = $this->getUser()->getPersoon()->getEmail())
       $afzenders[$email] = $email;
+
+    if ($prioretiseerEigenAfzender) {
+      $afzenders[$this->afzender] = $this->afzender;
+    }
 
     return $afzenders;
   }
