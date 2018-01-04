@@ -584,7 +584,14 @@ class ttCommunicatieActions extends sfActions
     $this->preExecuteVersturen();
 
     if ($this->show_bestemmelingen) {
-      $this->criteria->addAnd(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $this->getRequestParameter('niet_verzenden_naar', array()), Criteria::NOT_IN);
+      // opbouwen van array met bestemmelingen id's
+      $bestemmelingenArray = array();
+      foreach ($this->getRequestParameter('niet_verzenden_naar', array()) as $stringMetIds) {
+        foreach (explode(',', $stringMetIds) as $id) {
+          $bestemmelingenArray[(int) $id] = (int) $id;
+        }
+      }
+      $this->criteria->addAnd(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $bestemmelingenArray, Criteria::NOT_IN);
     }
 
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
