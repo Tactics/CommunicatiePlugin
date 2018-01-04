@@ -271,13 +271,39 @@ function showPlaceholders($placeholders)
   }
 
   function saveBestemmelingen() {
+    // clear hidden inputs
+    jQuery('input[name="niet_verzenden_naar[]"]').remove();
+
+    // maxLength van string
+    var maxLength = 2000;
+    var counter = 0;
+    var eForm = jQuery('form[name="print"]');
+
     jQuery('input[name="bestemmeling_id"]').each(function() {
       var checked = jQuery(this).is(':checked');
       var bestemmelingId = jQuery(this).val();
 
-      checked
-        ? jQuery('#niet_verzenden_naar_' + bestemmelingId).remove()
-        : jQuery('form[name="print"]').prepend('<input id="niet_verzenden_naar_' + bestemmelingId + '" type="hidden" value="' + bestemmelingId + '" name="niet_verzenden_naar[]">');
+      if (false === checked) {
+        // zoek de huidige container input
+        var currentContainerIdentifier = 'niet_verzenden_naar_' + counter.toString();
+        // als die niet bestaat, aanmaken
+        if (jQuery('input#' + currentContainerIdentifier).length === 0) {
+          eForm.prepend('<input id="' + currentContainerIdentifier + '" type="hidden" value="" name="niet_verzenden_naar[]">');
+        }
+        // inladen
+        var currentContainer = jQuery('input#' + currentContainerIdentifier);
+        // check string length, indien te groot om de id + delimiter toe te voegen, dan nieuwe container maken
+        if ((currentContainer.val().length + bestemmelingId.toString().length + 1) > maxLength) {
+          counter = counter + 1;
+          currentContainerIdentifier = 'niet_verzenden_naar_' + counter.toString();
+          eForm.prepend('<input id="' + currentContainerIdentifier + '" type="hidden" value="" name="niet_verzenden_naar[]">');
+          currentContainer = jQuery('input#' + currentContainerIdentifier);
+        }
+        // id toevoegen aan value
+        var currentContainerValue = currentContainer.val();
+        currentContainerValue = currentContainerValue + (currentContainerValue.length === 0 ? '' : ',') + bestemmelingId.toString();
+        currentContainer.val(currentContainerValue);
+      }
     });
   }
   
