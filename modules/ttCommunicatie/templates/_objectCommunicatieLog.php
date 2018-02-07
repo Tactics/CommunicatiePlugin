@@ -93,7 +93,7 @@
                       $table->addRow(
                         array(
                           $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
-                          $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
+                          $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() . ($briefVerzonden->getCc() ? ' (cc: ' . $briefVerzonden->getCc() . ')' : '') : ' - ',
                           format_date($briefVerzonden->getCreatedAt(), 'f'),
                           $briefVerzonden->getOnderwerp(),
                           (sfConfig::get('sf_style_smartadmin') ?
