@@ -101,12 +101,14 @@ function showPlaceholders($placeholders)
         $emailTo = $object->getMailerRecipientMail();
         $emailCc = '';
         $emailBcc = '';
-        if (method_exists($object, 'getMailerRecipientCC') && ($emailCc = $object->getMailerRecipientCC()))
+        if (method_exists($object, 'getMailerRecipientCC') && ($object->getMailerRecipientCC()))
         {
+          $emailCc = $object->getMailerRecipientCC();
           $emailCc = !empty($emailCc) ? implode(';', $emailCc) : '';
         }
-        if (method_exists($object, 'getMailerRecipientBCC') && ($emailBcc = $object->getMailerRecipientBCC()))
+        if (method_exists($object, 'getMailerRecipientBCC') && ($object->getMailerRecipientBCC()))
         {
+          $emailBcc = $object->getMailerRecipientBCC();
           $emailBcc = !empty($emailBcc) ? implode(';', $emailBcc) : '';
         }
         
