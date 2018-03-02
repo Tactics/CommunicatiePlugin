@@ -5,11 +5,14 @@ all:
 
 printSuccess:
   stylesheets: [-*, /ttCommunicatie/css/screen.css, /ttCommunicatie/css/print.css: {media: print}]
-  
+
+herprintBriefSuccess:
+  stylesheets: [-*, /ttCommunicatie/css/screen.css, /ttCommunicatie/css/print.css: {media: print}]
+
 editSuccess:
   javascripts: [/ttCommunicatie/js/tinymce4/tinymce.min.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js]
   stylesheets: [/ttBase/ui/css/tabs.css]
-  
+
 opmaakSuccess:
   javascripts: [/ttCommunicatie/js/tinymce4/tinymce.min.js, /ttBase/ui/js/tools.tabs-1.0.4.js, /ttBase/ui/js/tabs.js, /ttBase/ui/js/dialog.js, /ttBase/ui/js/tools.overlay-1.1.2.js, /ttBase/ui/js/tools.expose-1.0.5.js]
   stylesheets: [/ttBase/ui/css/tabs.css, /ttBase/ui/css/dialog.css]

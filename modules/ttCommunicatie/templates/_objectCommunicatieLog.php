@@ -99,6 +99,11 @@
                           (sfConfig::get('sf_style_smartadmin') ?
                             link_to_function('<i class="fa fa-search" title="Communicatie bekijken"></i>', 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' :
                             link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;') .
+                          ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_PRINT && $briefVerzonden->getCustom() == false ?
+                            (sfConfig::get('sf_style_smartadmin') ?
+                              link_to('<i class="fa fa-print" title="Brief opnieuw afdrukken"></i>', "ttCommunicatie/herprintBrief?id=".$briefVerzonden->getId(), array('target' => '_blank')) :
+                              link_to(image_tag('/ttCommunicatie/images/icons/printer_16.gif', array('title' => 'Brief opnieuw afdrukken')), "ttCommunicatie/herprintBrief?id=".$briefVerzonden->getId(), array('target' => '_blank'))) :
+                            '') .
                           ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ?
                               (sfConfig::get('sf_style_smartadmin') ?
                                 link_to_function('<i class="fa fa-envelope" title="Mail herzenden"></i>', "herzendEmail({$briefVerzonden->getId()});") :
@@ -147,7 +152,7 @@
   }
 
   function herzendEmail(brief_verzonden_id)
-  { 
+  {
     if (confirm('Bent u zeker dat u deze e-mail wil herzenden?'))
     {
       jQuery.ajax({

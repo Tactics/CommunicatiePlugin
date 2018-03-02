@@ -1129,6 +1129,18 @@ class ttCommunicatieActions extends sfActions
     echo $briefVerzonden->herzendEmail();
     exit();
   }
+  
+  /**
+   * Brief opnieuw afdrukken
+   */
+  public function executeHerprintBrief()
+  {
+    $this->briefVerzonden = BriefVerzondenPeer::retrieveByPk($this->getRequestParameter('id'));
+    $this->forward404Unless($this->briefVerzonden && $this->briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_PRINT);
+  
+    $this->setLayout(false);
+    $this->getResponse()->setTitle('Afdrukken');
+  }
 
   /**
    * Geeft details van één verzonden brief weer

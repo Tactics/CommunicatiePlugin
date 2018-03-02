@@ -18,6 +18,16 @@ class BriefVerzonden extends BaseBriefVerzonden
   {
     return Misc::getObject($this->getObjectClass(), $this->getObjectId());
   }
+  
+  /**
+   * Geeft de instantie weer van het object gekoppeld aan de verzonden brief
+   *
+   * @return object
+   */
+  public function getBestemmeling()
+  {
+    return Misc::getObject($this->getObjectClassBestemmeling(), $this->getObjectIdBestemmeling());
+  }
 
     /**
    * Opnieuw verzenden van een e-mail.
