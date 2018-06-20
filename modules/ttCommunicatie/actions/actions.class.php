@@ -1129,7 +1129,7 @@ class ttCommunicatieActions extends sfActions
     echo $briefVerzonden->herzendEmail();
     exit();
   }
-  
+
   /**
    * Brief opnieuw afdrukken
    */
@@ -1137,7 +1137,7 @@ class ttCommunicatieActions extends sfActions
   {
     $this->briefVerzonden = BriefVerzondenPeer::retrieveByPk($this->getRequestParameter('id'));
     $this->forward404Unless($this->briefVerzonden && $this->briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_PRINT);
-  
+
     $this->setLayout(false);
     $this->getResponse()->setTitle('Afdrukken');
   }
