@@ -119,7 +119,14 @@ class ttCommunicatieActions extends sfActions
       }
     }
 
-    $this->afzender = $this->getUser()->getAttribute('afzender', $defaultSender, $this->md5hash);
+    if ($this->getUser()->getAttribute('afzender', null, $this->md5hash))
+    {
+      $this->afzender = $this->getUser()->getAttribute('afzender', null, $this->md5hash);
+    }
+    else
+    {
+      $this->afzender = $defaultSender;
+    }
 
     $this->forceer_versturen = $this->getUser()->getAttribute('forceer_versturen', false, $this->md5hash);
 

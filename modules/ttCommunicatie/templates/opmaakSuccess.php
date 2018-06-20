@@ -113,6 +113,12 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                       </label>
                     </section>
                     <?php endif; ?>
+
+                    <div style="clear:both"></div>
+                    <section class="col col-2">
+                      <p>Deze mail zal verstuurd worden vanaf: <br> <b><?php echo $afzender; ?></b></p>
+                    </section>
+
                     <div style="clear:both"></div>
                     <section class="col col-2">
                       <label class="label">Verzenden via e-mail:</label>

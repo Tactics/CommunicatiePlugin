@@ -225,7 +225,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $options = array_merge($defaultOptions, $options);
 
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
-    
+    $afzender = isset($options['afzender']) ? $options['afzender'] : null;
+
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
     if (!$options['forceer_versturen'] && $this->getEenmaligVersturen() && $this->reedsVerstuurdNaar(get_class($object), $object->getId()))
     {
@@ -284,7 +285,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       'skip_template' => true,
       'cc' => $bestemmeling->getEmailCc(),
       'bcc' => $bestemmeling->getEmailBcc(),
-      'attachements' => $attachments
+      'attachements' => $attachments,
+      'afzender' => $afzender
     );
 
     $mailOptions = array_merge($mailOptions, $options);
