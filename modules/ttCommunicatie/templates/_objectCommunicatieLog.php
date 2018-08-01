@@ -51,7 +51,7 @@
         </div>
       </div>
     </article>
-
+<?php endif; // endif met filter?>
     <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12 sortable-grid ui-sortable">
       <div class="jarviswidget jarviswidget-sortable" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false" role="widget">
         <header role="heading">
@@ -67,7 +67,6 @@
         </header>
         <div role="content">
           <div id="zoekresultaten">
-<?php endif; // endif met filter?>
 <?php endif; // endif !ajaxrequest?>
             <div class="widget-body no-padding">
               <div id="dt_basic_wrapper" class="dataTables_wrapper form-inline no-footer">
@@ -147,7 +146,7 @@
   }
 
   function herzendEmail(brief_verzonden_id)
-  { 
+  {
     if (confirm('Bent u zeker dat u deze e-mail wil herzenden?'))
     {
       jQuery.ajax({
