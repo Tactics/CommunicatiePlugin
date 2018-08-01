@@ -1,22 +1,22 @@
 <?php
 // recursieve functie om alle placeholders weer te geven
 function showPlaceholders($placeholders)
-{   
-  echo '<ul>';                            
+{
+  echo '<ul>';
   foreach($placeholders as $id => $placeholder)
   {
     if (is_array($placeholder))
     {
-      echo '<li>' . $id;                         
+      echo '<li>' . $id;
       showPlaceholders($placeholder);
       echo '</li>';
     }
     else
     {
       echo '<li class="placeholder">' . link_to_function($placeholder, 'insertPlaceholder("' . $placeholder . '");') . '</li>';
-    } 
-  }    
-  echo '</ul>';                            
+    }
+  }
+  echo '</ul>';
 }
 ?>
 
@@ -113,6 +113,12 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                       </label>
                     </section>
                     <?php endif; ?>
+
+                    <div style="clear:both"></div>
+                    <section class="col col-2">
+                      <p>Deze mail zal verstuurd worden vanaf: <br> <b><?php echo $afzender; ?></b></p>
+                    </section>
+
                     <div style="clear:both"></div>
                     <section class="col col-2">
                       <label class="label">Verzenden via e-mail:</label>
@@ -186,11 +192,17 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
                   </div>
                 </fieldset>
               <footer>
-              <?php echo button_to_function('Voorbeeld brief', 'postForm("Voorbeeld brief")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
-              <?php echo button_to_function('Voorbeeld e-mail', 'postForm("Voorbeeld e-mail")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
+                <?php
+                if ($returnUrl)
+                {
+                  echo button_to('Terug', $returnUrl, array('class' => 'btn btn-default pull-left'));
+                }
+                ?>
+                <?php echo button_to_function('Voorbeeld brief', 'postForm("Voorbeeld brief")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
+                <?php echo button_to_function('Voorbeeld e-mail', 'postForm("Voorbeeld e-mail")', array('class' => 'btn btn-default')); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>
 
-              <?php echo button_to_function('Brieven afdrukken', 'postForm("brieven afdrukken")', array('class' => 'btn btn-primary briefonly', 'data-type' => 'brieven')); ?>
-              <?php echo button_to_function('E-mails verzenden', 'postForm("E-mails verzenden")', array('class' => 'btn btn-primary emailonly', 'data-type' => 'e-mails')); ?>
+                <?php echo button_to_function('Brieven afdrukken', 'postForm("brieven afdrukken")', array('class' => 'btn btn-primary briefonly', 'data-type' => 'brieven')); ?>
+                <?php echo button_to_function('E-mails verzenden', 'postForm("E-mails verzenden")', array('class' => 'btn btn-primary emailonly', 'data-type' => 'e-mails')); ?>
               </footer>
               </form>
             </div>
@@ -203,7 +215,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 
 <script type="text/javascript">
   var submitBtn = null;
-  
+
   function insertPlaceholder(placeholder)
   {
     tinyMCE.execCommand('mceInsertContent', null, '%' + placeholder + '%');
@@ -266,8 +278,8 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     }
     ?>
     jQuery('div.close').remove();
-  }    
-    
+  }
+
   function countBestemmelingen()
   {
     var aantal = jQuery('input.bestemmeling:checked').length;
@@ -275,13 +287,13 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
 
     return aantal;
   }
-  
+
   <?php endif; ?>
 
   jQuery(function($){
     // language tabs initialiseren
     $('#tabs').tt_tabs();
-    
+
     tinyMCE.init({
       selector: "textarea",
       width : "600",
@@ -302,7 +314,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
     $('form[name=print]').on('click', 'input[type=submit]', function(){
       submitBtn = this;
     });
-    
+
     $('form[name="print"]').on('submit', function(){
       var type = $(submitBtn).data('type');
       if (type) // voorbeelden hebben geen data-type attrib en worden sowieso gesubmit
@@ -313,10 +325,10 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           return false;
         }
       }
-    }); 
-    
+    });
+
     <?php if ($choose_template): ?>
-    // Laad template na selectie    
+    // Laad template na selectie
     $('#template_id').change(function(){
       if ($(this).val())
       {
@@ -324,7 +336,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           var cultures  = data.cultures;
           var html      = data.html;
           var onderwerp = data.onderwerp;
-          
+
           //console.info(cultures);
           $(cultures).each(function(i, culture){
             var h = html[culture];
@@ -339,7 +351,7 @@ if ($bestemmelingen_aantal > $waarschuwingsAantal)
           $('#sjabloon_eenmalig').html(data.eenmalig);
         });
       }
-    }).change();  
+    }).change();
     <?php endif; ?>
   });
 

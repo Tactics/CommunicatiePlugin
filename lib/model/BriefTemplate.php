@@ -3,10 +3,10 @@
 /**
  * Subclass for representing a row from the 'brief_template' table.
  *
- * 
+ *
  *
  * @package plugins.ttCommunicatiePlugin.lib.model
- */ 
+ */
 class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
 {
   /**
@@ -19,10 +19,10 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $returnString .= $this->getNaam() ? ' ' . $this->getNaam() : '';
     return $returnString;
   }
-  
+
   /**
    * Een BriefTemplate is een systeemtemplate wanneer parameter systeemnaam not null is
-   * 
+   *
    * @return bool
    */
   public function isSysteemtemplate()
@@ -98,32 +98,32 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
   {
     return $this->getId();
   }
-  
+
   /**
    * Html source ophalen
-   * 
+   *
    * @param $language
    * @return string Source
    */
   public function getHtmlSource($culture)
-  {   
-    return 'brieftemplate_' . $this->getId() . '_html_' . $culture;    
+  {
+    return 'brieftemplate_' . $this->getId() . '_html_' . $culture;
   }
-  
+
   /**
    * Onderwerp source ophalen
-   * 
+   *
    * @param $language
    * @return string Source
    */
   public function getOnderwerpSource($culture)
   {
-    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . $culture;    
+    return 'brieftemplate_' . $this->getId() . '_onderwerp_' . $culture;
   }
-  
+
   /**
    * Vertaling ophalen a.d.h.v source en taal
-   * 
+   *
    * @param  string source
    * @return string vertaling
    */
@@ -132,13 +132,13 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $c = new Criteria();
     $c->add(TransUnitPeer::SOURCE, $source);
     $transUnit = TransUnitPeer::doSelectOne($c);
-    
+
     return $transUnit ? $transUnit->getTarget() : '';
   }
-  
+
   /**
    * Onderwerp ophalen a.d.h.v culture.
-   * 
+   *
    * @param string $culture
    */
   public function getTranslatedOnderwerp($culture)
@@ -164,16 +164,16 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       {
         throw new sfException('TransUnit not found');
       }
-      
+
       $onderwerp = $transUnit->getTarget();
-    }  
-    
+    }
+
     return $onderwerp;
   }
-  
+
   /**
    * Html ophalen a.d.h.v culture.
-   * 
+   *
    * @param string $culture
    */
   public function getTranslatedHtml($culture)
@@ -199,14 +199,14 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       {
         throw new sfException('TransUnit not found');
       }
-      
+
       $html = $transUnit->getTarget();
-    }  
-    
+    }
+
     return $html;
   }
-  
-  
+
+
   /**
    * Mail versturen naar object
    *
@@ -225,15 +225,16 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $options = array_merge($defaultOptions, $options);
 
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
-    
+    $afzender = isset($options['afzender']) ? $options['afzender'] : null;
+
     // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
     if (!$options['forceer_versturen'] && $this->getEenmaligVersturen() && $this->reedsVerstuurdNaar(get_class($object), $object->getId()))
     {
       throw new sfException("Mail already sent.");
     }
-    
+
     $bestemmeling->setObject($object);
-    
+
     // brief layout ophalen
     $this->brief_layout = $this->getBriefLayout();
 
@@ -255,7 +256,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       $this->cultureBrieven[$culture]['body'] = $oudeBriefVerzonden->getHtml();
       $this->cultureBrieven[$culture]['onderwerp'] = $oudeBriefVerzonden->getOnderwerp();
     }
-    
+
     // work with copy of culturebrieven
     $tmpCultureBrieven = $this->cultureBrieven;
 
@@ -274,7 +275,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $onderwerp = $tmpCultureBrieven[$culture]['onderwerp'];
     $body = $tmpCultureBrieven[$culture]['body'];
     $brief = $head . $body;
-    
+
     $email = $bestemmeling->getEmailTo();
 
     $attachments = $this->getAttachments();
@@ -284,7 +285,8 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
       'skip_template' => true,
       'cc' => $bestemmeling->getEmailCc(),
       'bcc' => $bestemmeling->getEmailBcc(),
-      'attachements' => $attachments
+      'attachements' => $attachments,
+      'afzender' => $afzender
     );
 
     $mailOptions = array_merge($mailOptions, $options);
@@ -297,7 +299,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $briefVerzonden->setObjectClass(get_class($object));
     $briefVerzonden->setObjectId($object->getId());
     $briefVerzonden->setObjectClassBestemmeling($bestemmeling->getObjectClass());
-    $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());    
+    $briefVerzonden->setObjectIdBestemmeling($bestemmeling->getObjectId());
     $briefVerzonden->setBriefTemplateId($this->getId());
     $briefVerzonden->setMedium(BriefverzondenPeer::MEDIUM_MAIL);
     $briefVerzonden->setAdres($email);
@@ -306,81 +308,81 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
     $briefVerzonden->setHtml($brief);
     $briefVerzonden->setStatus($mailSent > 0 ? BriefVerzondenPeer::STATUS_VERZONDEN : BriefVerzondenPeer::STATUS_NT_VERZONDEN);
     $briefVerzonden->save();
-    
+
     return $mailSent;
   }
-  
+
   /**
    * geeft een array terug van htmls, geindexeerd op culture
-   * 
+   *
    * @return array[culture] = html
    */
   public function getHtmlCultureArr()
   {
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     $defaultCulture = BriefTemplatePeer::getDefaultCulture();
-    
-    $html = array();    
+
+    $html = array();
     foreach ($cultures as $culture => $label)
-    {     
+    {
       if ($culture === $defaultCulture)
       {
-        $html[$culture] = $this->getHtml();        
+        $html[$culture] = $this->getHtml();
       }
       else
       {
-        $html[$culture] = $this->getVertaling($this->getHtmlSource($culture));        
+        $html[$culture] = $this->getVertaling($this->getHtmlSource($culture));
       }
     }
-    
+
     return $html;
   }
-  
+
   /**
    * geeft een array terug van htmls, geindexeerd op culture
-   * 
+   *
    * @return array[culture] = html
    */
   public function getOnderwerpCultureArr()
   {
     $cultures = BriefTemplatePeer::getCultureLabelArray();
     $defaultCulture = BriefTemplatePeer::getDefaultCulture();
-    
-    $onderwerp = array();    
+
+    $onderwerp = array();
     foreach ($cultures as $culture => $label)
-    {     
+    {
       if ($culture === $defaultCulture)
       {
-        $onderwerp[$culture] = $this->getOnderwerp();        
+        $onderwerp[$culture] = $this->getOnderwerp();
       }
       else
       {
-        $onderwerp[$culture] = $this->getVertaling($this->getOnderwerpSource($culture));        
+        $onderwerp[$culture] = $this->getVertaling($this->getOnderwerpSource($culture));
       }
     }
-    
+
     return $onderwerp;
   }
-  
+
   /**
    * Een briefTemplate is verwijderbaar wanneer:
-   * - er geen BriefVerzonden objecten aan gekoppeld zijn. 
+   * - er geen BriefVerzonden objecten aan gekoppeld zijn.
    * - het geen systeemtemplate is
-   * 
+   *
    * @return boolean
    */
   public function isVerwijderbaar()
   {
     return ($this->countBriefVerzondens() === 0) && (! $this->isSysteemtemplate());
   }
-  
+
   /**
    * geeft een array terug met attachments uit
    * a) de template
    * b) on-the-fly toegevoegd
-   * 
+   *
    * @param sfWebRequest $request
-   * 
+   *
    * @return array
    */
   public function getAttachments($request = null)
@@ -396,7 +398,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
         {
           continue;
         }
-        
+
         if (function_exists('sys_get_temp_dir'))
         {
           $tmpFile = tempnam(sys_get_temp_dir(), 'brief_bijlage');
@@ -405,7 +407,7 @@ class BriefTemplate extends BaseBriefTemplate implements iAutocomplete
         {
           $tmpFile = tempnam('/tmp', 'brief_bijlage');
         }
-        
+
         $node->saveToFile($tmpFile);
 
         $attachments[$node->getName()] = $tmpFile;

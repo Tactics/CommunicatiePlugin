@@ -15,6 +15,7 @@
     <column name="systeemnaam" type="VARCHAR" size="45"/>
     <column name="systeemplaceholders" type="VARCHAR" size="1000"/>
     <column name="gearchiveerd" type="INTEGER" required="true" default="0"/>
+    <column name="unieke_bestemmeling" type="INTEGER" required="true" default="0"/>
     <column name="created_by" type="INTEGER"/>
     <column name="updated_by" type="INTEGER"/>
     <column name="created_at" type="TIMESTAMP"/>
@@ -84,6 +85,24 @@
     </foreign-key>
     <index>
       <index-column name="brief_template_id"/>
+    </index>
+  </table>
+
+  <table name="brief_verzonden_bijlage">
+    <column name="id" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="brief_verzonden_id" type="INTEGER" required="true" />
+    <column name="dms_node_id" type="INTEGER" required="true" />
+    <foreign-key name="fk_brief_verzonden_bijlage_brief_verzonden1" foreignTable="brief_verzonden">
+      <reference local="brief_verzonden_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key name="fk_brief_verzonden_bijlage_dms_node1" foreignTable="dms_node">
+      <reference local="dms_node_id" foreign="id"/>
+    </foreign-key>
+    <index>
+      <index-column name="brief_verzonden_id"/>
+    </index>
+    <index>
+      <index-column name="dms_node_id"/>
     </index>
   </table>
 </database>

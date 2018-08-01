@@ -185,7 +185,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->culture !== $v) {
@@ -281,7 +281,8 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 
 			$this->setNew(false);
 
-						return $startcol + 8; 
+			return $startcol + BriefBijlagePeer::NUM_COLUMNS - BriefBijlagePeer::NUM_LAZY_LOAD_COLUMNS;
+
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefBijlage object", $e);
 		}
@@ -518,7 +519,7 @@ abstract class BaseBriefBijlage extends BaseObject  implements Persistent {
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = BriefBijlagePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->setByPosition($pos, $value);
+		$this->setByPosition($pos, $value);
 	}
 
 	

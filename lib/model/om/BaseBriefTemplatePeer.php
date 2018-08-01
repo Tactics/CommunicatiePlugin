@@ -13,7 +13,7 @@ abstract class BaseBriefTemplatePeer {
 	const CLASS_DEFAULT = 'plugins.ttCommunicatiePlugin.lib.model.BriefTemplate';
 
 	
-	const NUM_COLUMNS = 17;
+	const NUM_COLUMNS = 18;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -59,6 +59,9 @@ abstract class BaseBriefTemplatePeer {
 	const GEARCHIVEERD = 'brief_template.GEARCHIVEERD';
 
 	
+	const UNIEKE_BESTEMMELING = 'brief_template.UNIEKE_BESTEMMELING';
+
+	
 	const CREATED_BY = 'brief_template.CREATED_BY';
 
 	
@@ -76,18 +79,18 @@ abstract class BaseBriefTemplatePeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'Categorie', 'BriefLayoutId', 'Onderwerp', 'Naam', 'Type', 'BestemmelingClasses', 'Html', 'EenmaligVersturen', 'IsPubliciteit', 'Systeemnaam', 'Systeemplaceholders', 'Gearchiveerd', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
-		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID, BriefTemplatePeer::CATEGORIE, BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefTemplatePeer::ONDERWERP, BriefTemplatePeer::NAAM, BriefTemplatePeer::TYPE, BriefTemplatePeer::BESTEMMELING_CLASSES, BriefTemplatePeer::HTML, BriefTemplatePeer::EENMALIG_VERSTUREN, BriefTemplatePeer::IS_PUBLICITEIT, BriefTemplatePeer::SYSTEEMNAAM, BriefTemplatePeer::SYSTEEMPLACEHOLDERS, BriefTemplatePeer::GEARCHIVEERD, BriefTemplatePeer::CREATED_BY, BriefTemplatePeer::UPDATED_BY, BriefTemplatePeer::CREATED_AT, BriefTemplatePeer::UPDATED_AT, ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'categorie', 'brief_layout_id', 'onderwerp', 'naam', 'type', 'bestemmeling_classes', 'html', 'eenmalig_versturen', 'is_publiciteit', 'systeemnaam', 'systeemplaceholders', 'gearchiveerd', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'Categorie', 'BriefLayoutId', 'Onderwerp', 'Naam', 'Type', 'BestemmelingClasses', 'Html', 'EenmaligVersturen', 'IsPubliciteit', 'Systeemnaam', 'Systeemplaceholders', 'Gearchiveerd', 'UniekeBestemmeling', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'UpdatedAt', ),
+		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID, BriefTemplatePeer::CATEGORIE, BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefTemplatePeer::ONDERWERP, BriefTemplatePeer::NAAM, BriefTemplatePeer::TYPE, BriefTemplatePeer::BESTEMMELING_CLASSES, BriefTemplatePeer::HTML, BriefTemplatePeer::EENMALIG_VERSTUREN, BriefTemplatePeer::IS_PUBLICITEIT, BriefTemplatePeer::SYSTEEMNAAM, BriefTemplatePeer::SYSTEEMPLACEHOLDERS, BriefTemplatePeer::GEARCHIVEERD, BriefTemplatePeer::UNIEKE_BESTEMMELING, BriefTemplatePeer::CREATED_BY, BriefTemplatePeer::UPDATED_BY, BriefTemplatePeer::CREATED_AT, BriefTemplatePeer::UPDATED_AT, ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'categorie', 'brief_layout_id', 'onderwerp', 'naam', 'type', 'bestemmeling_classes', 'html', 'eenmalig_versturen', 'is_publiciteit', 'systeemnaam', 'systeemplaceholders', 'gearchiveerd', 'unieke_bestemmeling', 'created_by', 'updated_by', 'created_at', 'updated_at', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Categorie' => 1, 'BriefLayoutId' => 2, 'Onderwerp' => 3, 'Naam' => 4, 'Type' => 5, 'BestemmelingClasses' => 6, 'Html' => 7, 'EenmaligVersturen' => 8, 'IsPubliciteit' => 9, 'Systeemnaam' => 10, 'Systeemplaceholders' => 11, 'Gearchiveerd' => 12, 'CreatedBy' => 13, 'UpdatedBy' => 14, 'CreatedAt' => 15, 'UpdatedAt' => 16, ),
-		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID => 0, BriefTemplatePeer::CATEGORIE => 1, BriefTemplatePeer::BRIEF_LAYOUT_ID => 2, BriefTemplatePeer::ONDERWERP => 3, BriefTemplatePeer::NAAM => 4, BriefTemplatePeer::TYPE => 5, BriefTemplatePeer::BESTEMMELING_CLASSES => 6, BriefTemplatePeer::HTML => 7, BriefTemplatePeer::EENMALIG_VERSTUREN => 8, BriefTemplatePeer::IS_PUBLICITEIT => 9, BriefTemplatePeer::SYSTEEMNAAM => 10, BriefTemplatePeer::SYSTEEMPLACEHOLDERS => 11, BriefTemplatePeer::GEARCHIVEERD => 12, BriefTemplatePeer::CREATED_BY => 13, BriefTemplatePeer::UPDATED_BY => 14, BriefTemplatePeer::CREATED_AT => 15, BriefTemplatePeer::UPDATED_AT => 16, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'categorie' => 1, 'brief_layout_id' => 2, 'onderwerp' => 3, 'naam' => 4, 'type' => 5, 'bestemmeling_classes' => 6, 'html' => 7, 'eenmalig_versturen' => 8, 'is_publiciteit' => 9, 'systeemnaam' => 10, 'systeemplaceholders' => 11, 'gearchiveerd' => 12, 'created_by' => 13, 'updated_by' => 14, 'created_at' => 15, 'updated_at' => 16, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Categorie' => 1, 'BriefLayoutId' => 2, 'Onderwerp' => 3, 'Naam' => 4, 'Type' => 5, 'BestemmelingClasses' => 6, 'Html' => 7, 'EenmaligVersturen' => 8, 'IsPubliciteit' => 9, 'Systeemnaam' => 10, 'Systeemplaceholders' => 11, 'Gearchiveerd' => 12, 'UniekeBestemmeling' => 13, 'CreatedBy' => 14, 'UpdatedBy' => 15, 'CreatedAt' => 16, 'UpdatedAt' => 17, ),
+		BasePeer::TYPE_COLNAME => array (BriefTemplatePeer::ID => 0, BriefTemplatePeer::CATEGORIE => 1, BriefTemplatePeer::BRIEF_LAYOUT_ID => 2, BriefTemplatePeer::ONDERWERP => 3, BriefTemplatePeer::NAAM => 4, BriefTemplatePeer::TYPE => 5, BriefTemplatePeer::BESTEMMELING_CLASSES => 6, BriefTemplatePeer::HTML => 7, BriefTemplatePeer::EENMALIG_VERSTUREN => 8, BriefTemplatePeer::IS_PUBLICITEIT => 9, BriefTemplatePeer::SYSTEEMNAAM => 10, BriefTemplatePeer::SYSTEEMPLACEHOLDERS => 11, BriefTemplatePeer::GEARCHIVEERD => 12, BriefTemplatePeer::UNIEKE_BESTEMMELING => 13, BriefTemplatePeer::CREATED_BY => 14, BriefTemplatePeer::UPDATED_BY => 15, BriefTemplatePeer::CREATED_AT => 16, BriefTemplatePeer::UPDATED_AT => 17, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'categorie' => 1, 'brief_layout_id' => 2, 'onderwerp' => 3, 'naam' => 4, 'type' => 5, 'bestemmeling_classes' => 6, 'html' => 7, 'eenmalig_versturen' => 8, 'is_publiciteit' => 9, 'systeemnaam' => 10, 'systeemplaceholders' => 11, 'gearchiveerd' => 12, 'unieke_bestemmeling' => 13, 'created_by' => 14, 'updated_by' => 15, 'created_at' => 16, 'updated_at' => 17, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	
@@ -138,42 +141,98 @@ abstract class BaseBriefTemplatePeer {
 	}
 
 	
-	public static function addSelectColumns(Criteria $criteria)
+	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 
-		$criteria->addSelectColumn(BriefTemplatePeer::ID);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::ID)
+		  : BriefTemplatePeer::ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CATEGORIE);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CATEGORIE)
+		  : BriefTemplatePeer::CATEGORIE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::BRIEF_LAYOUT_ID);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::BRIEF_LAYOUT_ID)
+		  : BriefTemplatePeer::BRIEF_LAYOUT_ID;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::ONDERWERP);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::ONDERWERP)
+		  : BriefTemplatePeer::ONDERWERP;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::NAAM);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::NAAM)
+		  : BriefTemplatePeer::NAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::TYPE);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::TYPE)
+		  : BriefTemplatePeer::TYPE;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::BESTEMMELING_CLASSES);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::BESTEMMELING_CLASSES)
+		  : BriefTemplatePeer::BESTEMMELING_CLASSES;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::HTML);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::HTML)
+		  : BriefTemplatePeer::HTML;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::EENMALIG_VERSTUREN);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::EENMALIG_VERSTUREN)
+		  : BriefTemplatePeer::EENMALIG_VERSTUREN;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::IS_PUBLICITEIT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::IS_PUBLICITEIT)
+		  : BriefTemplatePeer::IS_PUBLICITEIT;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::SYSTEEMNAAM);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::SYSTEEMNAAM)
+		  : BriefTemplatePeer::SYSTEEMNAAM;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::SYSTEEMPLACEHOLDERS);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::SYSTEEMPLACEHOLDERS)
+		  : BriefTemplatePeer::SYSTEEMPLACEHOLDERS;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::GEARCHIVEERD);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::GEARCHIVEERD)
+		  : BriefTemplatePeer::GEARCHIVEERD;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CREATED_BY);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::UNIEKE_BESTEMMELING)
+		  : BriefTemplatePeer::UNIEKE_BESTEMMELING;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::UPDATED_BY);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CREATED_BY)
+		  : BriefTemplatePeer::CREATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::CREATED_AT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::UPDATED_BY)
+		  : BriefTemplatePeer::UPDATED_BY;
+		$criteria->addSelectColumn($columnToSelect);
 
-		$criteria->addSelectColumn(BriefTemplatePeer::UPDATED_AT);
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::CREATED_AT)
+		  : BriefTemplatePeer::CREATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
+
+		$columnToSelect = $alias
+		  ? BriefTemplatePeer::alias($alias, BriefTemplatePeer::UPDATED_AT)
+		  : BriefTemplatePeer::UPDATED_AT;
+		$criteria->addSelectColumn($columnToSelect);
 
 	}
 
@@ -252,6 +311,7 @@ abstract class BaseBriefTemplatePeer {
 		$cls = Propel::import($cls);
 				while($rs->next()) {
 		
+			
 			$obj = new $cls();
 			$obj->hydrate($rs);
 			$results[] = $obj;
@@ -299,9 +359,10 @@ abstract class BaseBriefTemplatePeer {
 
 		BriefTemplatePeer::addSelectColumns($c);
 		$startcol = (BriefTemplatePeer::NUM_COLUMNS - BriefTemplatePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
 		BriefLayoutPeer::addSelectColumns($c);
 
-		$c->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID);
+		$c->addJoin(BriefTemplatePeer::BRIEF_LAYOUT_ID, BriefLayoutPeer::ID, Criteria::JOIN);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -309,17 +370,20 @@ abstract class BaseBriefTemplatePeer {
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
 			$omClass = BriefLayoutPeer::getOMClass();
 
+			
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol);
 
 			$newObject = true;
+			
 			foreach($results as $temp_obj1) {
 				$temp_obj2 = $temp_obj1->getBriefLayout(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -387,7 +451,7 @@ abstract class BaseBriefTemplatePeer {
 
 			$omClass = BriefTemplatePeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
@@ -396,13 +460,14 @@ abstract class BaseBriefTemplatePeer {
 					
 			$omClass = BriefLayoutPeer::getOMClass();
 
-
+            
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
 			$obj2->hydrate($rs, $startcol2);
 
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+			    
 				$temp_obj1 = $results[$j];
 				$temp_obj2 = $temp_obj1->getBriefLayout(); 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
@@ -565,7 +630,7 @@ abstract class BaseBriefTemplatePeer {
 	}
 
 	
-	public static function doValidate(BriefTemplate $obj, $cols = null)
+	public static function doValidate(BaseBriefTemplate $obj, $cols = null)
 	{
 		$columns = array();
 

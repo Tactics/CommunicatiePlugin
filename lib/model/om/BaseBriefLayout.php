@@ -214,7 +214,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->naam !== $v) {
@@ -228,7 +228,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->print_bestand !== $v) {
@@ -242,7 +242,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->mail_bestand !== $v) {
@@ -256,7 +256,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->print_stylesheets !== $v) {
@@ -270,7 +270,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	{
 
 						if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+			$v = (string) $v;
 		}
 
 		if ($this->mail_stylesheets !== $v) {
@@ -384,7 +384,8 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 
 			$this->setNew(false);
 
-						return $startcol + 12; 
+			return $startcol + BriefLayoutPeer::NUM_COLUMNS - BriefLayoutPeer::NUM_LAZY_LOAD_COLUMNS;
+
 		} catch (Exception $e) {
 			throw new PropelException("Error populating BriefLayout object", $e);
 		}
@@ -636,7 +637,7 @@ abstract class BaseBriefLayout extends BaseObject  implements Persistent {
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = BriefLayoutPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->setByPosition($pos, $value);
+		$this->setByPosition($pos, $value);
 	}
 
 	

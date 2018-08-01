@@ -92,12 +92,17 @@
                       $table->addRow(
                         array(
                           $briefVerzonden->getMedium() ? $briefVerzonden->getMedium() : ' - ',
-                          $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() : ' - ',
+                          $briefVerzonden->getAdres() ? $briefVerzonden->getAdres() . ($briefVerzonden->getCc() ? ' (cc: ' . $briefVerzonden->getCc() . ')' : '') : ' - ',
                           format_date($briefVerzonden->getCreatedAt(), 'f'),
                           $briefVerzonden->getOnderwerp(),
                           (sfConfig::get('sf_style_smartadmin') ?
                             link_to_function('<i class="fa fa-search" title="Communicatie bekijken"></i>', 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;' :
                             link_to_function(image_tag('/ttCommunicatie/images/icons/zoom_16.gif', array('title' => 'communicatie bekijken')), 'showDetail(' . $briefVerzonden->getId() . ');') . '&nbsp;') .
+                          ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_PRINT && $briefVerzonden->getCustom() == false ?
+                            (sfConfig::get('sf_style_smartadmin') ?
+                              link_to('<i class="fa fa-print" title="Brief opnieuw afdrukken"></i>', "ttCommunicatie/herprintBrief?id=".$briefVerzonden->getId(), array('target' => '_blank')) :
+                              link_to(image_tag('/ttCommunicatie/images/icons/printer_16.gif', array('title' => 'Brief opnieuw afdrukken')), "ttCommunicatie/herprintBrief?id=".$briefVerzonden->getId(), array('target' => '_blank'))) :
+                            '') .
                           ($briefVerzonden->getMedium() == BriefVerzondenPeer::MEDIUM_MAIL && $briefVerzonden->getCustom() == false ?
                               (sfConfig::get('sf_style_smartadmin') ?
                                 link_to_function('<i class="fa fa-envelope" title="Mail herzenden"></i>', "herzendEmail({$briefVerzonden->getId()});") :
