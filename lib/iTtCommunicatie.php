@@ -85,7 +85,11 @@ interface iTtCommunicatie extends iMailer
    * gebruikt om object_class/id_bestemmeling van brief_verzonden in te vullen
    */
 
-
+  /**
+   * optional method getDetailLink()
+   * Geeft de link terug dat kan gebruikt worden om de detail te tonen van object
+   * Wordt gebruikt bij het tonen van de emails die verzonden werden.
+   */
 }
 
 ?>
