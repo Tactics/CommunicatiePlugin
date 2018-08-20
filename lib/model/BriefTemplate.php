@@ -218,6 +218,7 @@ class BriefTemplate extends BaseBriefTemplate
   {
     $systeemvalues = isset($options['systeemvalues']) ? $options['systeemvalues'] : array();
     $afzender = isset($options['afzender']) ? $options['afzender'] : false;
+    $email = isset($options['mailto']) ? $options['mailto'] : $object->getMailerRecipientMail();
 
     // Controleren of het mogelijk is deze brief_template te versturen naar $object.
     $b     = $this->getBestemmelingArray();
@@ -241,8 +242,7 @@ class BriefTemplate extends BaseBriefTemplate
     $values     = array_merge($defaultPlaceholders, $values, $systeemvalues);
     $onderwerp   = BriefTemplatePeer::replacePlaceholders($this->getTranslatedOnderwerp($culture), $values);
     $values['onderwerp'] = $onderwerp;
-
-    $email       = $object->getMailerRecipientMail();
+    
     $html        = $this->getTranslatedHtml($culture);
     $headAndBody = $this->getBriefLayout()->getHeadAndBody('mail', $culture, $html, true);
 

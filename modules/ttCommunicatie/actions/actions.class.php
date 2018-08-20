@@ -578,7 +578,7 @@ class ttCommunicatieActions extends sfActions
    */
   public function executePrint()
   {
-    Misc::use_helper('Url');
+    Misc::use_helper('Url', 'Tag');
     set_time_limit(0);
 
     $this->preExecuteVersturen();
@@ -653,6 +653,7 @@ class ttCommunicatieActions extends sfActions
         $object = new $this->bestemmelingenClass();
         $object->hydrate($rs);
 
+        $url = method_exists($object, 'getDetailLink') ? ($object->getDetailLink() . $object->getId()): false;
 
         // geen brief_template => controleren of er aan het object zelf een template_id gekoppeld is
         if (!$this->brief_template) {
@@ -702,7 +703,7 @@ class ttCommunicatieActions extends sfActions
           $brief_template = $this->brief_template;
         }
 
-        echo get_class($object) . ' (id ' . $object->getId() . '): ';
+        echo link_to_if($url, get_class($object) . ' (id ' . $object->getId() . ')', $url, 'target=_blank') . ':';
 
         // sommige brieven mogen slechts eenmalig naar een object_class/id gestuurd worden
         if ($brief_template->getEenmaligVersturen() && $brief_template->ReedsVerstuurdNaar($this->bestemmelingenClass, $object->getId())) {
