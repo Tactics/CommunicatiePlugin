@@ -62,6 +62,7 @@ class ttCommunicatieActions extends sfActions
     $this->choose_afzender = $this->getUser()->getAttribute('choose_afzender', false, $this->md5hash);
     $this->mogelijke_afzenders = $this->getMogelijkeAfzenders($this->getUser()->getAttribute('prio_eigen_afzender', false, $this->md5hash));
 
+
     // indien object gegeven, wordt criteria en bestemmelingenClass/Peer enzo niet gebruikt.
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
 
@@ -580,6 +581,7 @@ class ttCommunicatieActions extends sfActions
   {
     Misc::use_helper('Url', 'Tag');
     set_time_limit(0);
+    $email = '';
 
     $this->preExecuteVersturen();
 
@@ -809,7 +811,7 @@ class ttCommunicatieActions extends sfActions
             $briefVerzonden->save();
 
             // notify object dat er een brief naar het object verzonden is
-            if (method_exists($object, 'notifyBriefVerzonden')) {
+            if (method_exists($object, 'setBriefVerzonden')) {
               $object->notifyBriefVerzonden($briefVerzonden);
             }
           } catch (Exception $e) {
@@ -820,6 +822,9 @@ class ttCommunicatieActions extends sfActions
         } else {
           if (!$email) {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
+            if (method_exists($object, 'notifyBriefVerzondenZonderEmail')) {
+              $object->notifyBriefVerzondenZonderEmail($this->brief_template);
+            }
           } else {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
           }
@@ -1292,7 +1297,7 @@ class ttCommunicatieActions extends sfActions
       }
     }
 
-    if ( $email = $this->getUser()->getPersoon()->getEmail())
+    if ($this->getUser()->getAccount() && $email = $this->getUser()->getPersoon()->getEmail())
       $afzenders[$email] = $email;
 
     if ($prioretiseerEigenAfzender) {
