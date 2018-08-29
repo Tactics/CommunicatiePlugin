@@ -62,7 +62,6 @@ class ttCommunicatieActions extends sfActions
     $this->choose_afzender = $this->getUser()->getAttribute('choose_afzender', false, $this->md5hash);
     $this->mogelijke_afzenders = $this->getMogelijkeAfzenders($this->getUser()->getAttribute('prio_eigen_afzender', false, $this->md5hash));
 
-
     // indien object gegeven, wordt criteria en bestemmelingenClass/Peer enzo niet gebruikt.
     $this->bestemmelingen_object = $this->getUser()->getAttribute('bestemmelingen_object', null, $this->md5hash);
 
@@ -506,6 +505,7 @@ class ttCommunicatieActions extends sfActions
   {
     foreach ($this->autoloadClasses as $class) {
       $classPeer = sfInflector::camelize($class) . 'Peer';
+
       eval($classPeer . '::TABLE_NAME;'); // autoloaden van de peer gebeurt hier
     }
 
@@ -581,7 +581,6 @@ class ttCommunicatieActions extends sfActions
   {
     Misc::use_helper('Url', 'Tag');
     set_time_limit(0);
-    $email = '';
 
     $this->preExecuteVersturen();
 
@@ -595,7 +594,6 @@ class ttCommunicatieActions extends sfActions
       }
       $this->criteria->addAnd(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $bestemmelingenArray, Criteria::NOT_IN);
     }
-
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
     // moeten er effectief e-mails verzonden worden?
     $emailverzenden = (!$voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);
@@ -1305,6 +1303,44 @@ class ttCommunicatieActions extends sfActions
     }
 
     return $afzenders;
+  }
+
+  public function executePrePrint()
+  {
+    $class = $this->getRequestParameter('class');
+    $md5hash = $this->getRequestParameter('hash');
+    $peerClass = $this->getRequestParameter('class', 'Aanvraag') . 'Peer';
+    $ids = json_decode($this->getRequestParameter('ids'), true);
+
+    $c = new Criteria();
+    $c->add(eval("return $peerClass::ID;"), $ids, Criteria::IN);
+
+    /** @var BriefTemplate $briefTemplate */
+    $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('templateId'));
+
+    if ($briefTemplate)
+    {
+      $this->getUser()->setAttribute('template_id', $briefTemplate->getId(), $md5hash);
+      $this->getUser()->setAttribute('afzender', '', $md5hash);
+      $this->getUser()->setAttribute('choose_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('choose_template', false, $md5hash);
+      $this->getUser()->setAttribute('prio_eigen_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('edit_template', !$briefTemplate->isSysteemTemplate(), $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_criteria', $c, $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_class', $class, $md5hash);
+    }
+    // geenopvang is speciaal geval, enige systeembrief die in batch verstuurd wordt
+    else if ($this->getRequestParameter('brief_type') == AanvraagPeer::BRIEF_GEENOPVANG)
+    {
+      $this->getUser()->setAttribute('afzender', '', $md5hash);
+      $this->getUser()->setAttribute('choose_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('choose_template', false, $md5hash);
+      $this->getUser()->setAttribute('edit_template', false, $md5hash);
+      $this->getUser()->setAttribute('prio_eigen_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_criteria', $c, $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_class', 'Aanvraag', $md5hash);
+    }
+    $this->executePrint();
   }
 }
 
