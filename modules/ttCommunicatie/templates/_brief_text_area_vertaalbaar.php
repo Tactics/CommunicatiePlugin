@@ -33,7 +33,7 @@
          
          // @todo
          // && $sf_context->getActionName() == 'opmaak' is tijdelijke oplossing.
-         // Wanneer gebruiker klaar is om mails te versturen is het de bedoeling dat 
+         // Wanneer gebruiker klaar is om mails te versturen is het de bedoeling dat
          // systeemplaceholders automatisch vervangen worden.
          // Bij het bewerken van een template is dit niet gewenst.
          if ($brief_template && $brief_template->isSysteemTemplate() && $sf_context->getActionName() == 'opmaak')
@@ -44,9 +44,9 @@
          }
          
         echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
-          'style' => 'width: 434px;', 'disabled' => !$edit_template, 'class' => $sf_request->hasError('onderwerp') ? 'state-error' : ''
+          'style' => 'max-width: none', 'disabled' => !$edit_template, 'class' => $sf_request->hasError('onderwerp') ? 'state-error' : ''
         ));
-        echo ' (Invoegvelden toegestaan) <br /><br />';
+        echo ' <small>(Invoegvelden toegestaan)</small> <br /><br />';
 
         // indien 1 bestemmeling, kunnen we de brief reeds parsen
         if (isset($bestemmeling))

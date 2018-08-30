@@ -41,9 +41,16 @@ end_slot();
 
   function insertPlaceholder(placeholder)
   {
-    tinyMCE.execCommand('mceInsertContent', null, '%' + placeholder + '%');
+      if (typeof prevFocus !== "undefined" && prevFocus.attr('id') == 'onderwerp_nl_BE')
+      {
+          this.insertAtCaret(prevFocus.attr('id'), '%' + placeholder + '%')
+      } else {
+          tinyMCE.execCommand('mceInsertContent', null, '%' + placeholder + '%');
+      }
   }
 
+  var prevFocus;
+  var focussed;
   jQuery(function($)
   {
     //string escaping
@@ -68,7 +75,13 @@ end_slot();
       ],
       pagebreak_separator : "%pagebreak%",
       toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
-      relative_urls: false
+      relative_urls: false,
+      setup: function(editor) {
+        editor.on('focus', function(e) {
+            prevFocus = focussed;
+            focussed = $(this);
+        });
+      }
     });
 
     $('#bestemmelingen :checkbox').change(function()
@@ -128,7 +141,12 @@ end_slot();
       $('#placeholders').toggle();
       $('#placeholders_summary').toggle();
     });
-
+    
+    document.addEventListener('focus', function(el){
+        prevFocus = focussed;
+        focussed = $(el.target);
+    }, true);
+    
   });
 
   function bijlageToevoegen()
