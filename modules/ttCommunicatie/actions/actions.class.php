@@ -821,13 +821,14 @@ class ttCommunicatieActions extends sfActions
           if (!$email) {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
             if (method_exists($object, 'notifyBriefVerzondenZonderEmail')) {
-              $object->notifyBriefVerzondenZonderEmail($this->brief_template);
+              $object->notifyBriefVerzondenZonderEmail($brief_template);
             }
+            echo $nietVerstuurdReden;
           } else {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+            echo $nietVerstuurdReden;
           }
 
-          echo $nietVerstuurdReden;
           $counter['wenstgeenmail']++;
         }
 
