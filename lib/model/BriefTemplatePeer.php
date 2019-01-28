@@ -499,7 +499,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
    */
   public static function parseIfStatements($html, $object, $email = false, $otherPlaceholders = array())
   {
-    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email), $otherPlaceholders);
+    $defaultPlaceholders = array_merge(self::getDefaultPlaceholders($object, $email, true), $otherPlaceholders);
 
     while (preg_match_all('/{%\s*if\s+[^{]*\s*({% endif %})/', $html, $matches, PREG_OFFSET_CAPTURE))
     {
@@ -522,6 +522,7 @@ class BriefTemplatePeer extends BaseBriefTemplatePeer
           {
             // nodige placeholders uit template halen
             $condition[1] = self::replacePlaceholdersFromObject($condition[1], $object, $email);
+            $condition[1] = self::replacePlaceholders($condition[1], $defaultPlaceholders);
           }
 
           // condition evalueren
