@@ -54,4 +54,21 @@ class BriefVerzondenPeer extends BaseBriefVerzondenPeer
     ;
     myDbTools::executeSql($sql);
   }
+
+  /**
+   * @param $templateId
+   * @param $class
+   * @param $objectId
+   * @return BriefVerzonden
+   *
+   */
+  public static function retrieveByTemplateAndClassAndId($templateId, $class, $objectId)
+  {
+    $c = new Criteria();
+    $c->add(BriefVerzondenPeer::BRIEF_TEMPLATE_ID, $templateId, Criteria::EQUAL);
+    $c->add(BriefVerzondenPeer::OBJECT_CLASS, $class, Criteria::EQUAL);
+    $c->add(BriefVerzondenPeer::OBJECT_ID, $objectId, Criteria::EQUAL);
+    $c->addDescendingOrderByColumn(BriefVerzondenPeer::ID);
+    return BriefVerzondenPeer::doSelectOne($c);
+  }
 }
