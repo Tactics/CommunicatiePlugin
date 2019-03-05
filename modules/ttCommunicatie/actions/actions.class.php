@@ -505,6 +505,7 @@ class ttCommunicatieActions extends sfActions
   {
     foreach ($this->autoloadClasses as $class) {
       $classPeer = sfInflector::camelize($class) . 'Peer';
+
       eval($classPeer . '::TABLE_NAME;'); // autoloaden van de peer gebeurt hier
     }
 
@@ -593,7 +594,6 @@ class ttCommunicatieActions extends sfActions
       }
       $this->criteria->addAnd(eval('return ' . $this->bestemmelingenPeer . '::ID;'), $bestemmelingenArray, Criteria::NOT_IN);
     }
-
     $voorbeeld = (stripos($this->getRequestParameter('commit'), 'voorbeeld') !== false);
     // moeten er effectief e-mails verzonden worden?
     $emailverzenden = (!$voorbeeld) && (stripos($this->getRequestParameter('commit'), 'mail') !== false);
@@ -809,7 +809,7 @@ class ttCommunicatieActions extends sfActions
             $briefVerzonden->save();
 
             // notify object dat er een brief naar het object verzonden is
-            if (method_exists($object, 'notifyBriefVerzonden')) {
+            if (method_exists($object, 'setBriefVerzonden')) {
               $object->notifyBriefVerzonden($briefVerzonden);
             }
           } catch (Exception $e) {
@@ -820,11 +820,15 @@ class ttCommunicatieActions extends sfActions
         } else {
           if (!$email) {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden, reden: geen e-mail adres.</font><br/>";
+            if (method_exists($object, 'notifyBriefVerzondenZonderEmail')) {
+              $object->notifyBriefVerzondenZonderEmail($brief_template);
+            }
+            echo $nietVerstuurdReden;
           } else {
             $nietVerstuurdReden = "<font color=red>E-mail werd niet verzonden naar $email, reden: communicatie via e-mail niet gewenst.</font><br/>";
+            echo $nietVerstuurdReden;
           }
 
-          echo $nietVerstuurdReden;
           $counter['wenstgeenmail']++;
         }
 
@@ -1292,7 +1296,7 @@ class ttCommunicatieActions extends sfActions
       }
     }
 
-    if ( $email = $this->getUser()->getPersoon()->getEmail())
+    if ($this->getUser()->getAccount() && $email = $this->getUser()->getPersoon()->getEmail())
       $afzenders[$email] = $email;
 
     if ($prioretiseerEigenAfzender) {
@@ -1300,6 +1304,44 @@ class ttCommunicatieActions extends sfActions
     }
 
     return $afzenders;
+  }
+
+  public function executePrePrint()
+  {
+    $class = $this->getRequestParameter('class');
+    $md5hash = $this->getRequestParameter('hash');
+    $peerClass = $this->getRequestParameter('class', 'Aanvraag') . 'Peer';
+    $ids = json_decode($this->getRequestParameter('ids'), true);
+
+    $c = new Criteria();
+    $c->add(eval("return $peerClass::ID;"), $ids, Criteria::IN);
+
+    /** @var BriefTemplate $briefTemplate */
+    $briefTemplate = BriefTemplatePeer::retrieveByPK($this->getRequestParameter('templateId'));
+
+    if ($briefTemplate)
+    {
+      $this->getUser()->setAttribute('template_id', $briefTemplate->getId(), $md5hash);
+      $this->getUser()->setAttribute('afzender', '', $md5hash);
+      $this->getUser()->setAttribute('choose_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('choose_template', false, $md5hash);
+      $this->getUser()->setAttribute('prio_eigen_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('edit_template', !$briefTemplate->isSysteemTemplate(), $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_criteria', $c, $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_class', $class, $md5hash);
+    }
+    // geenopvang is speciaal geval, enige systeembrief die in batch verstuurd wordt
+    else if ($this->getRequestParameter('brief_type') == AanvraagPeer::BRIEF_GEENOPVANG)
+    {
+      $this->getUser()->setAttribute('afzender', '', $md5hash);
+      $this->getUser()->setAttribute('choose_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('choose_template', false, $md5hash);
+      $this->getUser()->setAttribute('edit_template', false, $md5hash);
+      $this->getUser()->setAttribute('prio_eigen_afzender', false, $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_criteria', $c, $md5hash);
+      $this->getUser()->setAttribute('bestemmelingen_class', 'Aanvraag', $md5hash);
+    }
+    $this->executePrint();
   }
 }
 
