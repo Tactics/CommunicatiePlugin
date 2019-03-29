@@ -293,6 +293,7 @@ class BriefTemplate extends BaseBriefTemplate
     $briefVerzonden->setAdres($email);
     $briefVerzonden->setOnderwerp($onderwerp);
     $briefVerzonden->setCulture($culture);
+    $briefVerzonden->setStatus($mailSent ? Bericht::STATUS_VERZONDEN : Bericht::STATUS_MISLUKT);
     $briefVerzonden->setHtml($brief);
     $briefVerzonden->save();
 
