@@ -809,7 +809,7 @@ class ttCommunicatieActions extends sfActions
             $briefVerzonden->save();
 
             // notify object dat er een brief naar het object verzonden is
-            if (method_exists($object, 'setBriefVerzonden')) {
+            if (method_exists($object, 'notifyBriefVerzonden')) {
               $object->notifyBriefVerzonden($briefVerzonden);
             }
           } catch (Exception $e) {
