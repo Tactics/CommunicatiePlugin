@@ -21,6 +21,8 @@ if (!isset($module_show_action))
   $module_show_action = 'show';
 }
 
+if(! function_exists('__'))
+    \Misc::use_helper('i18n');
 
 ?>
 
@@ -31,7 +33,7 @@ if (!isset($module_show_action))
   	<?php if ( $object->getId()) : ?>
 	<li><?php echo link_to_unless(! isset($action), $object->__toString(), $module_name . '/' . $module_show_action . '?id=' . $object->getId()) ?></li>
 	 <?php else : ?>
-	<li>Nieuwe <?php echo ucfirst(strToLower(get_class($object)));?></li>
+	<li><?php echo __('Nieuwe') . ' ' . ucfirst(strToLower(get_class($object)));?></li>
 	 <?php endif ?>
  <?php endif ?>
  <?php if (isset($action) && $action) : ?>
