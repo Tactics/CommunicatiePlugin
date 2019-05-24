@@ -144,6 +144,6 @@
 <?php if (! $sf_request->isXmlHttpRequest()) : ?>
   </div>
   <hr />
-  <?php echo button_to("Nieuw sjabloon", 'ttCommunicatie/create'); ?>
+  <?php echo button_to(__('Nieuw sjabloon'), 'ttCommunicatie/create'); ?>
 </div><!-- /.pageblock -->
 <?php endif; ?>
