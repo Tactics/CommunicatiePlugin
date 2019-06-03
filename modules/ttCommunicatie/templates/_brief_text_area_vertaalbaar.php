@@ -2,7 +2,7 @@
 
 <?php
 if(! function_exists('__'))
-  \Misc::use_helper('i18n');
+  \Misc::use_helper('I18N');
 ?>
 
 <div id="tabs">

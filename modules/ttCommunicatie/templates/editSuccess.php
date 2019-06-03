@@ -154,7 +154,7 @@ function showPlaceholders($placeholders)
 
 <?php
 if(! function_exists('__'))
-  \Misc::use_helper('i18n');
+  \Misc::use_helper('I18N');
 ?>
 
 <h2 class="pageblock"><?php echo $brief_template->getId() ? __('Sjabloon bewerken') : __('Nieuw sjabloon'); ?></h2>

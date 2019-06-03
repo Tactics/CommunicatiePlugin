@@ -1,7 +1,7 @@
 <?php include_partial('breadcrumb', array('object' => $object, 'action' => 'Communicatie bewerken'));  ?>
 <?php
 if(! function_exists('__'))
-  \Misc::use_helper('i18n');
+  \Misc::use_helper('I18N');
 ?>
 
 <h2 class="pageblock"><?php echo __('Communicatie bewerken');?></h2>
