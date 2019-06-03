@@ -211,7 +211,7 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-   * KopiÃ«er een sjabloon
+   * Kopiëer een sjabloon
    */
   public function executeCopy()
   {
@@ -256,7 +256,7 @@ class ttCommunicatieActions extends sfActions
 
     if (!$systeem) {
       if (!$this->getRequestParameter('classes')) {
-        $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens Ã©Ã©n mogelijke bestemmeling in te geven.');
+        $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
       }
 
       if (!$this->getRequestParameter('naam')) {
@@ -776,7 +776,7 @@ class ttCommunicatieActions extends sfActions
             BerichtPeer::verstuurEmail($email, BriefTemplatePeer::clearPlaceholders($brief), $options);
 
             $verstuurd = true;
-            echo 'Bericht verzonden naar : ' . $email . (method_exists($object, '__toString') ? ' ( ' . $object . ' )' : '');
+            echo 'Bericht verzonden naar : ' . $email . (method_exists($object, '__toString') ? ' ( ' . utf8_encode($object) . ' )' : '');
             echo isset($options['cc']) ? ', cc: ' . implode(';', $options['cc']) : '';
             echo isset($options['bcc']) ? ', bcc: ' . implode(';', $options['bcc']) : '';
             echo '<br/>';
@@ -1023,7 +1023,7 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-   * Geeft details van Ã©Ã©n verzonden brief weer
+   * Geeft details van één verzonden brief weer
    */
   public function executeShowCommunicatieLog()
   {
@@ -1344,4 +1344,3 @@ class ttCommunicatieActions extends sfActions
     $this->executePrint();
   }
 }
-
