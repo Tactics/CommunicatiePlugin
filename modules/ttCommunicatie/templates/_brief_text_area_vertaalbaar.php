@@ -1,5 +1,10 @@
 <?php $language_array = BriefTemplatePeer::getTranslationLanguageArray(); ?>
 
+<?php
+if(! function_exists('__'))
+  \Misc::use_helper('I18N');
+?>
+
 <div id="tabs">
   <ul>
     <?php foreach ($language_array as $language): ?>
@@ -43,10 +48,10 @@
            $html    = str_replace($search, $replace, $html);
          }
          
-        echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
+        echo input_tag(__('onderwerp') .'[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
           'style' => 'width: 434px;'
         ));
-        echo ' (Invoegvelden toegestaan) <br /><br />';
+        echo ' (' . __('Invoegvelden toegestaan') .') <br /><br />';
       
         // indien 1 bestemmeling, kunnen we de brief reeds parsen
         if (isset($bestemmelingen_object))

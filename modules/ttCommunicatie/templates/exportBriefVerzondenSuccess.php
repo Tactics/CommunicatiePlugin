@@ -1,15 +1,20 @@
+<?php
+if(! function_exists('__'))
+  \Misc::use_helper('I18N');
+?>
+
 <table>
   <thead>
     <tr>
-      <th>Template</th>
-      <th>Object class</th>
-      <th>Object id</th>
-      <th>Medium</th>
-      <th>Onderwerp</th>
-      <th>Status</th>
-      <th>Datum verzonden</th>
-      <th>Bestemmeling</th>
-      <th>E-mail</th>
+      <th><?php echo __('Template');?></th>
+      <th><?php echo __('Object class');?></th>
+      <th><?php echo __('Object id');?></th>
+      <th><?php echo __('Medium');?></th>
+      <th><?php echo __('Onderwerp');?></th>
+      <th><?php echo __('Status');?></th>
+      <th><?php echo __('Datum verzonden');?></th>
+      <th><?php echo __('Bestemmeling');?></th>
+      <th><?php echo __('E-mail');?></th>
     </tr>
   </thead>
   <tbody>

@@ -1,4 +1,9 @@
 <?php
+if(! function_exists('__'))
+  \Misc::use_helper('I18N');
+?>
+
+<?php
 // recursieve functie om alle placeholders weer te geven
 function showPlaceholders($placeholders)
 {   
@@ -25,16 +30,16 @@ function showPlaceholders($placeholders)
 <?php if ($show_bestemmelingen): ?>
 <div id="dialog-bestemmelingen" style="display:none;"> 
   <?php echo form_tag('', array('name' => 'select_bestemmelingen')) ?>
-    <h2>Bestemmelingen</h2>
+    <h2><?php echo __('Bestemmelingen');?></h2>
     <span>
       <?php 
-        echo label_for('search', 'Zoeken');
+        echo label_for('search', __('Zoeken'));
         echo '&nbsp;';
         echo input_tag('search'); 
       ?>
     </span><br /><br />
     <span>
-      <a href="#" style="display: inline-block;" id="selecteer-alle">selecteer</a> / <a href="#" style="display: inline-block;" id="deselecteer-alle">deselecteer</a>
+      <a href="#" style="display: inline-block;" id="selecteer-alle"><?php echo __('selecteer');?></a> / <a href="#" style="display: inline-block;" id="deselecteer-alle"><?php echo __('deselecteer');?></a>
     </span>
     <hr />
     <div style="height: 170px; overflow: auto;">
@@ -56,7 +61,7 @@ function showPlaceholders($placeholders)
       </ul>
     </div>
     <hr />
-    <?php echo submit_tag('Opslaan') ?>
+    <?php echo submit_tag(__('Opslaan')) ?>
   </form>
 </div>
 <?php endif; ?>
@@ -73,12 +78,12 @@ function showPlaceholders($placeholders)
     <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <?php endif; ?>
   <?php $aantalBestemmelingen = $rs->getRecordCount(); ?>
-  <h2 class="pageblock">Brief opmaken</h2>
+  <h2 class="pageblock"><?php echo __('Brief opmaken');?></h2>
   <div class="pageblock">
     <table class="formtable">
       <?php if ($choose_afzender): ?>
         <tr>
-          <th>Verstuur als:</th>
+          <th><?php echo __('Verstuur als');?>:</th>
           <td>
             <?php 
               echo select_tag('afzender', options_for_select($mogelijke_afzenders))
@@ -88,7 +93,7 @@ function showPlaceholders($placeholders)
       <?php endif ?>
       <?php if ($choose_template) : ?>
         <tr>
-          <th>Sjabloon:</th>
+          <th><?php echo __('Sjabloon');?>:</th>
           <td><?php echo select_tag('template_id', objects_for_select($brief_templates, 'getId', 'getNaam')); ?></td>
         </tr>      
       <?php endif; ?>
@@ -115,47 +120,47 @@ function showPlaceholders($placeholders)
         $rs->seek(0); // reset $rs
         ?>
         <tr>
-          <th>Bestemmeling:</th>
+          <th><?php echo __('Bestemmeling');?>:</th>
           <td>
             <?php echo input_tag('email_to', $emailTo, array('size' => 80)); ?>
             &nbsp; <?php echo link_to_function('Cc/Bcc', "jQuery('.cc_bcc').toggle();"); ?>
           </td>
         </tr>
         <tr class="cc_bcc" <?php echo $emailCc ? '' : 'style="display: none"'; ?>>
-          <th>Cc:</th>
+          <th><?php echo __('Cc');?>:</th>
           <td><?php echo input_tag('email_cc', $emailCc, array('size' => 80)); ?></td>
         </tr>
         <tr class="cc_bcc" <?php echo $emailBcc ? '' : 'style="display: none"'; ?>>
-          <th>Bcc:</th>
+          <th><?php echo __('Bcc');?>:</th>
           <td><?php echo input_tag('email_bcc', $emailBcc, array('size' => 80)); ?></td>
         </tr>
       <?php else : ?>       
         <tr>
-          <th>Aantal bestemmelingen:</th>
+          <th><?php echo __('Aantal bestemmelingen');?>:</th>
           <td>
             <span id="record-count"><?php echo $aantalBestemmelingen; ?></span>
             <?php if ($show_bestemmelingen): ?>
-              (<a href="#" id="toggle-bestemmelingen">Toon lijst</a>)
+              (<a href="#" id="toggle-bestemmelingen"><?php echo __('Toon lijst');?></a>)
             <?php endif ?>
           </td>
         </tr>
       <?php endif; ?>
         
       <tr>
-        <th>Verzenden via e-mail:</th>
+        <th><?php echo __('Verzenden via e-mail');?>:</th>
         <td>
           <?php echo select_tag('verzenden_via', options_for_select(array(
-              'liefst' => 'Ja, indien gewenst',
-              'altijd' => 'Ja, altijd',
-              'nee' => 'Nee, alles afdrukkken op papier'
+              'liefst' => __('Ja, indien gewenst'),
+              'altijd' => __('Ja, altijd'),
+              'nee' => __('Nee, alles afdrukkken op papier')
             ), 'ja'), array('onchange' => 'jQuery(this).val() != "nee" ? jQuery(".emailonly").show() : jQuery(".emailonly").hide();'))?>
         </td>
       </tr>
       
       <?php if ($brief_template) : ?>
         <tr>
-          <th>Eenmalig verzenden:</th>
-          <td id="sjabloon_eenmalig"><?php echo $brief_template->getEenmaligVersturen() ? 'Ja' : 'Nee'; ?></td>
+          <th><?php echo __('Eenmalig verzenden');?>:</th>
+          <td id="sjabloon_eenmalig"><?php echo $brief_template->getEenmaligVersturen() ? __('Ja') : __('Nee'); ?></td>
         </tr>
       <?php endif; ?>
         
@@ -165,7 +170,7 @@ function showPlaceholders($placeholders)
           <td>&nbsp;</td>
         </tr>
         <tr class="required">
-          <th>Onderwerp/tekst:</th>
+          <th><?php echo __('Onderwerp/tekst');?>:</th>
           <td>
             <?php 
             include_partial('brief_text_area_vertaalbaar', array(
@@ -178,7 +183,7 @@ function showPlaceholders($placeholders)
           </td>
           <td>
             <?php if ($is_target) : ?>
-              <h2 class="pageblock" style="margin-left: 20px; width: 300px;">Invoegvelden</h2>
+              <h2 class="pageblock" style="margin-left: 20px; width: 300px;"><?php echo __('Invoegvelden');?></h2>
               <div id="placeholders" class="pageblock" style="overflow: auto; height: 500px; width: 295px; margin-left: 20px;">            
               <?php
                 $placeholders = eval("return $bestemmelingenClass::getPlaceholders();");   
@@ -200,10 +205,10 @@ function showPlaceholders($placeholders)
       <?php endif; ?>
         
       <tr>
-        <th>Bijlagen:</th>
+        <th><?php echo __('Bijlagen');?>:</th>
         <td>
           <?php echo input_file_tag('bijlage0', array('class' => 'bijlagen')) ?> <br />
-          <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
+          <?php echo link_to_function('__(Bijlage toevoegen)', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
         </td>
       </tr>
     </table>
@@ -213,11 +218,11 @@ function showPlaceholders($placeholders)
     <?php echo submit_tag('Voorbeeld e-mail'); // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' ?>    
     
     <?php if ($show_bestemmelingen): ?>
-      <?php echo submit_tag('Brieven afdrukken'); ?>
-      <?php echo submit_tag('E-mails verzenden', array('class' => 'emailonly')); ?>
+      <?php echo submit_tag(__('Brieven afdrukken')); ?>
+      <?php echo submit_tag(__('E-mails verzenden'), array('class' => 'emailonly')); ?>
     <?php else: ?>
-      <?php echo submit_tag('Brieven afdrukken', array('confirm' => 'Bent u zeker dat u tot ' . $rs->getRecordCount() . ' brieven wilt afdrukken?')); ?>
-      <?php echo submit_tag('E-mails verzenden', array('class' => 'emailonly', 'confirm' => 'Bent u zeker dat u tot ' . $rs->getRecordCount() . ' e-mails wilt verzenden?')); ?>
+      <?php echo submit_tag(__('Brieven afdrukken'), array('confirm' => __('Bent u zeker dat u tot') . ' ' . $rs->getRecordCount() . ' ' . __('brieven wilt afdrukken?'))); ?>
+      <?php echo submit_tag(__('E-mails verzenden'), array('class' => 'emailonly', 'confirm' => __('Bent u zeker dat u tot') . ' ' . $rs->getRecordCount() . ' ' . __('e-mails wilt verzenden?'))); ?>
     <?php endif; ?>
     
   </div>

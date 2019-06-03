@@ -9,6 +9,12 @@
 </head>
 
 <body>
+
+    <?php
+        if(! function_exists('__'))
+        \Misc::use_helper('I18N');
+    ?>
+
   <?php
     $printAttachements = false;
 
@@ -58,7 +64,7 @@
             $object_brief_template = BriefTemplatePeer::retrieveByPK($layoutEnTemplateId['brief_template_id']);          
             if (! $object_brief_template)
             {
-              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' niet gevonden.</font><br/>';
+              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_template_id ' . $layoutEnTemplateId['brief_template_id'] . ' ' . __('niet gevonden') . '.</font><br/>';
               continue;                
             } 
           }
@@ -74,7 +80,7 @@
             $brief_layout = BriefLayoutPeer::retrieveByPK($layoutEnTemplateId['brief_layout_id']);
             if (! $brief_layout)
             {
-              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' niet gevonden.</font><br/>';
+              echo '<font color="red">' . get_class($object) . '&rarr;getLayoutEnTemplateId(): brief_layout_id ' . $layoutEnTemplateId['brief_layout_id'] . ' ' . __('niet gevonden') . '.</font><br/>';
               continue;
             } 
           }  
@@ -114,7 +120,7 @@
       
       if (! $brief_layout)
       {
-        echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) niet gevonden.</font><br/>";
+        echo "<font color=red>{$bestemmelingenClass} (id: {$object->getId()}): BriefLayout (id: {$layoutEnTemplateId['brief_layout_id']}) " . __('niet gevonden') . ".</font><br/>";
         continue;
       }
       
@@ -145,12 +151,7 @@
       // voorbeeld melding om te vermijden dat dit wordt gebruikt om effectief af te drukken
       if ($voorbeeld)
       {
-        $watermerkDiv = '
-          <div style="width: 560px; position: absolute; left: 50px; top: 450px; -moz-transform: rotate(-300deg); font-size:80px; color:red; opacity:0.4">
-            VOORBEELD
-          </div>
-        ';
-
+        $watermerkDiv = '<div style="width: 560px; position: absolute; left: 50px; top: 450px; -moz-transform: rotate(-300deg); font-size:80px; color:red; opacity:0.4">' . __('VOORBEELD') . '</div>';
         $brief = $watermerkDiv . $brief;
       }      
 
@@ -193,7 +194,7 @@
 
     if (! $aantal_brieven)
     {
-      echo '<p>Er zijn geen brieven te versturen.</p>';
+      echo '<p>' . __('Er zijn geen brieven te versturen') . '.</p>';
       echo '</div>';
     }
   ?>
@@ -213,7 +214,7 @@
 
       <?php if (! $voorbeeld): ?>
 
-      if (confirm("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt."))
+      if (confirm("<?php echo __("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt.");?>"))
       {
         jQuery.ajax({
           url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",
@@ -226,18 +227,18 @@
           cache: false,
           success: function(l)
           {
-             alert('De documenten werden gemarkeerd als afgedrukt.');
-             //window.close();
-          }
-        });
-      }
+             alert("<?php echo __('De documenten werden gemarkeerd als afgedrukt.');?>");
+                           //window.close();
+                        }
+                      });
+                    }
 
-      <?php endif; ?>
+                    <?php endif; ?>
     }
 
     function voerEmailUit(aantal)
     {
-      if (confirm('Er worden ' + aantal + ' e-mails verzonden.  Doorgaan met verzenden?'))
+      if (confirm('<?php echo __('Er worden');?>' + ' ' + aantal + ' ' + '<?php echo __('e-mails verzonden');?>' + '.  ' + '<?php echo __('Doorgaan met verzenden?');?>'))
       {
         jQuery.ajax({
           url: "<?php echo url_for('ttCommunicatie/verstuurEmail'); ?>",
@@ -245,7 +246,7 @@
           cache: false,
           success: function(html)
           {
-             alert('Alle e-mails werden verzonden.');
+             alert('<?php echo __('Alle e-mails werden verzonden.');?>');
              window.close();
              $('#mailsversturen').hide();
              $('#geenmailsversturen').show();
