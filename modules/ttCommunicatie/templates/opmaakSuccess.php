@@ -89,7 +89,7 @@ function showPlaceholders($placeholders)
               echo select_tag('afzender', options_for_select($mogelijke_afzenders))
               ?>
                 <br/>
-              <?php echo input_tag('afzender_other', $afzenderOther, array('size' => 80, 'style' => 'display:none;')); ?>
+              <?php echo input_tag('afzender_other', $afzender_other, array('size' => 80, 'style' => 'display:none;')); ?>
             </td>
         </tr>
       <?php endif ?>
