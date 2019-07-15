@@ -45,21 +45,24 @@
   {
     // language tabs initialiseren
     $('#tabs').tt_tabs();
-    
-    tinyMCE.init({        
+
+    tinyMCE.init({
       mode : "textareas",
-      theme : "advanced", 
+      theme : "advanced",
       theme_advanced_toolbar_location : "top",
-      width : "600", 
-      height : "454",       
-      language : "nl",      
+      width : "600",
+      height : "454",
+      language : "nl",
       plugins: "paste, pagebreak, table",
       pagebreak_separator : "%pagebreak%",
-      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
-      theme_advanced_buttons2 : "tablecontrols",
-      theme_advanced_buttons3 : ""      
+      theme_advanced_font_sizes : "10px,12px,14px,16px,24px",
+      theme_advanced_text_colors : "000000",
+      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|styleselect,fontselect,fontsizeselect,forecolor,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
+      theme_advanced_buttons2 : "",
+      theme_advanced_buttons3 : "",
+      theme_advanced_fonts : "Andale Mono=andale mono,times;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier;Georgia=georgia,palatino;Helvetica=helvetica;Impact=impact,chicago;Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco;Times New Roman=times new roman,times;Trebuchet MS=trebuchet ms,geneva;Verdana=verdana,geneva;",
     });
-    
+
     $('#bestemmelingen :checkbox').change(function()
     {
       // Geef placeholders van de verschillende targets weer
@@ -124,7 +127,7 @@
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
     var  str = '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '">';
-    
+
     jQuery('a.bijlage_toevoegen').before(str);
     jQuery('a.bijlage_toevoegen').before('<br />');
   }
@@ -133,22 +136,22 @@
 <?php
 // recursieve functie om alle placeholders weer te geven
 function showPlaceholders($placeholders)
-{   
-  echo '<ul>';                            
+{
+  echo '<ul>';
   foreach($placeholders as $id => $placeholder)
   {
     if (is_array($placeholder))
     {
-      echo '<li>' . $id;                         
+      echo '<li>' . $id;
       showPlaceholders($placeholder);
       echo '</li>';
     }
     else
     {
       echo '<li class="placeholder">' . link_to_function($placeholder, 'insertPlaceholder("' . $placeholder . '");') . '</li>';
-    } 
-  }    
-  echo '</ul>';                            
+    }
+  }
+  echo '</ul>';
 }
 ?>
 
@@ -159,16 +162,16 @@ if(! function_exists('__'))
 
 <h2 class="pageblock"><?php echo $brief_template->getId() ? __('Sjabloon bewerken') : __('Nieuw sjabloon'); ?></h2>
 <div class="pageblock">
-  <?php include_partial('global/formvalidationerrors') ?>  
-  
-  <?php echo form_tag("ttCommunicatie/update", array('multipart' => true, 'name' => 'edit_template')); ?>  
+  <?php include_partial('global/formvalidationerrors') ?>
+
+  <?php echo form_tag("ttCommunicatie/update", array('multipart' => true, 'name' => 'edit_template')); ?>
   <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <table class="formtable">
     <tr <?php if ($sf_request->hasError('naam')) {echo 'class="error"';} ?>>
       <th><?php echo __('Naam');?>:</th>
       <td>
         <?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80, 'disabled' => $brief_template->isSysteemTemplate())); ?>
-        <?php 
+        <?php
           if ($brief_template->isSysteemTemplate())
           {
             echo object_input_hidden_tag($brief_template, 'getNaam');
@@ -192,11 +195,11 @@ if(! function_exists('__'))
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
         <label>
           <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray()), array('disabled' => $brief_template->isSysteemTemplate())); ?>
-          <?php echo $oClass['label']; ?>          
+          <?php echo $oClass['label']; ?>
         </label>
         <?php endforeach; ?>
       </td>
-    </tr>    
+    </tr>
     <tr>
       <th>&nbsp;</th>
       <td>&nbsp;</td>
@@ -207,12 +210,12 @@ if(! function_exists('__'))
         <table>
           <tr <?php if ($sf_request->hasError('onderwerp')) {echo 'class="error"';} ?>>
             <td>
-              <?php                 
+              <?php
                 include_partial('brief_text_area_vertaalbaar', array(
-                  'brief_template'      => $brief_template,                                   
+                  'brief_template'      => $brief_template,
                   'systeemplaceholders' => $systeemplaceholders,
                   'choose_template'     => false
-                ));                            
+                ));
               ?>
             </td>
             <td>
@@ -222,27 +225,27 @@ if(! function_exists('__'))
               </div>
 
               <div id="placeholders_summary" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px; display:none;"></div>
-              
+
               <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px;">
-                <?php 
+                <?php
                 foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
-                  <?php if ('Algemeen' == $oClass['class']) : 
+                  <?php if ('Algemeen' == $oClass['class']) :
                     continue;
                   endif; ?>
                   <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                     <strong><?php echo $oClass['label']; ?></strong>
-                    <?php  
+                    <?php
                       $placeholders = eval("return {$oClass['class']}::getPlaceholders();");
                       // Algemene placeholders indien gedefinieerd
                       if (class_exists('Placeholder'))
                       {
                         $placeholders = array_merge($placeholders, array('Algemeen' => Placeholder::getPlaceholders()));
                       }
-                      showPlaceholders($placeholders);                          
+                      showPlaceholders($placeholders);
                     ?>
                   </div>
                 <?php endforeach; ?>
-                 
+
                 <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
                   <div class="system">
                     <strong><?php echo __('Briefspecifieke velden');?></strong>
@@ -253,8 +256,8 @@ if(! function_exists('__'))
                       </ul>
                   </div>
                 <?php endif; ?>
-              </div>     
-              
+              </div>
+
             </td>
           </tr>
         </table>
@@ -295,18 +298,18 @@ if(! function_exists('__'))
     </tr>
     <tr>
       <th><?php echo __('Slechts eenmalig versturen');?>:</th>
-      <td>        
+      <td>
         <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => __('nee') , 1 => __('ja')), $brief_template->getEenmaligVersturen())); ?>
       </td>
     </tr>
   </table>
   <hr>
-  <?php 
+  <?php
     echo input_hidden_tag('language_label');
-    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' 
+    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
     echo submit_tag(__('Voorbeeld brief'), array('class' => 'button-target-blank'));
     echo '&nbsp;';
-    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' 
+    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
     echo submit_tag(__('Voorbeeld e-mail'), array('class' => 'button-target-blank'));
     echo '&nbsp;';
     echo submit_tag(__('Opslaan'));
@@ -321,7 +324,7 @@ if(! function_exists('__'))
     // Afhankelijk van op welke submit tag gebruiker klikt is target _blank.
     $('input[name="commit"]').click(function(){
       var form = $(this).closest('form');
-      
+
       if ($(this).attr('class') == 'button-target-blank')
       {
         form.attr('target', '_blank');
