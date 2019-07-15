@@ -84,11 +84,13 @@ function showPlaceholders($placeholders)
       <?php if ($choose_afzender): ?>
         <tr>
           <th><?php echo __('Verstuur als');?>:</th>
-          <td>
-            <?php
+            <td>
+              <?php
               echo select_tag('afzender', options_for_select($mogelijke_afzenders))
-            ?>
-          </td>
+              ?>
+                <br/>
+              <?php echo input_tag('afzender_other', $afzenderOther, array('size' => 80, 'style' => 'display:none;')); ?>
+            </td>
         </tr>
       <?php endif ?>
       <?php if ($choose_template) : ?>
@@ -98,14 +100,17 @@ function showPlaceholders($placeholders)
         </tr>
       <?php endif; ?>
 
+      <?php
+        $emailCc = '';
+        $emailBcc = '';
+      ?>
+
       <?php if ($aantalBestemmelingen === 1) : ?>
         <?php
         $rs->next();
         $object = new $bestemmelingenClass();
         $object->hydrate($rs);
         $emailTo = $object->getMailerRecipientMail();
-        $emailCc = '';
-        $emailBcc = '';
         if (method_exists($object, 'getMailerRecipientCC') && ($object->getMailerRecipientCC()))
         {
           $emailCc = $object->getMailerRecipientCC();
@@ -142,7 +147,16 @@ function showPlaceholders($placeholders)
             <?php if ($show_bestemmelingen): ?>
               (<a href="#" id="toggle-bestemmelingen"><?php echo __('Toon lijst');?></a>)
             <?php endif ?>
+            <?php echo link_to_function('Cc/Bcc', "jQuery('.cc_bcc').toggle();"); ?>
           </td>
+        </tr>
+        <tr class="cc_bcc" <?php echo $emailCc ? '' : 'style="display: none"'; ?>>
+          <th><?php echo __('Cc');?>:</th>
+          <td><?php echo input_tag('email_cc', $emailCc, array('size' => 80)); ?></td>
+        </tr>
+        <tr class="cc_bcc" <?php echo $emailBcc ? '' : 'style="display: none"'; ?>>
+          <th><?php echo __('Bcc');?>:</th>
+          <td><?php echo input_tag('email_bcc', $emailBcc, array('size' => 80)); ?></td>
         </tr>
       <?php endif; ?>
 
@@ -233,6 +247,21 @@ function showPlaceholders($placeholders)
   {
     tinyMCE.execCommand('mceInsertContent', null, '%' + placeholder + '%');
   }
+
+  function showHideOther(element) {
+      var value = element.val();
+      if (value === 'other') {
+          jQuery('#afzender_other').show();
+      } else {
+          jQuery('#afzender_other').val('');
+          jQuery('#afzender_other').hide();
+      }
+  }
+
+  showHideOther(jQuery('#afzender'));
+  jQuery('#afzender').on('change', function(){
+      showHideOther(jQuery(this));
+  });
 
   <?php if ($show_bestemmelingen): ?>
   function showDialog(dialog)

@@ -59,6 +59,7 @@ class ttCommunicatieActions extends sfActions
     $this->bestemmelingenPeer = $this->bestemmelingenClass . 'Peer';
     $this->show_bestemmelingen = $this->getUser()->getAttribute('show_bestemmelingen', false, $this->md5hash);
     $this->afzender = $this->getUser()->getAttribute('afzender', sfConfig::get("sf_mail_sender"), $this->md5hash);
+    $this->afzender_other = '';
     $this->choose_afzender = $this->getUser()->getAttribute('choose_afzender', false, $this->md5hash);
     $this->mogelijke_afzenders = $this->getMogelijkeAfzenders($this->getUser()->getAttribute('prio_eigen_afzender', false, $this->md5hash));
 
@@ -211,7 +212,7 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-   * Kopiëer een sjabloon
+   * Kopiï¿½er een sjabloon
    */
   public function executeCopy()
   {
@@ -256,7 +257,7 @@ class ttCommunicatieActions extends sfActions
 
     if (!$systeem) {
       if (!$this->getRequestParameter('classes')) {
-        $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens één mogelijke bestemmeling in te geven.');
+        $this->getRequest()->setError('bestemmelingen', 'Gelieve minstens ï¿½ï¿½n mogelijke bestemmeling in te geven.');
       }
 
       if (!$this->getRequestParameter('naam')) {
@@ -749,10 +750,15 @@ class ttCommunicatieActions extends sfActions
 
           $nietVerstuurdReden = '';
           try {
+
+            $afzender = $this->getRequestParameter('afzender', $this->afzender);
+            $afzenderOther = $this->getRequestParameter('afzender_other', '');
+            $afzender = $afzenderOther !== '' ? $afzenderOther : $afzender;
+
             $options = array(
               'onderwerp' => $onderwerp,
               'skip_template' => true,
-              'afzender' => $this->getRequestParameter('afzender', $this->afzender),
+              'afzender' => $afzender,
               'attachements' => $attachments,
               'img_path' => sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'brieven' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR
             );
@@ -1023,7 +1029,7 @@ class ttCommunicatieActions extends sfActions
   }
 
   /**
-   * Geeft details van één verzonden brief weer
+   * Geeft details van ï¿½ï¿½n verzonden brief weer
    */
   public function executeShowCommunicatieLog()
   {
@@ -1303,6 +1309,8 @@ class ttCommunicatieActions extends sfActions
       $afzenders[$this->afzender] = $this->afzender;
     }
 
+    // Allow users to fill in a free email address.
+    $afzenders['other'] = 'Vrije ingave email';
     return $afzenders;
   }
 
