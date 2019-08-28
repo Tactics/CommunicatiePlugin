@@ -52,6 +52,8 @@
       theme_advanced_toolbar_location : "top",
       width : "600",
       height : "454",
+      relative_urls: false,
+      remove_script_host: false,
       language : "nl",
       plugins: "paste, pagebreak, table",
       pagebreak_separator : "%pagebreak%",
