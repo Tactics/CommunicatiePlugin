@@ -927,12 +927,12 @@ class ttCommunicatieActions extends sfActions
     $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
     $filelocation = $tmp_dir . DIRECTORY_SEPARATOR . 'bijlagen.pdf';
 
-    $pdf = new \Clegginabox\PDFMerger\PDFMerger;
+    $pdf = new \Jurosh\PDFMerge\PDFMerger;
     foreach($attachements as $filename => $filePath)
     {
       $pdf->addPDF($filePath, 'all');
     }
-    $pdf->merge('file',$filelocation, 'P');
+    $pdf->merge('file',$filelocation);
     return $filelocation;
   }
 

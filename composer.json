@@ -12,7 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "composer/installers": "~1.0",
-        "clegginabox/pdf-merger": "dev-master#88e641ca2aa732b4f05e423a8ebc662af495e6ad"
+        "jurosh/pdf-merge": "^2.0"
 
     }
 }
