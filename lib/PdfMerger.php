@@ -24,7 +24,7 @@
 namespace Tactics\PDFMerger;
 
 use Exception;
-use setasign\Fpdi\FPDI;
+use setasign\Fpdi\Fpdi;
 
 class PDFMerger
 {
