@@ -241,7 +241,7 @@
 
       <?php if (! $voorbeeld): ?>
 
-      if (confirm("<?php echo __("Heeft u de brieven correct afgedrukt?\n(Hiermee worden ze als afgedrukt gemarkeerd)\nBij 'Ok', wacht tot het venster automatisch gesloten wordt.");?>"))
+      if (confirm("<?php echo __("Heeft u de brieven correct afgedrukt? (Hiermee worden ze als afgedrukt gemarkeerd) Bij 'Ok', wacht tot het venster automatisch gesloten wordt.");?>"))
       {
         jQuery.ajax({
           url: "<?php echo url_for('ttCommunicatie/bevestigAfdrukken'); ?>",

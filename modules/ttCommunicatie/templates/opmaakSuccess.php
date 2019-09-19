@@ -29,7 +29,7 @@ function showPlaceholders($placeholders)
 
 <?php if ($show_bestemmelingen): ?>
 <div id="dialog-bestemmelingen" style="display:none;">
-  <?php echo form_tag('', array('name' => 'select_bestemmelingen')) ?>
+  <?php echo form_tag('ttCommunicatie/opmaak', array('name' => 'select_bestemmelingen')) ?>
     <h2><?php echo __('Bestemmelingen');?></h2>
     <span>
       <?php
