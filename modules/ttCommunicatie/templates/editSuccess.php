@@ -46,6 +46,8 @@
     // language tabs initialiseren
     $('#tabs').tt_tabs();
 
+      // Deze configuratie zou eigenlijk overschrijfbaar moeten zijn
+      // @TODO eens bekijken hoe/of symfony 1 dit toelaat
     tinyMCE.init({
       mode : "textareas",
       theme : "advanced",
@@ -80,6 +82,7 @@
             "Verdana=verdana,geneva;"+
             "Webdings=webdings;"+
             "Wingdings=wingdings,zapf dingbats",
+        content_css : "/ttCommunicatie/web/css/fonts.css"
     });
 
     $('#bestemmelingen :checkbox').change(function()

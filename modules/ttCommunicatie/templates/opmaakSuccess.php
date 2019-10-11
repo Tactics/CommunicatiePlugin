@@ -349,6 +349,8 @@ function showPlaceholders($placeholders)
     // language tabs initialiseren
     $('#tabs').tt_tabs();
 
+    // Deze configuratie zou eigenlijk overschrijfbaar moeten zijn
+    // @TODO eens bekijken hoe/of symfony 1 dit toelaat
     tinyMCE.init({
       mode : "textareas",
       theme : "advanced",
@@ -357,6 +359,7 @@ function showPlaceholders($placeholders)
       height : "454",
       language : "nl",
       plugins: "paste, pagebreak",
+
       pagebreak_separator : "%pagebreak%",
       theme_advanced_font_sizes : "10px,12px,14px,16px,24px",
       theme_advanced_text_colors : "000000",
@@ -381,6 +384,7 @@ function showPlaceholders($placeholders)
             "Verdana=verdana,geneva;"+
             "Webdings=webdings;"+
             "Wingdings=wingdings,zapf dingbats",
+        content_css : "/ttCommunicatie/web/css/fonts.css"
       init_instance_callback : function() {
         $('#template_id').change();
       }
