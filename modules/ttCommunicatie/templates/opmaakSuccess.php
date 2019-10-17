@@ -372,6 +372,7 @@ function showPlaceholders($placeholders)
             "Book Antiqua=book antiqua,palatino;"+
             "Calibri=calibri,sans-serif;"+
             "Comic Sans MS=comic sans ms,sans-serif;"+
+            "Cooper Hewitt=cooper hewitt,helvetica,arial,sans-serif;"+
             "Courier New=courier new,courier;"+
             "Georgia=georgia,palatino;"+
             "Helvetica=helvetica;"+
