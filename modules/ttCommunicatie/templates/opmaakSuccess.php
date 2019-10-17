@@ -385,7 +385,7 @@ function showPlaceholders($placeholders)
             "Verdana=verdana,geneva;"+
             "Webdings=webdings;"+
             "Wingdings=wingdings,zapf dingbats",
-        content_css : "/ttCommunicatie/web/css/fonts.css"
+        content_css : "/ttCommunicatie/web/css/fonts.css",
       init_instance_callback : function() {
         $('#template_id').change();
       }
