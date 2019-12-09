@@ -48,7 +48,7 @@ if(! function_exists('__'))
            $html    = str_replace($search, $replace, $html);
          }
          
-        echo input_tag(__('onderwerp') .'[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
+        echo input_tag('onderwerp[' . BriefTemplatePeer::getCulture($language) . ']', $onderwerp, array(
           'style' => 'width: 434px;'
         ));
         echo ' (' . __('Invoegvelden toegestaan') .') <br /><br />';
