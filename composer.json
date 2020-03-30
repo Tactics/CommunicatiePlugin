@@ -12,6 +12,6 @@
     "minimum-stability": "dev",
     "require": {
         "composer/installers": "~1.0",
-        "tactics/tt-dms-plugin": "dev-master"
+        "tactics/tt-dms-plugin": "dev-subsidieloket"
     }
 }
