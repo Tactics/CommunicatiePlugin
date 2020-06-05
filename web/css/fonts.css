@@ -1,0 +1,16 @@
+@font-face {
+    font-family: 'calibri';
+    src: url('fonts/Calibri.woff2') format('woff2'),
+        url('fonts/Calibri.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'cooper hewitt';
+    src: url('fonts/CooperHewitt.woff2') format('woff2'),
+    url('fonts/CooperHewitt.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+

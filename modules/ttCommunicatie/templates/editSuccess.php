@@ -45,21 +45,46 @@
   {
     // language tabs initialiseren
     $('#tabs').tt_tabs();
-    
-    tinyMCE.init({        
+
+      // Deze configuratie zou eigenlijk overschrijfbaar moeten zijn
+      // @TODO eens bekijken hoe/of symfony 1 dit toelaat
+    tinyMCE.init({
       mode : "textareas",
-      theme : "advanced", 
+      theme : "advanced",
       theme_advanced_toolbar_location : "top",
-      width : "600", 
-      height : "454",       
-      language : "nl",      
+      width : "600",
+      height : "454",
+      relative_urls: false,
+      remove_script_host: false,
+      language : "nl",
       plugins: "paste, pagebreak, table",
       pagebreak_separator : "%pagebreak%",
-      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
-      theme_advanced_buttons2 : "tablecontrols",
-      theme_advanced_buttons3 : ""      
+      theme_advanced_font_sizes : "10px,12px,14px,16px,24px",
+      theme_advanced_text_colors : "000000",
+      theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|styleselect,fontselect,fontsizeselect,forecolor,|,undo,redo,|,cleanup,|,bullist,numlist,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,pagebreak,|,link,unlink,",
+      theme_advanced_buttons2 : "",
+      theme_advanced_buttons3 : "",
+      theme_advanced_fonts : "Andale Mono=andale mono,times;"+
+            "Arial=arial,helvetica,sans-serif;"+
+            "Arial Black=arial black,avant garde;"+
+            "Book Antiqua=book antiqua,palatino;"+
+            "Calibri=calibri,sans-serif;"+
+            "Comic Sans MS=comic sans ms,sans-serif;"+
+            "Courier New=courier new,courier;"+
+            "Georgia=georgia,palatino;"+
+            "Helvetica=helvetica;"+
+            "Impact=impact,chicago;"+
+            "Symbol=symbol;"+
+            "Tahoma=tahoma,arial,helvetica,sans-serif;"+
+            "Terminal=terminal,monaco;"+
+            "Times New Roman=times new roman,times;"+
+            "Trebuchet MS=trebuchet ms,geneva;"+
+            "Verdana=verdana,geneva;"+
+            "Webdings=webdings;"+
+            "Wingdings=wingdings,zapf dingbats",
+        content_css : "/ttCommunicatie/web/css/fonts.css"
     });
-    
+
     $('#bestemmelingen :checkbox').change(function()
     {
       // Geef placeholders van de verschillende targets weer
@@ -124,7 +149,7 @@
   {
     var cnt = jQuery('input.new_brief_bijlages').size();
     var  str = '<input id="new_brief_bijlage' + cnt + '" type="file" value="" name="new_brief_bijlage' + cnt + '">';
-    
+
     jQuery('a.bijlage_toevoegen').before(str);
     jQuery('a.bijlage_toevoegen').before('<br />');
   }
@@ -133,37 +158,42 @@
 <?php
 // recursieve functie om alle placeholders weer te geven
 function showPlaceholders($placeholders)
-{   
-  echo '<ul>';                            
+{
+  echo '<ul>';
   foreach($placeholders as $id => $placeholder)
   {
     if (is_array($placeholder))
     {
-      echo '<li>' . $id;                         
+      echo '<li>' . $id;
       showPlaceholders($placeholder);
       echo '</li>';
     }
     else
     {
       echo '<li class="placeholder">' . link_to_function($placeholder, 'insertPlaceholder("' . $placeholder . '");') . '</li>';
-    } 
-  }    
-  echo '</ul>';                            
+    }
+  }
+  echo '</ul>';
 }
 ?>
 
-<h2 class="pageblock"><?php echo $brief_template->getId() ? 'Sjabloon bewerken' : 'Nieuw sjabloon'; ?></h2>
+<?php
+if(! function_exists('__'))
+  \Misc::use_helper('I18N');
+?>
+
+<h2 class="pageblock"><?php echo $brief_template->getId() ? __('Sjabloon bewerken') : __('Nieuw sjabloon'); ?></h2>
 <div class="pageblock">
-  <?php include_partial('global/formvalidationerrors') ?>  
-  
-  <?php echo form_tag("ttCommunicatie/update", array('multipart' => true, 'name' => 'edit_template')); ?>  
+  <?php include_partial('global/formvalidationerrors') ?>
+
+  <?php echo form_tag("ttCommunicatie/update", array('multipart' => true, 'name' => 'edit_template')); ?>
   <?php echo input_hidden_tag('template_id', $brief_template->getId()); ?>
   <table class="formtable">
     <tr <?php if ($sf_request->hasError('naam')) {echo 'class="error"';} ?>>
-      <th>Naam:</th>
+      <th><?php echo __('Naam');?>:</th>
       <td>
         <?php echo object_input_tag($brief_template, 'getNaam', array('size' => 80, 'disabled' => $brief_template->isSysteemTemplate())); ?>
-        <?php 
+        <?php
           if ($brief_template->isSysteemTemplate())
           {
             echo object_input_hidden_tag($brief_template, 'getNaam');
@@ -173,7 +203,7 @@ function showPlaceholders($placeholders)
     </tr>
     <?php if ($brief_template->isSysteemTemplate()): ?>
     <tr>
-      <th>Systeemnaam:</th>
+      <th><?php echo __('Systeemnaam');?>:</th>
       <td><?php echo $brief_template->getSysteemnaam() ?></td>
     </tr>
     <?php endif; ?>
@@ -182,65 +212,65 @@ function showPlaceholders($placeholders)
       <td>&nbsp;</td>
     </tr>
     <tr <?php if ($sf_request->hasError('bestemmelingen')) {echo 'class="error"';} ?>>
-      <th>Mogelijke bestemmelingen:</th>
+      <th><?php echo __('Mogelijke bestemmelingen');?>:</th>
       <td id="bestemmelingen">
         <?php foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
         <label>
           <?php echo checkbox_tag('classes[]', $oClass['class'], in_array($oClass['class'], $brief_template->getBestemmelingArray()), array('disabled' => $brief_template->isSysteemTemplate())); ?>
-          <?php echo $oClass['label']; ?>          
+          <?php echo $oClass['label']; ?>
         </label>
         <?php endforeach; ?>
       </td>
-    </tr>    
+    </tr>
     <tr>
       <th>&nbsp;</th>
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <th>Onderwerp/tekst:</th>
+      <th><?php echo __('Onderwerp/tekst');?>:</th>
       <td>
         <table>
           <tr <?php if ($sf_request->hasError('onderwerp')) {echo 'class="error"';} ?>>
             <td>
-              <?php                 
+              <?php
                 include_partial('brief_text_area_vertaalbaar', array(
-                  'brief_template'      => $brief_template,                                   
+                  'brief_template'      => $brief_template,
                   'systeemplaceholders' => $systeemplaceholders,
                   'choose_template'     => false
-                ));                            
+                ));
               ?>
             </td>
             <td>
-              <h2 class="pageblock" style="margin-left: 20px; width: 280px;">Invoegvelden</h2>
+              <h2 class="pageblock" style="margin-left: 20px; width: 280px;"><?php echo __('Invoegvelden');?></h2>
               <div class="pageblock" style="width: 275px; margin-left: 20px;margin-bottom: 0px;border-bottom: 0px;">
-                <label><input type="checkbox" id="hideUnsupported"> Geef enkel invoegvelden weer die door elk type bestemmeling ondersteund worden.</label>
+                <label><input type="checkbox" id="hideUnsupported"> <?php echo __('Geef enkel invoegvelden weer die door elk type bestemmeling ondersteund worden');?>.</label>
               </div>
 
               <div id="placeholders_summary" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px; display:none;"></div>
-              
+
               <div id="placeholders" class="pageblock" style="overflow: auto; height: 430px; width: 275px; margin-left: 20px;">
-                <?php 
+                <?php
                 foreach(sfConfig::get('sf_communicatie_targets') as $oClass): ?>
-                  <?php if ('Algemeen' == $oClass['class']) : 
+                  <?php if ('Algemeen' == $oClass['class']) :
                     continue;
                   endif; ?>
                   <div id="target_<?php echo $oClass['class']; ?>" style="margin-bottom: 6px;">
                     <strong><?php echo $oClass['label']; ?></strong>
-                    <?php  
+                    <?php
                       $placeholders = eval("return {$oClass['class']}::getPlaceholders();");
                       // Algemene placeholders indien gedefinieerd
                       if (class_exists('Placeholder'))
                       {
                         $placeholders = array_merge($placeholders, array('Algemeen' => Placeholder::getPlaceholders()));
                       }
-                      showPlaceholders($placeholders);                          
+                      showPlaceholders($placeholders);
                     ?>
                   </div>
                 <?php endforeach; ?>
-                 
+
                 <?php if ($brief_template->isSysteemtemplate() && count($systeemplaceholders) > 0): ?>
                   <div class="system">
-                    <strong>Briefspecifieke velden</strong>
+                    <strong><?php echo __('Briefspecifieke velden');?></strong>
                       <ul>
                         <?php foreach ($systeemplaceholders as $systeemplaceholder): ?>
                           <li class="placeholder"><a href="#" onClick="insertPlaceholder('<?php echo $systeemplaceholder ?>'); return false;"><?php echo $systeemplaceholder ?></a></li>
@@ -248,8 +278,8 @@ function showPlaceholders($placeholders)
                       </ul>
                   </div>
                 <?php endif; ?>
-              </div>     
-              
+              </div>
+
             </td>
           </tr>
         </table>
@@ -259,54 +289,54 @@ function showPlaceholders($placeholders)
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <th>Bijlagen:</th>
+      <th><?php echo __('Bijlagen');?>:</th>
       <td>
         <?php foreach ($brief_template->getBriefBijlages() as $brief_bijlage): ?>
           <?php $node = DmsNodePeer::retrieveByPK($brief_bijlage->getBijlageNodeId()); ?>
           <?php echo link_to($node->getDiskName(), 'ttCommunicatie/downloadAttachment?file_id=' . $node->getId()) . ' ' . link_to(image_tag('icons/trash_16.gif'), 'ttCommunicatie/deleteAttachment?file_id=' . $node->getId() . '&brief_bijlage_id=' . $brief_bijlage->getId() , array('title' => 'Verwijderen')) . '<br />'; ?>
         <?php endforeach; ?>
         <?php echo input_file_tag('new_brief_bijlage0', array('class' => 'new_brief_bijlages')) ?> <br />
-        <?php echo link_to_function('Bijlage toevoegen', 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
+        <?php echo link_to_function(__('Bijlage toevoegen'), 'bijlageToevoegen()', array('class' => 'bijlage_toevoegen')); ?>
       </td>
     </tr>
     <tr <?php if ($sf_request->hasError('brief_layout_id')) {echo 'class="error"';} ?>>
-      <th>Layout:</th>
+      <th><?php echo __('Layout');?>:</th>
       <td>
         <?php echo select_tag('brief_layout_id', objects_for_select(BriefLayoutPeer::getSorted(), 'getId', 'getNaam', $brief_template->getBriefLayoutId(), array('include_blank' => true))); ?>
       </td>
     </tr>
     <tr>
-      <th>Bewerkbaar voor versturen:</th>
+      <th><?php echo __('Bewerkbaar voor versturen');?>:</th>
       <td>
-        <?php echo select_tag('bewerkbaar', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getBewerkbaar())); ?>
+        <?php echo select_tag('bewerkbaar', options_for_select(array(0 => __('nee') , 1 => __('ja')), $brief_template->getBewerkbaar())); ?>
       </td>
     </tr>
     <tr>
-      <th>Beveiligde weergave:</th>
+      <th><?php echo __('Beveiligde weergave');?>:</th>
       <td>
-        <?php echo select_tag('weergave_beveiligd', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getWeergaveBeveiligd())); ?>
-        <span id="weergave_beveiligd_waarschuwing"><strong>Opgelet!</strong> Bij beveiligde weergave wordt de inhoud van deze brief niet opgeslaan in de logs. De inhoud van bestaande logs voor dit sjabloon zal worden leeggemaakt.</span>
+        <?php echo select_tag('weergave_beveiligd', options_for_select(array(0 => __('nee') , 1 => __('ja')), $brief_template->getWeergaveBeveiligd())); ?>
+        <span id="weergave_beveiligd_waarschuwing"><strong><?php echo __('Opgelet');?>!</strong> <?php echo __('Bij beveiligde weergave wordt de inhoud van deze brief niet opgeslaan in de logs. De inhoud van bestaande logs voor dit sjabloon zal worden leeggemaakt');?>.</span>
       </td>
     </tr>
     <tr>
-      <th>Slechts eenmalig versturen:</th>
-      <td>        
-        <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => 'nee' , 1 => 'ja'), $brief_template->getEenmaligVersturen())); ?>
+      <th><?php echo __('Slechts eenmalig versturen');?>:</th>
+      <td>
+        <?php echo select_tag('eenmalig_versturen', options_for_select(array(0 => __('nee') , 1 => __('ja')), $brief_template->getEenmaligVersturen())); ?>
       </td>
     </tr>
   </table>
   <hr>
-  <?php 
+  <?php
     echo input_hidden_tag('language_label');
-    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' 
-    echo submit_tag('Voorbeeld brief', array('class' => 'button-target-blank')); 
+    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
+    echo submit_tag(__('Voorbeeld brief'), array('class' => 'button-target-blank'));
     echo '&nbsp;';
-    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()' 
-    echo submit_tag('Voorbeeld e-mail', array('class' => 'button-target-blank')); 
+    // opgelet: de naam van deze knop moet 'voorbeeld' bevatten, hierop wordt getest in de executePrint()'
+    echo submit_tag(__('Voorbeeld e-mail'), array('class' => 'button-target-blank'));
     echo '&nbsp;';
-    echo submit_tag('Opslaan');
+    echo submit_tag(__('Opslaan'));
     echo '&nbsp;';
-    echo button_to_function('Annuleren', 'history.back();'); 
+    echo button_to_function(__('Annuleren'), 'history.back();');
    ?>
    </form>
 </div>
@@ -316,7 +346,7 @@ function showPlaceholders($placeholders)
     // Afhankelijk van op welke submit tag gebruiker klikt is target _blank.
     $('input[name="commit"]').click(function(){
       var form = $(this).closest('form');
-      
+
       if ($(this).attr('class') == 'button-target-blank')
       {
         form.attr('target', '_blank');

@@ -1,5 +1,10 @@
 <?php include_partial('breadcrumb', array('object' => $object, 'action' => 'Communicatie bewerken'));  ?>
-<h2 class="pageblock">Communicatie bewerken</h2>
+<?php
+if(! function_exists('__'))
+  \Misc::use_helper('I18N');
+?>
+
+<h2 class="pageblock"><?php echo __('Communicatie bewerken');?></h2>
 <div class="pageblock">
   <?php echo form_tag('ttCommunicatie/updateBriefVerzonden', array('name' => 'edit_brief_verzonden')) ?>
     <?php include_partial('global/formvalidationerrors') ?>
@@ -9,15 +14,15 @@
     <table class="formtable">
       <tbody>
         <tr>
-          <th>Naar:</th>
+          <th><?php echo __('Naar');?>:</th>
           <td><?php echo $object->__toString() ?></td>
         </tr>
         <tr class="required <?php if ($sf_request->hasError('medium')) echo ' error'; ?>">
-          <th>Medium:</th>
+          <th><?php echo __('Medium');?>:</th>
           <td><?php echo select_tag('medium', options_for_select(BriefVerzondenPeer::getMediaOptionsForSelect(), $brief_verzonden->getMedium(), array('include_blank' => true))); ?></td>
         </tr>
         <tr class="required <?php if ($sf_request->hasError('adres')) echo ' error'; ?>">
-          <th>Adres:</th>
+          <th><?php echo __('Adres');?>:</th>
           <td>
             <?php echo input_tag('adres', $brief_verzonden->getAdres(), array('style' => 'width:400px;')); ?>
           </td>
@@ -43,16 +48,16 @@
           </td>
         </tr>
         <tr class="required <?php if ($sf_request->hasError('onderwerp')) echo ' error'; ?>">
-          <th>Onderwerp:</th>
+          <th><?php echo __('Onderwerp');?>:</th>
           <td><?php echo input_tag('onderwerp', $brief_verzonden->getOnderwerp(), array('style' => 'width:400px;')) ?></td>
         </tr>
         <tr class="required <?php if ($sf_request->hasError('html')) echo ' error'; ?>">
-          <th>Info:</th>
+          <th><?php echo __('Info');?>:</th>
           <td><?php echo textarea_tag('html', $brief_verzonden->getHtml(), array('size' => '75x6')) ?></td>
         </tr>
       </tbody>
     </table>
-    <?php echo submit_tag('Opslaan') ?>&nbsp;<?php echo button_to_function('Annuleren', 'history.back()'); ?>
+    <?php echo submit_tag(__('Opslaan')) ?>&nbsp;<?php echo button_to_function(__('Annuleren'), 'history.back()'); ?>
   </form>
 </div>
 
