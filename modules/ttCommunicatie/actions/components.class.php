@@ -66,8 +66,9 @@ class ttCommunicatieComponents extends sfComponents
     
     $this->type = isset($this->type) ? $this->type : 'object';
     $this->metFilter = isset($this->metFilter) ? $this->metFilter : false;
+    $this->orCton = isset($this->or_cton) ? $this->or_cton : false;
     
-    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type);
+    $this->pager = self::getCommunicatieLogPager(get_class($this->object), $this->object->getId(), $this->type, $this->orCton);
     $this->pager->init();
   }
   
